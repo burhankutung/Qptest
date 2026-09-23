@@ -1,0 +1,102 @@
+{
+  "name": "Q-Profit Finance Executive (client palette)",
+  "dataColors": ["#001B72", "#4577BF", "#0BC0FF", "#354E9E", "#0B8EB6", "#6ED0EE", "#19327F", "#3EC1E9", "#FF7800", "#B10057"],
+  "foreground": "#1A1A1A",
+  "foregroundNeutralSecondary": "#6D6D6D",
+  "foregroundNeutralTertiary": "#B0B0B0",
+  "background": "#FFFFFF",
+  "backgroundLight": "#FBFBFB",
+  "backgroundNeutral": "#EAEAEA",
+  "tableAccent": "#7122F4",
+  "good": "#0FA465",
+  "neutral": "#F4B11E",
+  "bad": "#FF4B4B",
+  "maximum": "#001B72",
+  "center": "#4577BF",
+  "minimum": "#6ED0EE",
+  "null": "#E7E7E7",
+  "hyperlink": "#7122F4",
+  "visitedHyperlink": "#7122F4",
+  "textClasses": {
+    "callout": { "fontSize": 20, "fontFace": "Proxima Nova", "color": "#1A1A1A" },
+    "title": { "fontSize": 12, "fontFace": "Proxima Nova Semibold", "color": "#1A1A1A" },
+    "header": { "fontSize": 10, "fontFace": "Proxima Nova Semibold", "color": "#6D6D6D" },
+    "label": { "fontSize": 9, "fontFace": "Proxima Nova", "color": "#6D6D6D" },
+    "largeTitle": { "fontSize": 18, "fontFace": "Proxima Nova Bold", "color": "#1A1A1A" }
+  },
+  "visualStyles": {
+    "page": {
+      "*": {
+        "background": [{ "color": { "solid": { "color": "#FBFBFB" } }, "transparency": 0 }],
+        "outspace": [{ "color": { "solid": { "color": "#FBFBFB" } } }]
+      }
+    },
+    "*": {
+      "*": {
+        "background": [{ "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }],
+        "border": [{ "show": true, "color": { "solid": { "color": "#EAEAEA" } }, "radius": 16, "width": 1 }],
+        "dropShadow": [{ "show": false }],
+        "padding": [{ "top": 16, "bottom": 16, "left": 18, "right": 18 }],
+        "title": [{ "show": true, "fontFamily": "Proxima Nova Semibold", "fontSize": 12, "fontColor": { "solid": { "color": "#1A1A1A" } }, "alignment": "left" }],
+        "subTitle": [{ "show": true, "fontFamily": "Proxima Nova", "fontSize": 9, "fontColor": { "solid": { "color": "#6D6D6D" } } }],
+        "visualTooltip": [{ "type": "Canvas", "background": { "solid": { "color": "#1A1A1A" } }, "titleFontColor": { "solid": { "color": "#FCFCFC" } }, "valueFontColor": { "solid": { "color": "#FCFCFC" } }, "fontFamily": "Proxima Nova", "fontSize": 9 }],
+        "categoryAxis": [{ "fontFamily": "Proxima Nova", "fontSize": 8, "labelColor": { "solid": { "color": "#6D6D6D" } }, "showAxisTitle": false, "gridlineShow": false }],
+        "valueAxis": [{ "fontFamily": "Proxima Nova", "fontSize": 8, "labelColor": { "solid": { "color": "#6D6D6D" } }, "showAxisTitle": false, "gridlineColor": { "solid": { "color": "#EAEAEA" } }, "gridlineStyle": "dashed" }],
+        "legend": [{ "show": true, "position": "BottomLeft", "fontFamily": "Proxima Nova", "fontSize": 9, "labelColor": { "solid": { "color": "#6D6D6D" } } }],
+        "labels": [{ "fontFamily": "Proxima Nova Semibold", "fontSize": 8, "color": { "solid": { "color": "#6D6D6D" } } }]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [{ "fontFamily": "Proxima Nova Bold", "fontSize": 20, "color": { "solid": { "color": "#1A1A1A" } } }],
+        "categoryLabels": [{ "fontFamily": "Proxima Nova Semibold", "fontSize": 9, "color": { "solid": { "color": "#6D6D6D" } } }],
+        "border": [{ "show": true, "color": { "solid": { "color": "#EAEAEA" } }, "radius": 12 }]
+      }
+    },
+    "cardVisual": {
+      "*": {
+        "border": [{ "show": true, "color": { "solid": { "color": "#EAEAEA" } }, "radius": 12 }],
+        "accentBar": [{ "show": true, "width": 3, "position": "Left" }]
+      }
+    },
+    "slicer": {
+      "*": {
+        "border": [{ "show": true, "color": { "solid": { "color": "#EAEAEA" } }, "radius": 9 }],
+        "items": [{ "fontFamily": "Proxima Nova Semibold", "textSize": 9, "fontColor": { "solid": { "color": "#6D6D6D" } } }],
+        "header": [{ "show": false }]
+      }
+    },
+    "advancedSlicerVisual": {
+      "*": {
+        "fillCustom": [{ "$id": "selected:selected", "fillColor": { "solid": { "color": "#7122F4" } } }],
+        "label": [{ "$id": "selected:selected", "fontColor": { "solid": { "color": "#FCFCFC" } } }]
+      }
+    },
+    "tableEx": {
+      "*": {
+        "columnHeaders": [{ "fontFamily": "Proxima Nova Semibold", "fontSize": 8, "fontColor": { "solid": { "color": "#6D6D6D" } }, "backColor": { "solid": { "color": "#FBFBFB" } } }],
+        "values": [{ "fontFamily": "Proxima Nova", "fontSize": 9, "fontColorPrimary": { "solid": { "color": "#1A1A1A" } }, "backColorPrimary": { "solid": { "color": "#FFFFFF" } }, "backColorSecondary": { "solid": { "color": "#FFFFFF" } } }],
+        "total": [{ "fontFamily": "Proxima Nova Bold", "fontSize": 9, "backColor": { "solid": { "color": "#FBFBFB" } } }],
+        "grid": [{ "gridVertical": false, "gridHorizontal": true, "gridHorizontalColor": { "solid": { "color": "#EAEAEA" } }, "rowPadding": 6 }]
+      }
+    },
+    "pivotTable": {
+      "*": {
+        "columnHeaders": [{ "fontFamily": "Proxima Nova Semibold", "fontSize": 8, "fontColor": { "solid": { "color": "#6D6D6D" } }, "backColor": { "solid": { "color": "#FBFBFB" } } }],
+        "rowHeaders": [{ "fontFamily": "Proxima Nova Semibold", "fontSize": 9, "fontColor": { "solid": { "color": "#1A1A1A" } }, "stepped": true, "steppedLayoutIndentation": 18 }],
+        "values": [{ "fontFamily": "Proxima Nova", "fontSize": 9, "fontColorPrimary": { "solid": { "color": "#1A1A1A" } } }],
+        "subTotals": [{ "fontFamily": "Proxima Nova Bold", "backColor": { "solid": { "color": "#FBFBFB" } } }],
+        "grid": [{ "gridVertical": false, "gridHorizontal": true, "gridHorizontalColor": { "solid": { "color": "#EAEAEA" } }, "rowPadding": 6 }]
+      }
+    },
+    "lineClusteredColumnComboChart": { "*": { "lineStyles": [{ "strokeWidth": 2, "showMarker": true, "markerSize": 4 }] } },
+    "donutChart": { "*": { "slices": [{ "innerRadiusRatio": 72 }], "legend": [{ "position": "Right" }] } },
+    "actionButton": {
+      "*": {
+        "fill": [{ "$id": "default", "show": true, "fillColor": { "solid": { "color": "#DCD4FF" } } }, { "$id": "selected", "fillColor": { "solid": { "color": "#7122F4" } } }],
+        "text": [{ "$id": "default", "fontFamily": "Proxima Nova Semibold", "fontSize": 9, "fontColor": { "solid": { "color": "#1A1A1A" } } }, { "$id": "selected", "fontColor": { "solid": { "color": "#FCFCFC" } } }],
+        "outline": [{ "$id": "default", "show": true, "lineColor": { "solid": { "color": "#DCD4FF" } }, "roundEdge": 7 }]
+      }
+    }
+  }
+}

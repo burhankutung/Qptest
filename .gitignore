@@ -1,0 +1,7 @@
+# Only the published site is tracked in this repo.
+*
+!Live/
+!Live/**
+!.gitignore
+!index.html
+!.nojekyll
