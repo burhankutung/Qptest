@@ -434,8 +434,7 @@ function shell(){
     '<span class="mk">'+icon('bars')+'</span><h1>Q-Profit</h1><span class="prod">Finance Executive Dashboard</span></div>'+
     '<div class="qp-who" data-who tabindex="0" role="button" aria-haspopup="true"><span class="av">'+p.ini+'</span><span><b>'+p.name+'</b><span>'+p.role+'</span></span>'+icon('chevd','cv')+
       '<div class="qp-pop" role="menu"><div class="hd"><b>'+p.name+'</b><span>'+p.role+'</span></div><div class="acc">Your access</div><div class="scope">'+p.scope+'</div>'+access+
-      '<a href="../index.html" data-logout>'+icon('logout')+'Logout</a></div></div>'+
-    '<button class="qp-ic qp-logout" data-logout aria-label="Logout" data-tip="Logout">'+icon('logout')+'</button></header>';
+      '<a href="../index.html" data-logout>'+icon('logout')+'Logout</a></div></div></header>';
   return {rail:rail, top:top};
 }
 function crumb(){
