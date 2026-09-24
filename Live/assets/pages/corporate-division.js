@@ -3,7 +3,7 @@
 var f = QP.f, M = f.m, chip = QP.chip;
 function sum(a){ return a.reduce(function(x,y){ return x+y; },0); }
 
-/* Qiddiya Technology is stated in full by the wireframe. The other central-office
+/* Qiddiya Technology is reported in full. The other central-office
    divisions (Finance, HR, Procurement, Legal — per the sitemap) follow the same shape. */
 var DIVS = {
   'Qiddiya Technology': {
@@ -71,7 +71,7 @@ QP.define('corporate-division', {
     }
     h += QP.eyebrow(s.division + ' · cost against plan', (ytd ? 'YTD to Feb-26' : 'Feb-26') + ' · ' + f.sar + ' millions · dashed marker = plan');
     h += '<div class="qp-grid g5">' + tile('Total', totA, totP, 5, 10) + tile('Personnel Cost', pers[0], pers[1], 5, 10) + tile('Professional Svcs', kp[0], kp[1], 5, 15) + tile('IT Cost', ki[0], ki[1], 6, 15) +
-      QP.kpi({label:'Headcount', st:QP.pill('No data', 'neu'), value:f.i(D.hc), sub:'Plan <b>'+f.i(D.hcp)+'</b>', status:'neu', chip:'<span class="muted" style="font-size:11.5px">Status not set for headcount</span>'}) + '</div>';
+      QP.kpi({label:'Headcount', st:QP.pill('No data', 'neu'), value:f.i(D.hc), sub:'Plan <b>'+f.i(D.hcp)+'</b>', status:'neu', chip:'<span class="muted" style="font-size:var(--fs-sm)">Status not set for headcount</span>'}) + '</div>';
 
     /* division cost report */
     var lbl = key === 'm' ? 'Feb-26' : key === 'y' ? 'YTD' : 'FY';
@@ -106,7 +106,7 @@ QP.define('corporate-division', {
     h += '<div class="qp-row">' +
       QP.card({cls:'f1', title:'Aging profile', sub:'Share of the division’s payables by age bucket', body:'<div class="qp-chart" id="dv-ap"></div>'+QP.legendHtml([{l:'Not Due', c:'var(--s1)'},{l:'1-30', c:'var(--s2)'},{l:'31-60', c:'var(--amb)'},{l:'>90', c:'var(--neg)'}])}) +
       QP.card({cls:'flush f2', body:QP.table({id:'dap', rows:D.ap, total:{n:'Total', b:bt}, cols:[{k:'n', label:'Vendor'}].concat(['Not Due','1-30','31-60','>90'].map(function(b, i){
-        return {label:b+' ('+f.sar+')', cls:'r', fmt:function(r){ return f.i(r.b[i]); }}; })).concat([{label:'Total ('+f.sar+')', cls:'r', fmt:function(r){ return '<b>'+f.i(sum(r.b))+'</b>'; }}])}),
+        return {label:b+' ('+f.sar+')', cls:'r', fmt:function(r){ return f.i(r.b[i]); }}; })).concat([{label:'Total ('+f.sar+')', cls:'r', key:true, fmt:function(r){ return f.i(sum(r.b)); }}])}),
         foot:'Grain: vendor, aging bucket. Total reconciles to Total Commitments outstanding.'}) +
       '</div>';
     return h;

@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Q-Profit Design System</title>
-<link rel="icon" href="assets/qiddiya-mark.png">
+<link rel="icon" href="/Live/assets/qiddiya-mark.png">
 <link rel="stylesheet" href="https://use.typekit.net/fkj2upu.css">
-<link rel="stylesheet" href="assets/qp.css">
+<link rel="stylesheet" href="/Live/assets/qp.css">
 <style>
   body{min-width:0}
   .wrap{max-width:1240px;margin:0 auto;padding:18px 18px 40px}
@@ -19,7 +19,7 @@
   .ty .r{display:flex;align-items:baseline;gap:18px;padding:10px 0;border-bottom:1px solid var(--line)}
   .ty .r:last-child{border-bottom:0}
   .ty .r code{width:220px;flex:none;font-size:12px;color:var(--mut);font-family:Consolas,monospace}
-  .demo{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .spec{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
   code{font-family:Consolas,monospace;font-size:12px;background:var(--card2);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
 </style>
 </head>
@@ -27,13 +27,13 @@
 <div class="wrap">
   <header class="qp-top">
     <div class="qp-brand"><span class="mk" id="mk"></span><h1>Q-Profit</h1><span class="prod">Design system &amp; Power BI build notes</span></div>
-    <a class="qp-link" href="index.html">Sign in</a>
+    <a class="qp-link" href="/">All workspaces</a>
   </header>
-  <div class="qp-crumb"><a class="bk" href="index.html" aria-label="Back">&#8249;</a><b>Design system</b><span class="sep">/</span><span class="cur">Foundations, components and Power BI mapping</span></div>
-  <p class="qp-desc">One language across all seven dashboards, layout from the OE Performance View, colour strictly from the client palette: Light gray surface, White cards with Soft gray borders, Purple for buttons and links, Light purple for tabs, the Qiddiya blue / aqua ramp for charts, and Red / Green / Amber only for state.</p>
+  <div class="qp-crumb"><a class="bk" href="/" aria-label="Back to all workspaces"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a><b>Design system</b><span class="sep">/</span><span class="cur">Foundations, components and Power BI mapping</span></div>
+  <p class="qp-desc">One language across all seven dashboards, layout from the OE Performance View, colour strictly from the client palette: Light gray surface, White cards with Soft gray borders, Purple for buttons, links and the selected period, Light gray for the period-switch track, the Qiddiya blue / aqua ramp for charts, and Red / Green / Amber only for state.</p>
   <div id="ds"></div>
 </div>
-<script src="assets/qp.js" data-noboot></script>
+<script src="/Live/assets/qp.js" data-noboot></script>
 <script>
 (function(){
   var f = QP.f, M = f.m, chip = QP.chip, h = '';
@@ -41,12 +41,13 @@
   QP.state = {_open:{'ds-0':true}}; QP.persona = QP.PERSONAS.imran;
   function sw(n, v, hex, role){ return '<div><i style="background:var('+v+')"></i><span><b>'+n+' · '+hex+'</b><em>'+role+'</em></span></div>'; }
 
-  h += QP.sec('Colour', 'Only the client-approved palette (Design-system / Colors.pdf, Branding.pdf) — no tints, transparencies, gradients or shadows', '<a class="qp-link" href="assets/qprofit-powerbi-theme.json" download>Power BI theme (.json)</a>', 'first');
+  h += QP.sec('Colour', 'Only the client-approved palette (Design-system / Colors.pdf, Branding.pdf) — no tints, transparencies, gradients or shadows', '<a class="qp-link" href="/Live/assets/qprofit-powerbi-theme.json" download>Power BI theme (.json)</a>', 'first');
   h += QP.card({body:
     QP.eyebrow('Primary & UI') + '<div class="sw">'+
       sw('Purple','--c-purple','#7122F4','Buttons & icon-button backgrounds; link text')+
-      sw('Light purple','--c-light-purple','#DCD4FF','Background for tabs; selected rail item, selected rows')+
-      sw('Light gray','--c-light-gray','#FBFBFB','Dashboard surface; table cell hover; inset panels')+
+      sw('Light purple','--c-light-purple','#DCD4FF','Selected rail item; back-link hover')+
+      sw('Canvas','--c-canvas','#F4F5F7','Dashboard surface, shared with the OE reference dashboard')+
+      sw('Light gray','--c-light-gray','#FBFBFB','Inset panels and metric tiles; table cell hover; period-switch track')+
       sw('White','--c-white','#FFFFFF','Card surface')+
       sw('Soft gray','--c-soft-gray','#EAEAEA','Card borders; table rules; chart gridlines')+
       sw('Carbon black','--c-carbon','#1A1A1A','Titles, subtitles, KPI numbers, table cells; secondary-button border')+
@@ -63,12 +64,15 @@
 
   h += QP.sec('Typography', 'Proxima Nova throughout; the Riyal sign ⃁ renders in Arial');
   h += QP.card({cls:'ty', body:
-    '<div class="r"><code>Brand · 23 / 700</code><span style="font-size:23px;font-weight:700;letter-spacing:-.02em">Q-Profit</span></div>'+
-    '<div class="r"><code>Section · 20 / 700</code><span style="font-size:20px;font-weight:700">Monthly Performance Trend</span></div>'+
-    '<div class="r"><code>Card title · 16 / 600</code><span style="font-size:16px;font-weight:600">Development Business Units</span></div>'+
-    '<div class="r"><code>KPI value · 26 / 700</code><span style="font-size:26px;font-weight:700">'+M(3214.6)+'</span></div>'+
-    '<div class="r"><code>Body · 13–14 / 400</code><span style="font-size:13.5px">Grain: business unit, then cost line.</span></div>'+
-    '<div class="r"><code>Eyebrow / header · 10.5–11 / 700</code><span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)">YTD Actual ('+f.sar+')</span></div>'+
+    '<div class="r"><code>Product name · 26 / 700</code><span style="font-size:26px;font-weight:700;letter-spacing:-.02em">Q-Profit</span></div>'+'<div class="r"><code>Page title · 20 / 700 + 500</code><span style="font-size:20px;font-weight:700">Consolidated <span style="color:var(--mut);font-weight:500">/ Qiddiya Investment Company</span></span></div>'+
+    '<div class="r"><code>Group label · 18 / 500, dark gray</code><span style="font-size:18px;font-weight:500;color:var(--mut)">Area summaries</span></div>'+
+    '<div class="r"><code>Card title · 18 / 600</code><span style="font-size:18px;font-weight:600">Development Business Units</span></div>'+
+    '<div class="r"><code>Tile value · 18 / 700</code><span style="font-size:18px;font-weight:700">'+M(1850.0)+'</span></div>'+
+    '<div class="r"><code>KPI value · 26 / 700</code><span style="font-size:26px;font-weight:700;letter-spacing:-.025em">'+M(3214.6)+'</span></div>'+
+    '<div class="r"><code>Body · 14 / 400</code><span style="font-size:14px">Personnel Cost</span></div>'+
+    '<div class="r"><code>Label & target · 12–13 / 400, dark gray</code><span style="font-size:13px;color:var(--mut)">YTD plan '+M(3352.0)+' · Forecast '+M(3388.4)+'</span></div>'+
+    '<div class="r"><code>Column title · 12 / 600, dark gray</code><span style="font-size:12px;font-weight:600;color:var(--mut)">YTD Actual ('+f.sar+')</span></div>'+
+    '<div class="r"><code>Note · 12 / 400, dark gray</code><span style="font-size:12px;color:var(--mut)">Grain: business unit, then cost line.</span></div>'+
     '<div class="qp-foot">'+QP.icon('info')+'<span>Currency: amounts carry '+f.sar+' before the value on cards; tables never repeat it per cell — the column heading states <b>('+f.sar+')</b>. "SAR" is not used anywhere.</span></div>'});
 
   h += QP.sec('Components');
@@ -77,26 +81,26 @@
     QP.kpi({label:'Qiddiya City Headcount', value:f.i(1842), sub:'YTD Plan <b>1,901</b>', status:'amb', chip:chip(-3.1, {good:'none', cls:'amb'})}) +
     QP.kpi({label:'Cash Overall', value:M(9238.2), sub:'YTD Secured <b>'+M(9180.0)+'</b>', status:'pos', chip:chip(0.6)}) +
     QP.kpi({label:'Headcount', value:'17', sub:'Plan <b>18</b>', status:'neu', st:QP.pill('No data','neu')}) + '</div>';
-  h += QP.card({style:'margin-top:16px', body:'<div class="demo">'+
+  h += QP.card({style:'margin-top:16px', body:'<div class="spec">'+
     QP.seg('a', 'm', [{v:'m', l:'Mar'}, {v:'ytd', l:'YTD'}]) + QP.seg('b', 'plan', [{v:'forecast', l:'Forecast'}, {v:'plan', l:'Plan'}], 'sm') +
     QP.dd('c', 'Month', 'Mar', ['Mar']) + QP.dd('d', 'Business Unit', 'Entertainment', ['Entertainment'], {locked:'Fixed to access scope'}) + QP.clearBtn(true) + QP.statusPill() +
-    '</div><div class="demo" style="margin-top:14px">' + chip(2.9, {good:'down'}) + chip(-5.8, {good:'down'}) + chip(1.3) + chip(0) + QP.pill('On track','pos') + QP.pill('At risk','amb') + QP.pill('Underperforming','neg') + QP.pill('No data','neu') +
-    '<a class="qp-link">View details'+QP.icon('arrowr')+'</a><span class="qp-badge">Badge</span></div>'});
-  h += QP.card({cls:'flush', style:'margin-top:16px', title:'Matrix with drill-down', sub:'Power BI matrix, stepped layout; the Cost lines button is the +/- expand', body:QP.table({id:'ds', rows:[
+    '</div><div class="spec" style="margin-top:14px">' + chip(2.9, {good:'down'}) + chip(-5.8, {good:'down'}) + chip(1.3) + chip(0) + QP.pill('On track','pos') + QP.pill('At risk','amb') + QP.pill('Underperforming','neg') + QP.pill('No data','neu') +
+    '<a class="qp-link" href="/user/imran/consolidated">View details'+QP.icon('arrowr')+'</a><span class="qp-badge">Badge</span></div>'});
+  h += QP.card({cls:'flush', style:'margin-top:16px', title:'Matrix with drill-down', sub:'Power BI matrix, stepped layout; the chevron at the start of a row is the +/- expand, and the whole row is clickable', body:QP.table({id:'ds', rows:[
       {n:'Professional Services', a:61.2, p:52.8, flag:true, children:[{n:'Consulting', a:28.2, p:24.3}, {n:'Legal advisory', a:14.7, p:12.7}]},
       {n:'Marketing & Events', a:33.8, p:35.9, children:[{n:'Brand campaigns', a:15.5, p:16.5}]}], total:{n:'Total', a:95.0, p:88.7},
     cols:[{k:'n', label:'Cost Category'}, {label:'YTD Actual ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.a); }}, {label:'YTD Plan ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.p); }}, {label:'Variance %', cls:'r', fmt:function(r){ return chip(f.varPct(r.a, r.p), {good:'down'}); }}]}),
-    foot:'Red left edge = row breaches its threshold (conditional formatting on the row header). Totals sit on an inset band.'});
+    foot:'Red left rule = row breaches its threshold (conditional formatting on the row header). Totals sit under a carbon rule.'});
 
   h += QP.sec('Power BI mapping', 'Every element on the seven dashboards is built from native visuals');
   var map = [
-    ['Icon rail & persona access', 'Page navigator buttons + RLS roles', 'Each persona sees only permitted pages; single-page personas hide the rail.'],
-    ['Month / YTD toggle, Plan / Forecast, Selected Month / YTD / Full Year', 'Field parameters or bookmarks on a button slicer', 'Tabs sit on a Light purple #DCD4FF track; the selected tab is Purple #7122F4 with Lighter gray 2 #FCFCFC text.'],
+    ['Icon rail & user access', 'Page navigator buttons + RLS roles', 'Each user sees only their permitted dashboards; users with a single dashboard have no rail.'],
+    ['Month / YTD toggle, Plan / Forecast, Selected Month / YTD / Full Year', 'Field parameters or bookmarks on a button slicer', 'Tabs sit on a Light gray #FBFBFB pill track with a Soft gray border; the selected tab is Purple #7122F4 with Lighter gray 2 #FCFCFC text.'],
     ['Year, Month, Business Unit, Division, Project dropdowns', 'Dropdown slicers; locked ones = slicer with RLS-filtered single value', 'Padlock state shown with an icon and tooltip.'],
     ['From / To dates', 'Date slicer, "Between" style', 'Driven by the Month / YTD toggle through a period table.'],
-    ['KPI tiles with status edge', 'New card visual (accent bar left) or card + shape', 'Accent colour from a status measure (good / neutral / bad).'],
+    ['KPI cards and metric tiles with status edge', 'New card visual (accent bar left) or card + shape', 'Accent colour from a status measure (good / neutral / bad); variance arrow repeats it.'],
     ['Variance chips ▲ / ▼', 'Conditional formatting icons + font colour', 'Arrow = direction; colour = favourability (cost over plan is adverse).'],
-    ['Tables with "Cost lines"', 'Matrix with row hierarchy (expand / collapse)', 'Drill-through page optional for full ledger lines.'],
+    ['Tables with expandable rows','Matrix with row hierarchy (expand / collapse)', 'Drill-through page optional for full ledger lines.'],
     ['Monthly trend (columns + cumulative lines)', 'Line and clustered column chart, secondary axis', 'Plan dashed; legend click hides a series (native).'],
     ['Headcount / AP aging stacks', 'Stacked column chart + line (plan)', '>90 days past due always red.'],
     ['Workforce donut, progress rings', 'Donut chart; rings = donut with one value + remainder', 'Centre total as a card overlay.'],
@@ -106,10 +110,10 @@
     ['Tooltips', 'Report page tooltips', 'Dark tooltip, month + series + variance.']
   ];
   h += QP.card({cls:'flush', body:QP.table({id:'map', rows:map, cols:[{label:'Design element', fmt:function(r){ return r[0]; }}, {label:'Power BI build', fmt:function(r){ return r[1]; }}, {label:'Notes', fmt:function(r){ return '<span class="muted" style="white-space:normal">'+r[2]+'</span>'; }}]}),
-    foot:'Canvas 1440 px wide; rail 78 px; gutters 16–18 px; card radius 16 (top-left 4); KPI tile radius 12; control radius 9.'});
+    foot:'Canvas 1440 px wide; rail 78 px; page gutter 18 px, grid gap 12 px, card inset 20 px, 32 px between groups; card radius 12; KPI card radius 10; metric tile radius 8; control radius 8; period switch 14.'});
   h += '<footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span></footer>';
   document.getElementById('ds').innerHTML = h;
-  document.addEventListener('click', function(ev){ var ex = ev.target.closest('[data-exp]'); if (!ex) return; var o = ex.getAttribute('aria-expanded') !== 'true'; ex.setAttribute('aria-expanded', o); document.querySelectorAll('tr[data-parent="'+ex.dataset.exp+'"]').forEach(function(r){ r.hidden = !o; }); });
+  document.addEventListener('click', function(ev){ var xr = ev.target.closest('tr[data-xp]'); var ex = ev.target.closest('[data-exp]') || (xr && xr.querySelector('[data-exp]')); if (!ex) return; var o = ex.getAttribute('aria-expanded') !== 'true'; ex.setAttribute('aria-expanded', o); document.querySelectorAll('tr[data-parent="'+ex.dataset.exp+'"]').forEach(function(r){ r.hidden = !o; }); });
 })();
 </script>
 </body>

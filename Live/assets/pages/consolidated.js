@@ -101,28 +101,42 @@ QP.define('consolidated', {
       var sub = k.sec != null
         ? 'YTD Secured <b>'+M(k.sec)+'</b> · FY Target <b>'+M(k.fy)+'</b>'
         : 'YTD Plan <b>'+(k.hc ? f.i(k.p) : M(k.p))+'</b> · YTD Forecast <b>'+(k.hc ? f.i(k.fc) : M(k.fc))+'</b>';
-      return QP.kpi({label:k.k, info:k.info, value:val, sub:sub, status:k.st, chip:chip(v, {good:k.good || 'up', cls:k.good === 'none' ? 'amb' : null}) + '<span class="muted" style="font-size:11.5px">vs '+(k.sec != null ? 'YTD secured' : 'YTD plan')+'</span>'});
+      return QP.kpi({label:k.k, info:k.info, value:val, sub:sub, status:k.st, chip:chip(v, {good:k.good || 'up', cls:k.good === 'none' ? 'amb' : null}) + '<span class="muted" style="font-size:var(--fs-sm)">vs '+(k.sec != null ? 'YTD secured' : 'YTD plan')+'</span>'});
     }).join('') + '</div>';
 
     /* area summaries */
     h += QP.eyebrow('Area summaries', 'Open an area for its full dashboard');
-    function view(id){ return QP.can(id) ? '<a class="qp-link" href="'+QP.href(id)+'">View details'+QP.icon('arrowr')+'</a>' : '<span class="qp-link" aria-disabled="true" data-tip="Outside your access">'+QP.icon('lock')+'View details</span>'; }
-    function area(id, name, tag, col, lead, mini, note){
-      return '<article class="qp-area" style="--ac:'+col+'"><div class="hdr"><div class="tt"><b>'+name+'</b><span>'+tag+'</span></div><span class="ic">'+QP.icon(id)+'</span></div>'+
-        '<div class="bd">'+lead+(mini ? '<div class="mini">'+mini+'</div>' : '')+'<div class="ft"><span class="note">'+(note||'')+'</span>'+view(id)+'</div></div></article>';
+    function view(id){ return QP.can(id) ? '<a class="qp-link ghost" href="'+QP.href(id)+'">View details'+QP.icon('arrowr')+'</a>' : '<span class="qp-link ghost" aria-disabled="true" data-tip="Outside your access">'+QP.icon('lock')+'View details</span>'; }
+    function area(id, name, tag, col, lead, tiles, note){
+      return '<article class="qp-area" style="--ac:'+col+'"><div class="hdr"><div class="tt"><b>'+name+'</b><span>'+tag+'</span></div>'+view(id)+'</div>'+
+        '<div class="bd">'+lead+'<div class="qp-tiles">'+tiles+'</div><div class="ft">'+note+'</div></div></article>';
     }
-    function lead(k, v, u, c){ return '<div class="lead"><div><div class="k">'+k+'</div><div class="v">'+v+(u ? '<small>'+u+'</small>' : '')+'</div></div>'+(c||'')+'</div>'; }
-    function mini(k, v, c, cls){ return '<div class="'+(cls||'')+'"><span class="k">'+k+'</span><span class="v">'+v+(c||'')+'</span></div>'; }
+    function lead(k, v, u, cmp){ return '<div class="lead"><div class="k">'+k+'</div><div class="v">'+v+(u ? '<small>'+u+'</small>' : '')+'</div>'+(cmp ? '<div class="cmp">'+cmp+'</div>' : '')+'</div>'; }
+    function vs(a, b, label, fmt, good){ return chip(f.varPct(a, b), {good:good || 'up'}) + '<span>vs '+label+' <b>'+fmt(b)+'</b></span>'; }
+    /* tile against a reference figure: status edge and chip both come from the variance */
+    function tref(k, v, a, b, label, fmt, o){ o = o || {}; var d = f.varPct(a, b);
+      return QP.tile(k, v, label+' '+fmt(b)+chip(d, {good:o.good || 'up'}), o.tone || QP.tone(d, o.good || 'up'), o.cls); }
+    var COMMIT = [{n:'Entertainment', v:1850.0, c:'var(--s1)'}, {n:'Master Development Unit', v:4620.0, c:'var(--s2)'}, {n:'Others', v:1442.4, c:'var(--s3)'}], cTot = 7912.4;
+    var mK = function(v){ return M(v, 0) + ' K'; };
     h += '<div class="qp-row">' +
       area('development','Development','Business units · capital projects','var(--c-qblue)', lead('Work Performed', M(2080.0), 'M'),
-        mini('Commitments · Total', M(7912.4)) + mini('Commitments · Entertainment', M(1850.0)) + mini('Commitments · MDU', M(4620.0)) + mini('Commitments · Others', M(1442.4)) + mini('MoF', M(1640.0), '', 'wide'), 'YTD · '+f.sar+' millions') +
-      area('operating-assets','Operating Assets','Six Flags · Playmaker Studio · Aquarabia','var(--c-aqua600)', lead('Revenue', M(51.9), 'M', chip(1.3)),
-        mini('Visitation', f.i(214880), chip(3.4)) + mini('Admission Yield %', M(168.40, 2)) + mini('Total per Cap (Excl. Partnership)', M(242.10, 2), chip(1.5)) + mini('Headcount', f.i(1284)) + mini('EBITDA', M(14.2)+'<small class="muted" style="font-size:12px;font-weight:600"> M</small>', chip(f.varPct(14.2, 14.1)), 'wide'), 'YTD vs budget') +
+        QP.tile('Commitments · Total', M(cTot), '<span class="qp-comp" role="img" aria-label="Commitments by unit" style="flex:1 1 100%;display:flex">'+COMMIT.map(function(c){ return '<i style="flex:'+c.v+';background:'+c.c+'"></i>'; }).join('')+'</span>', 'neu', 'wide') +
+        COMMIT.map(function(c){ return QP.tile('<i style="background:'+c.c+'"></i>Commitments · '+c.n, M(c.v), Math.round(c.v / cTot * 100)+'% of commitments', 'neu'); }).join('') +
+        QP.tile('MoF', M(1640.0), 'Ministry of Finance funding', 'neu'), 'YTD · '+f.sar+' millions') +
+      area('operating-assets','Operating Assets','Six Flags · Playmaker Studio · Aquarabia','var(--c-aqua600)', lead('Revenue', M(51.9), 'M', vs(51.9, 51.2, 'budget', M)),
+        tref('Visitation', f.i(214880), 214880, 207810, 'Budget', f.i) +
+        QP.tile('Admission Yield %', M(168.40, 2), 'Admission revenue per guest', 'neu') +
+        tref('Total per Cap (Excl. Partnership)', M(242.10, 2), 242.10, 238.50, 'Budget', function(v){ return M(v, 2); }) +
+        QP.tile('Headcount', f.i(1284), '', 'neu') +
+        tref('EBITDA', M(14.2)+'<small>M</small>', 14.2, 14.1, 'Budget', function(v){ return M(v)+' M'; }, {cls:'wide'}), 'YTD against budget') +
       '</div><div class="qp-row">' +
-      area('corporate','Corporate','Central office · cost functions','var(--c-q300)', lead('Work Performed', M(393.1), 'M', chip(2.9, {good:'down'})),
-        mini('Headcount', f.i(856), chip(f.varPct(856, 892), {good:'none'})) + mini('Initiatives', '23 <small class="muted" style="font-size:12px;font-weight:600">live · 4 behind schedule</small>'), 'YTD vs plan') +
-      area('city-operations','City Operations','Shared services · Worker’s Village','var(--c-q400)', lead('Work Performed', M(31410, 0), 'K', chip(2.1)),
-        mini('Worker’s Village Occupancy', '92%') + mini('Worker’s Village Revenue', M(4180, 0)+'<small class="muted" style="font-size:12px;font-weight:600"> K</small>') + mini('Worker’s Village EBITDA', M(1120, 0)+'<small class="muted" style="font-size:12px;font-weight:600"> K</small>', '', 'wide'), 'Stated in thousands') +
+      area('corporate','Corporate','Central office · cost functions','var(--c-q300)', lead('Work Performed', M(393.1), 'M', vs(393.1, 381.9, 'plan', M, 'down')),
+        tref('Headcount', f.i(856), 856, 892, 'Plan', f.i, {good:'none', tone:'amb'}) +
+        QP.tile('Initiatives', '23<small>live</small>', '4 behind schedule', 'amb'), 'YTD against plan · '+f.sar+' millions') +
+      area('city-operations','City Operations','Shared services · Worker’s Village','var(--c-q400)', lead('Work Performed', M(31410, 0), 'K', vs(31410, 30760, 'plan', mK)),
+        QP.tile('Worker’s Village Occupancy', '92%', '', 'neu') +
+        QP.tile('Worker’s Village Revenue', M(4180, 0)+'<small>K</small>', '', 'neu') +
+        QP.tile('Worker’s Village EBITDA', M(1120, 0)+'<small>K</small>', '', 'neu', 'wide'), 'YTD · '+f.sar+' thousands') +
       '</div>';
 
     /* monthly performance trend */
@@ -134,7 +148,8 @@ QP.define('consolidated', {
       : 'Metric: <b>'+T.label+' ('+f.sar+' '+T.unit+')</b><span class="dot"></span>'+ml+' Actual <b>'+fm(T.actual[idx])+'</b><span class="dot"></span>'+ml+' Plan <b>'+fm(T.plan[idx])+'</b>';
     h += QP.sec('Monthly Performance Trend', 'Six months to ' + ml, QP.seg('trend', s.trend, [{v:'overall',l:'Overall'},{v:'corporate',l:'Corporate'},{v:'development',l:'Development'},{v:'city',l:'City Ops'}], 'sm'));
     var off = s.trendOff || {};
-    h += QP.card({body:'<div class="qp-meta">'+meta+'<span style="margin-left:auto">'+chip(f.varPct(ytd ? ya : T.actual[idx], ytd ? yp : T.plan[idx]), {good:s.trend === 'corporate' ? 'down' : 'up', suffix:'vs plan'})+'</span></div><div class="qp-chart" id="c-trend"></div>'+
+    var tv = f.varPct(ytd ? ya : T.actual[idx], ytd ? yp : T.plan[idx]), tg = s.trend === 'corporate' ? 'down' : 'up';
+    h += QP.card({status:QP.tone(tv, tg), body:'<div class="qp-meta">'+meta+'<span style="margin-left:auto">'+chip(tv, {good:tg, suffix:'vs plan'})+'</span></div><div class="qp-chart" id="c-trend"></div>'+
       QP.legendHtml([{l:'Actual / Predictor', c:'var(--s1)', off:off[0]},{l:'Plan', c:'var(--plan)', off:off[1]},{l:'YTD Actual / Predictor', c:'var(--s7)', t:'ln', off:off[2]},{l:'YTD Plan', c:'var(--target)', t:'dash', off:off[3]}], 'trendOff'),
       foot:'Columns are monthly values on the left axis; lines are cumulative YTD on the right axis. Select a legend item to hide a series.'});
 
@@ -173,30 +188,6 @@ QP.define('consolidated', {
         body:corpTbl, foot:'Grain: cost category, then department. Measures are '+(ytd ? 'YTD' : ml)+' actual against '+(ytd ? 'YTD' : ml)+' '+(cB === 'plan' ? 'plan' : 'forecast')+'. Cost over plan reads as adverse.'}) +
       '</div>';
 
-    /* city operations + operating assets */
-    var coT = QP.table({id:'co', rows:[{n:'Worker’s Village', a:31410, b:30760}], total:{n:'Total', a:31410, b:30760}, cols:[
-      {k:'n', label:'Asset'},
-      {label:'YTD Actual ('+f.sar+' K)', cls:'r', fmt:function(r){ return f.i(r.a); }},
-      {label:'YTD Plan ('+f.sar+' K)', cls:'r', fmt:function(r){ return f.i(r.b); }},
-      {label:'Variance %', cls:'r', fmt:function(r){ return chip(f.varPct(r.a, r.b)); }}
-    ]});
-    var oaRows = [
-      {n:'Revenue', a:51.9, b:51.2, u:'m'}, {n:'EBITDA', a:14.2, b:14.1, u:'m'},
-      {n:'Visitation', a:214880, b:207810, u:'i'}, {n:'Total per Cap (Excl. Partnership)', a:242.10, b:238.50, u:'m2'}
-    ];
-    var oaT = QP.table({id:'oa', rows:oaRows, cols:[
-      {k:'n', label:'Metric'},
-      {label:'YTD Actual', cls:'r', fmt:function(r){ return r.u === 'i' ? f.i(r.a) : M(r.a, r.u === 'm2' ? 2 : 1); }},
-      {label:'YTD Budget', cls:'r', fmt:function(r){ return r.u === 'i' ? f.i(r.b) : M(r.b, r.u === 'm2' ? 2 : 1); }},
-      {label:'Variance %', cls:'r', fmt:function(r){ return chip(f.varPct(r.a, r.b)); }}
-    ]});
-    h += '<div class="qp-row" style="margin-top:16px">' +
-      QP.card({cls:'flush f1', title:'City Operations', cap:'Stated in thousands', body:coT, rt:QP.can('city-operations') ? '<a class="qp-link ghost" href="city-operations.html">City Operations'+QP.icon('arrowr')+'</a>' : '',
-        foot:'Grain: asset, monthly. Figures here are thousands, not millions — see City Operations for detail.'}) +
-      QP.card({cls:'flush f1', title:'Operating Assets', cap:'Mixed units, stated per row', body:oaT, rt:QP.can('operating-assets') ? '<a class="qp-link ghost" href="operating-assets.html">Operating Assets'+QP.icon('arrowr')+'</a>' : '',
-        foot:'Grain: metric, monthly. Revenue and EBITDA in '+f.sar+' millions; per cap in '+f.sar+'; visitation in guests.'}) +
-      '</div>';
-
     /* project status */
     var fp = PROJECTS.filter(function(p){ return (s.project === 'All' || p.n === s.project) && (s.bu === 'All' || p.bu === s.bu); });
     h += QP.sec('Project Status', 'Stage-gate position of the major contracts');
@@ -216,10 +207,11 @@ QP.define('consolidated', {
     h += QP.sec('Project Progress Metrics', fp.length === 1 ? fp[0].n + ' · ' + fp[0].bu : (s.project === 'All' && s.bu === 'All' ? 'All projects' : fp.length + ' projects'), QP.dd('project', 'Project', s.project, projOpts) + QP.dd('bu', 'Business Unit', s.bu, buOpts));
     if (pm) {
       var tone = function(v, ref){ return v >= ref ? 'var(--s1)' : 'var(--amb)'; };
+      var ringCtx = function(v){ return 'vs time consumed <b>'+pm.time+'%</b>' + chip(v - pm.time, {dp:0, unit:' pt', signed:true, good:'up'}); };
       h += '<div class="qp-grid g3">' +
-        QP.card({cls:'tight', body:QP.ring(pm.time, 'var(--s2)', 'Time Consumed')}) +
-        QP.card({cls:'tight', body:QP.ring(pm.mc, pm.mc >= pm.time ? 'var(--s1)' : 'var(--amb)', 'Physical Progress')}) +
-        QP.card({cls:'tight', body:QP.ring(pm.acct, 'var(--s3)', 'Accounting Progress')}) + '</div>';
+        QP.card({cls:'tight', body:QP.ring(pm.time, 'var(--s2)', 'Time Consumed', null, '<span class="muted">Elapsed share of the project schedule</span>')}) +
+        QP.card({cls:'tight', body:QP.ring(pm.mc, pm.mc >= pm.time ? 'var(--s1)' : 'var(--amb)', 'Physical Progress', null, ringCtx(pm.mc))}) +
+        QP.card({cls:'tight', body:QP.ring(pm.acct, 'var(--s3)', 'Accounting Progress', null, ringCtx(pm.acct))}) + '</div>';
     } else {
       h += QP.card({body:'<div class="qp-empty">'+QP.icon('info')+'No project matches this Project and Business Unit combination.</div>'});
     }
@@ -229,7 +221,7 @@ QP.define('consolidated', {
     var total = sum(WORKFORCE.map(function(w){ return w.value; }));
     h += QP.sec('Workforce', 'Month end, ' + ml);
     h += '<div class="qp-row">' +
-      QP.card({cls:'f1', title:'Total Workforce Summary', sub:'All people working on Qiddiya City, by type', body:'<div style="display:flex;align-items:center;gap:22px"><div class="qp-chart" id="c-wf" style="width:200px;flex:none"></div><div class="qp-dl" style="flex:1">'+
+      QP.card({cls:'f1', title:'Total Workforce Summary', sub:'All people working on Qiddiya City, by type', body:'<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:22px"><div class="qp-chart" id="c-wf" style="width:200px;flex:none"></div><div class="qp-dl" style="flex:1 1 220px">'+
         WORKFORCE.map(function(w){ return '<div class="r"><i style="background:'+w.color+'"></i><span class="l">'+w.name+'</span><b>'+f.i(w.value)+'</b><em>'+Math.round(w.value / total * 100)+'%</em></div>'; }).join('')+'</div></div>'}) +
       QP.card({cls:'f15', title:'Qiddiya City Headcount Trend', sub:'Headcount, by business area', rt:'<span class="qp-badge">'+f.i(1842)+' at '+ml+'</span>', body:'<div class="qp-chart" id="c-hc"></div>'+
         QP.legendHtml([{l:'Actual · Corporate', c:'var(--s1)'},{l:'Actual · Development', c:'var(--s2)'},{l:'Actual · City Operations', c:'var(--s3)'},{l:'Plan · Total', c:'var(--target)', t:'dash'}])}) +
@@ -239,7 +231,7 @@ QP.define('consolidated', {
     var tot = [0,0,0,0,0,0]; APV.forEach(function(v){ v.b.forEach(function(x, i){ tot[i] += x; }); });
     var apTbl = QP.table({id:'ap', rows:APV, total:{n:'Total', b:tot}, cols:[{k:'n', label:'Vendor'}].concat(['Not Due','1-30','31-60','61-90','91-180','>180'].map(function(b, i){
       return {label:b+' ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.b[i]); }};
-    })).concat([{label:'Total ('+f.sar+')', cls:'r', fmt:function(r){ return '<b>'+f.n(sum(r.b))+'</b>'; }}])});
+    })).concat([{label:'Total ('+f.sar+')', cls:'r', key:true, fmt:function(r){ return f.n(sum(r.b)); }}])});
     h += QP.sec('Accounts Payable', 'Balance by age bucket');
     h += '<div class="qp-row">' +
       QP.card({cls:'f1', title:'Accounts Payable Aging', sub:'Balance by age bucket, trend by month ('+(s.ap === 'amount' ? f.sar+' millions' : 'invoice count')+')', rt:QP.seg('ap', s.ap, [{v:'amount',l:'Amount'},{v:'count',l:'Count'}], 'sm'),

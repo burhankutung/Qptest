@@ -27,8 +27,8 @@
   "visualStyles": {
     "page": {
       "*": {
-        "background": [{ "color": { "solid": { "color": "#FBFBFB" } }, "transparency": 0 }],
-        "outspace": [{ "color": { "solid": { "color": "#FBFBFB" } } }]
+        "background": [{ "color": { "solid": { "color": "#F4F5F7" } }, "transparency": 0 }],
+        "outspace": [{ "color": { "solid": { "color": "#F4F5F7" } } }]
       }
     },
     "*": {

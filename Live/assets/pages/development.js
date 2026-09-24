@@ -4,7 +4,7 @@ var f = QP.f, M = f.m, chip = QP.chip;
 function sum(a){ return a.reduce(function(x,y){ return x+y; },0); }
 function split(total, w){ var s = sum(w), acc = 0; return w.map(function(x, i){ var v = i === w.length - 1 ? QP.round(total - acc, 1) : QP.round(total * x / s, 1); acc += v; return v; }); }
 
-/* KPI cards: actual, plan and forecast for each business unit (wireframe) */
+/* KPI cards: actual, plan and forecast for each business unit */
 var CARDS = [
   {n:'Total Development', a:3213.0, p:3392.0, fc:3448.0, tr:[2890,2968,3035,3102,3160,3213.0]},
   {n:'Entertainment', a:355.8, p:412.0, fc:440.0, tr:[330,336,341,347,351,355.8]},
@@ -95,9 +95,9 @@ QP.define('development', {
     var cols = [
       {k:'n', label:'Business Unit'},
       {label:(cum ? 'Budget' : 'FY 2026 Budget')+' ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.bud); }},
-      {label:'Commitments ('+f.sar+')', cls:'r', fmt:function(r){ return r.com == null ? '<span class="muted">—</span>' : f.n(r.com); }},
+      {label:'Commitments ('+f.sar+')', cls:'r', fmt:function(r){ return r.com == null ? null : f.n(r.com); }},
       {label:'Work Performed ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.wp); }},
-      {label:'Advances ('+f.sar+')', cls:'r', fmt:function(r){ return r.adv == null ? '<span class="muted">—</span>' : f.n(r.adv); }},
+      {label:'Advances ('+f.sar+')', cls:'r', fmt:function(r){ return r.adv == null ? null : f.n(r.adv); }},
       {label:'YTD Actual ('+f.sar+')', cls:'r', band:true, fmt:function(r){ return f.n(r.a); }},
       {label:'YTD Plan ('+f.sar+')', cls:'r', band:true, fmt:function(r){ return f.n(r.p); }},
       {label:'Variance %', cls:'r', band:true, fmt:function(r){ return chip(f.varPct(r.a, r.p)); }}
@@ -138,7 +138,7 @@ QP.define('development', {
     h += '<div class="qp-row">' +
       QP.card({cls:'f1', title:'Accounts Payable Aging', sub:'Total balance by month', body:'<div class="qp-chart" id="d-ap"></div>'}) +
       QP.card({cls:'flush f15', title:'Payables by Vendor', cap:'Apr-26', body:QP.table({id:'dap', rows:AP.vend, total:{n:'Total', b:bt}, cols:[{k:'n', label:'Vendor'}].concat(['Not Due','1-30','31-90','91-180'].map(function(b, i){
-        return {label:b+' ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.b[i]); }}; })).concat([{label:'Total ('+f.sar+')', cls:'r', fmt:function(r){ return '<b>'+f.n(sum(r.b))+'</b>'; }}])}),
+        return {label:b+' ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.b[i]); }}; })).concat([{label:'Total ('+f.sar+')', cls:'r', key:true, fmt:function(r){ return f.n(sum(r.b)); }}])}),
         foot:'Grain: vendor, aging bucket. Total reconciles to the April bar.'}) +
       '</div>';
     return h;

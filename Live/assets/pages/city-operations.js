@@ -45,7 +45,7 @@ QP.define('city-operations', {
       '</div>';
 
     h += '<div class="qp-row" style="margin-top:16px">' +
-      QP.card({cls:'flush f1', title:'Occupancy (%)', cap:'Thousands does not apply — stated as a percentage', body:QP.table({id:'occ', rows:OCC, total:{n:'Total', v:OCC_T},
+      QP.card({cls:'flush f1', title:'Occupancy (%)', cap:'Percent', body:QP.table({id:'occ', rows:OCC, total:{n:'Total', v:OCC_T},
         groups:[{span:1},{span:3, label:'Last three months'},{span:1, label:'Jan 2026 vs Dec 2025'}], cols:[
         {k:'n', label:'Partners'},
         {label:'Jan 2026', cls:'r', band:true, fmt:function(r){ return QP.bar(r.v[0], 'var(--s1)'); }},
@@ -67,8 +67,8 @@ QP.define('city-operations', {
       return [
         {label:'Actual ('+f.sar+')', cls:'r', band:band, fmt:function(r){ return K(r.a); }},
         {label:'Budget ('+f.sar+')', cls:'r', band:band, fmt:function(r){ return K(r.b); }},
-        {label:'Variance ('+f.sar+')', cls:'r', band:band, fmt:function(r){ var d = r.a - r.b; return d ? '<span style="font-weight:600;color:var(--'+((d > 0) === ((r.good || 'up') === 'up') ? 'pos' : 'neg')+'-ink)">'+f.signed(d, 0)+'</span>' : '<span class="muted">—</span>'; }},
-        {label:'Variance %', cls:'r', band:band, fmt:function(r){ return chip(f.varPct(r.a, r.b), {good:r.good || 'up', signed:true}); }}
+        {label:'Variance ('+f.sar+')', cls:'r', band:band, fmt:function(r){ return chip(r.a - r.b, {dp:0, unit:'', good:r.good || 'up'}); }},
+        {label:'Variance %', cls:'r', band:band, fmt:function(r){ return chip(f.varPct(r.a, r.b), {good:r.good || 'up'}); }}
       ];
     }
     var rows = PL.map(function(r){ return {n:r.n, a:r.a, b:r.b, good:r.good, cls:r.cls === 'net' ? 'tot' : '', children:(r.kids || []).map(function(k){ return {n:k.n, a:k.a, b:k.b, good:r.good}; })}; });

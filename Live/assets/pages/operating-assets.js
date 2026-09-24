@@ -5,7 +5,7 @@ function sum(a){ return a.reduce(function(x,y){ return x+y; },0); }
 var MONTHS = ['Jan','Feb','Mar','Apr','May'];
 var CH = ['B2C — Annual Pass','B2B — Corporate','B2B — Educational','B2B — Government','B2B — Hotels','B2B — Tour & Travel','Other — Companion','Other — Employee','Special Events'];
 
-/* Six Flags Qiddiya — YTD to May-26, exactly as stated in the wireframe */
+/* Six Flags Qiddiya — YTD to May-26, as reported */
 var SF = {
   name:'Six Flags Qiddiya', ridesLabel:'Top 10 Rides — Utilization %',
   visits:214880, vb:207810, yld:168.40, yldV:1.1,
@@ -69,7 +69,7 @@ function daily(a, upto){
 
 QP.define('operating-assets', {
   filterKeys:['asset','basis','month'],
-  defaults:function(){ return {asset:'sf', basis:'ytd', month:'5'}; },
+  defaults:function(){ return {asset:'sf', basis:'ytd', month:'5', ch:'pc'}; },
   scope:function(s){ return ASSETS[s.asset].name; },
   controls:function(s){
     var ml = QP.MON[+s.month - 1];
@@ -87,7 +87,7 @@ QP.define('operating-assets', {
     var h = '';
 
     /* KPI block */
-    function t(label, val, v, o){ o = o || {}; var tone = QP.tone(v, 'up'); return QP.kpi({label:label, value:val, status:o.st || (Math.abs(v) < 1 ? 'amb' : tone), chip:chip(v, {unit:o.unit, dp:o.dp}) + '<span class="muted" style="font-size:11.5px">'+(o.vs || 'vs budget')+'</span>', sub:o.sub, cls:o.cls}); }
+    function t(label, val, v, o){ o = o || {}; var tone = QP.tone(v, 'up'); return QP.kpi({label:label, value:val, status:o.st || (Math.abs(v) < 1 ? 'amb' : tone), chip:chip(v, {unit:o.unit, dp:o.dp}) + '<span class="muted" style="font-size:var(--fs-sm)">'+(o.vs || 'vs budget')+'</span>', sub:o.sub, cls:o.cls}); }
     var body = QP.eyebrow('KPIs', perL) + '<div class="qp-grid g2">' +
         t('Visitation', f.i(visits), f.varPct(visits, vb), {sub:'Budget <b>'+f.i(vb)+'</b> guests'}) +
         t('Admission Yield %', M(a.yld, 2), a.yldV, {sub:'Admission revenue per guest'}) + '</div>' +
@@ -114,7 +114,7 @@ QP.define('operating-assets', {
       QP.card({cls:'f1', title:'Monthly Admissions Trend', rt:QP.pill('Budget line dashed', 'neu'),
         body:'<div class="qp-meta">YTD Actual <b>'+f.i(cumA)+'</b>'+chip(f.varPct(cumA, cumB))+'<span class="dot"></span>YTD Budget <b>'+f.i(cumB)+'</b></div><div class="qp-chart" id="oa-month"></div>'+
           QP.legendHtml([{l:'Admissions', c:'var(--s1)'},{l:'Budget', c:'var(--target)', t:'dash'}])}) +
-      QP.card({cls:'f1', title:'Daily Admissions Since Launch', rt:'<span class="muted" style="font-size:12px">Latest reading is yesterday, not the close</span>',
+      QP.card({cls:'f1', title:'Daily Admissions Since Launch', rt:'<span class="muted" style="font-size:var(--fs-sm)">Latest reading is yesterday, not the close</span>',
         body:'<div class="qp-chart" id="oa-daily"></div>'+QP.legendHtml([{l:'Daily admissions', c:'var(--s2)'},{l:'7-day average', c:'var(--s1)', t:'ln'}])}) +
       '</div>';
 
@@ -125,14 +125,16 @@ QP.define('operating-assets', {
         {label:'Variance', cls:'r', fmt:function(r){ return chip(f.varPct(r.a, r.b)); }}]});
     }
     var sa = function(v){ return v * mult; }, sb = function(v){ return v * multB; };
-    h += QP.sec('Channel Performance', perL);
-    h += '<div class="qp-row">' +
-      QP.card({cls:'flush f1', title:'Per Cap Split by Channel', body:chT('pc', a.chPc, a.pcTot, ' ('+f.sar+')', function(v){ return f.n(v, 2); }), foot:'Grain: channel. Reconciles to Total Per Cap above.'}) +
-      QP.card({cls:'flush f1', title:'Admissions Split by Channel', body:chT('ad', a.chAd.map(function(r){ return [Math.round(sa(r[0])), Math.round(sb(r[1]))]; }), [visits, vb], '', function(v){ return f.i(v); }), foot:'Grain: channel. Reconciles to Visitation above.'}) +
-      '</div>';
-
-    /* revenue split + P&L */
     var rv = a.chRev.map(function(r){ return [QP.round(sa(r[0]), 1), QP.round(sb(r[1]), 1)]; });
+    var CHV = {
+      pc:{l:'Per Cap', cap:f.sar + ' per guest', t:chT('pc', a.chPc, a.pcTot, ' ('+f.sar+')', function(v){ return f.n(v, 2); }), foot:'Grain: channel. Reconciles to Total Per Cap above.'},
+      ad:{l:'Admissions', cap:'Guests', t:chT('ad', a.chAd.map(function(r){ return [Math.round(sa(r[0])), Math.round(sb(r[1]))]; }), [visits, vb], '', function(v){ return f.i(v); }), foot:'Grain: channel. Reconciles to Visitation above.'},
+      rv:{l:'Revenue', cap:f.sar + ' millions', t:chT('rv', rv, [QP.round(sum(rv.map(function(r){ return r[0]; })), 1), QP.round(sum(rv.map(function(r){ return r[1]; })), 1)], ' ('+f.sar+')', function(v){ return f.n(v); }), foot:'Grain: channel. Reconciles to Revenue in the profit and loss.'}
+    };
+    var chv = CHV[s.ch] || CHV.pc;
+    h += QP.sec('Channel Performance', perL);
+
+    /* channel split + P&L */
     var mShare = a.mv[m - 1] / a.mv[4];
     var plRows = [
       {n:'Revenue', ma:a.pl.rev[0] * mShare, mb:a.pl.rev[1] * mShare, y:a.pl.rev[2] * cumA / a.visits, children:a.pl.kids.map(function(k){ return {n:k[0], ma:k[1] * mShare, mb:k[2] * mShare, y:k[3] * cumA / a.visits}; })},
@@ -141,17 +143,15 @@ QP.define('operating-assets', {
     ];
     plRows.forEach(function(r){ ['ma','mb','y'].forEach(function(k){ r[k] = QP.round(r[k], 1); }); (r.children || []).forEach(function(c){ ['ma','mb','y'].forEach(function(k){ c[k] = QP.round(c[k], 1); }); }); });
     var eb = {n:'EBITDA', ma:QP.round(sum(plRows.map(function(r){ return r.ma; })), 1), mb:QP.round(sum(plRows.map(function(r){ return r.mb; })), 1), y:QP.round(sum(plRows.map(function(r){ return r.y; })), 1)};
-    h += '<div class="qp-row" style="margin-top:16px">' +
-      QP.card({cls:'flush f1', title:'Revenue Split by Channel', cap:f.sar + ' millions', body:QP.table({id:'rv', rows:rv.map(function(r, i){ return {n:CH[i], a:r[0], b:r[1], flag:f.varPct(r[0], r[1]) < -15}; }),
-        total:{n:'Total', a:QP.round(sum(rv.map(function(r){ return r[0]; })), 1), b:QP.round(sum(rv.map(function(r){ return r[1]; })), 1)}, cols:[
-        {k:'n', label:'Channel'}, {label:per+' Actual ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.a); }}, {label:per+' Budget ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.b); }},
-        {label:'Variance', cls:'r', fmt:function(r){ return chip(f.varPct(r.a, r.b)); }}]}), foot:'Grain: channel. Reconciles to Revenue in the profit and loss.'}) +
+    h += '<div class="qp-row">' +
+      QP.card({cls:'flush f1', title:chv.l + ' Split by Channel', cap:chv.cap, body:chv.t, foot:chv.foot,
+        rt:QP.seg('ch', s.ch || 'pc', [{v:'pc', l:'Per Cap'}, {v:'ad', l:'Admissions'}, {v:'rv', l:'Revenue'}], 'sm')}) +
       QP.card({cls:'flush f1', title:'Profit & Loss Statement', cap:f.sar + ' millions', body:QP.table({id:'pnl', expLabel:'Lines', rows:plRows, total:eb, cols:[
         {k:'n', label:'P&L'},
         {label:ml.slice(0, 3)+' Actual ('+f.sar+')', cls:'r', band:!ytd, fmt:function(r){ return f.n(r.ma); }},
         {label:ml.slice(0, 3)+' Budget ('+f.sar+')', cls:'r', band:!ytd, fmt:function(r){ return f.n(r.mb); }},
         {label:'Variance', cls:'r', band:!ytd, fmt:function(r){ return chip(r.cost ? f.varPct(Math.abs(r.ma), Math.abs(r.mb)) : f.varPct(r.ma, r.mb), {good:r.cost ? 'down' : 'up'}); }},
-        {label:'YTD Actual ('+f.sar+')', cls:'r', band:ytd, fmt:function(r){ return '<b>'+f.n(r.y)+'</b>'; }}
+        {label:'YTD Actual ('+f.sar+')', cls:'r', band:ytd, key:true, fmt:function(r){ return f.n(r.y); }}
       ]}) + '<div class="qp-trio" style="padding:16px 22px 0">'+
         '<div><span class="k">'+ml.slice(0, 3)+' EBITDA margin</span><span class="v">'+f.pct(eb.ma / plRows[0].ma * 100)+'</span></div>'+
         '<div><span class="k">'+ml.slice(0, 3)+' budget margin</span><span class="v">'+f.pct(eb.mb / plRows[0].mb * 100)+'</span></div>'+

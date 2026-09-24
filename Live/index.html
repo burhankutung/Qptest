@@ -3,91 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sign in · Q-Profit</title>
-<link rel="icon" href="assets/qiddiya-mark.png">
+<title>Q-Profit · Finance Executive Dashboard</title>
+<meta name="description" content="Q-Profit — Finance Executive Dashboard for Qiddiya Investment Company.">
+<link rel="icon" href="/Live/assets/qiddiya-mark.png">
 <link rel="stylesheet" href="https://use.typekit.net/fkj2upu.css">
-<link rel="stylesheet" href="assets/qp.css">
-<style>
-  body{min-width:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px 16px}
-  .box{width:100%;max-width:420px}
-  .brand{display:flex;align-items:center;gap:11px;justify-content:center;margin-bottom:22px}
-  .brand .mk{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--acc-bg);color:var(--acc-ink)}
-  .brand .mk svg{width:19px;height:19px}
-  .brand h1{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:0}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:28px 28px 24px}
-  .card h2{font-size:18px;font-weight:700;margin:0}
-  .card p.s{font-size:13px;color:var(--mut);margin:4px 0 20px}
-  label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin:0 0 6px}
-  input{width:100%;height:40px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink);font:inherit;font-size:14px;padding:0 12px;outline:none;margin-bottom:14px;transition:border-color .15s,box-shadow .15s}
-  input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-bg)}
-  input::placeholder{color:var(--c-disabled-font)}
-  .err{font-size:12.5px;color:var(--neg-ink);background:var(--neg-bg);border:1px solid var(--neg);border-radius:8px;padding:8px 10px;margin:-4px 0 14px;display:none}
-  .err.on{display:block}
-  button.go{width:100%;height:42px;border:0;border-radius:9px;background:var(--tab-fill);color:var(--tab-ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:box-shadow .15s}
-  button.go:hover{box-shadow:0 0 0 3px var(--acc-bg)}
-  .demo{font-size:11.5px;color:var(--faint);text-align:center;margin-top:12px}
-  .ps{margin-top:18px}
-  .ps .t{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 2px 8px}
-  .ps button{width:100%;display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-bottom:6px;cursor:pointer;text-align:left;font:inherit;transition:border-color .15s}
-  .ps button:hover,.ps button.on{border-color:var(--acc)}
-  .ps .av{width:30px;height:30px;border-radius:50%;background:var(--s1);color:var(--c-white);display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
-  .ps b{font-size:13px;font-weight:600;display:block}
-  .ps span.r{font-size:11.5px;color:var(--mut)}
-  .ps em{margin-left:auto;font-style:normal;font-size:11.5px;color:var(--faint)}
-</style>
+<link rel="stylesheet" href="/Live/assets/qp.css">
 </head>
 <body>
-<div class="box">
-  <div class="brand"><span class="mk" id="mk"></span><h1>Q-Profit</h1></div>
-  <form class="card" id="f" novalidate>
-    <h2>Sign in</h2>
-    <p class="s">Finance Executive Dashboard</p>
-    <label for="u">Username</label>
-    <input id="u" name="username" autocomplete="off" placeholder="e.g. imran" autofocus>
-    <label for="p">Password</label>
-    <input id="p" name="password" type="password" autocomplete="off">
-    <div class="err" id="err" role="alert"></div>
-    <button class="go" type="submit">Login</button>
-    <div class="demo">Demo only — no real authentication. Any password works.</div>
-  </form>
-  <div class="ps">
-    <div class="t">Demo personas</div>
-    <div id="list"></div>
-  </div>
+<div class="qp-solo">
+  <header class="qp-top">
+    <div class="qp-brand"><span class="logo"><img src="/Live/assets/qiddiya-mark.png" alt="Qiddiya"></span><h1>Q-Profit</h1><span class="prod">Finance Executive Dashboard</span></div>
+  </header>
+  <div class="qp-crumb"><b>Workspaces</b><span class="sep">/</span><span class="cur">Qiddiya Investment Company</span></div>
+  <div class="qp-orient"><p class="qp-desc">Each workspace is scoped to one person’s role and access. Every dashboard has its own address — bookmark it or share it directly.</p></div>
+  <div class="qp-sec first"><h2>People</h2><span class="cap" id="count"></span></div>
+  <div class="qp-grid qp-people" id="list"><div class="qp-loading" role="status" style="min-height:240px;grid-column:1/-1"><i></i>Loading workspaces…</div></div>
+  <footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span><span class="sp"></span><span>Source: SAP actuals, plan &amp; forecast workbooks</span></footer>
 </div>
-<script src="assets/qp.js" data-noboot></script>
+<script src="/Live/assets/qp.js" data-noboot></script>
 <script>
 (function(){
-  document.getElementById('mk').innerHTML = QP.icon('bars');
-  var order = ['imran','hala','mohammed','yousef','reem','nasser','sara'];
-  var u = document.getElementById('u'), p = document.getElementById('p'), err = document.getElementById('err');
-  function landing(slug){ var ps = QP.PERSONAS[slug]; return encodeURI(ps.folder) + '/' + QP.PAGES[ps.pages[0]].file; }
-  function find(v){
-    v = v.trim().toLowerCase().replace(/@.*$/, '');
-    for (var i = 0; i < order.length; i++) { var s = order[i], ps = QP.PERSONAS[s]; if (v === s || v === ps.name.toLowerCase() || v === ps.name.split(' ')[0].toLowerCase()) return s; }
-    return null;
-  }
-  /* already signed in: go straight to the dashboard */
-  try { var cur = localStorage.getItem('qp-user'); if (cur && QP.PERSONAS[cur]) { location.replace(landing(cur)); return; } } catch(e){}
-
-  document.getElementById('list').innerHTML = order.map(function(s){
-    var ps = QP.PERSONAS[s];
-    return '<button type="button" data-s="'+s+'"><span class="av">'+ps.ini+'</span><span><b>'+ps.name+'</b><span class="r">'+ps.role+'</span></span><em>'+s+'</em></button>';
+  var users = QP.USERS;
+  document.getElementById('count').textContent = users.length + ' workspaces';
+  document.getElementById('list').innerHTML = users.map(function(k){
+    var p = QP.PERSONAS[k], home = QP.url(null, k);
+    return '<article class="qp-card qp-person">'+
+      '<div class="who"><span class="av">'+p.ini+'</span><div><b>'+p.name+'</b><span>'+p.role+'</span></div></div>'+
+      '<p class="scope">'+p.scope+'</p>'+
+      '<div class="pages" aria-label="'+QP.esc(p.name)+'’s dashboards">'+p.pages.map(function(id){ return '<a class="qp-navlink" href="'+QP.url(id, k)+'">'+QP.icon(id)+QP.PAGES[id].label+'</a>'; }).join('')+'</div>'+
+      '<div class="rule"></div><div class="ft"><code>'+home+'</code><a class="qp-link" href="'+home+'">Open workspace'+QP.icon('arrowr')+'</a></div>'+
+    '</article>';
   }).join('');
-  document.getElementById('list').addEventListener('click', function(ev){
-    var b = ev.target.closest('[data-s]'); if (!b) return;
-    u.value = b.dataset.s; p.value = 'demo'; err.classList.remove('on');
-    document.querySelectorAll('.ps button').forEach(function(x){ x.classList.toggle('on', x === b); });
-    p.focus();
-  });
-  document.getElementById('f').addEventListener('submit', function(ev){
-    ev.preventDefault();
-    var s = find(u.value);
-    if (!u.value.trim() || !p.value) { err.textContent = 'Enter a username and password.'; err.classList.add('on'); return; }
-    if (!s) { err.textContent = 'Unknown user. Pick one of the demo personas below.'; err.classList.add('on'); return; }
-    try { localStorage.setItem('qp-user', s); } catch(e){}
-    location.href = landing(s);
-  });
 })();
 </script>
 </body>

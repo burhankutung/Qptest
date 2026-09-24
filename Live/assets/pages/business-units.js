@@ -4,7 +4,7 @@ var f = QP.f, M = f.m, chip = QP.chip;
 function sum(a){ return a.reduce(function(x,y){ return x+y; },0); }
 function split(total, w, dp){ var s = sum(w), acc = 0; return w.map(function(x, i){ var v = i === w.length - 1 ? QP.round(total - acc, dp) : QP.round(total * x / s, dp); acc += v; return v; }); }
 
-/* Entertainment is the unit the wireframe states in full; every other unit
+/* Entertainment is the unit reported in full; every other unit
    reads its totals from the Development performance report. */
 var UNITS = {
   'Entertainment':           {qfm:27, bud:875, com:1232, wp:560, a:560, p:600, fy:600, dp:0},
@@ -81,7 +81,7 @@ QP.define('business-units', {
       {label:'YTD Actual ('+f.sar+')', cls:'r', band:true, fmt:function(r){ return nf(r.a); }},
       {label:'YTD Plan ('+f.sar+')', cls:'r', band:true, fmt:function(r){ return nf(r.p); }},
       {label:'Variance', cls:'r', band:true, fmt:function(r){ return chip(f.varPct(r.a, r.p)); }}
-    ]}), foot:'Grain: business unit, monthly. Cumulative since project inception. Open Cost lines for the cost breakdown structure beneath the unit.'});
+    ]}), foot:'Grain: business unit, monthly. Cumulative since project inception. Open a row for the cost breakdown structure beneath the unit.'});
 
     /* MC progress */
     var ps = unitProjects(s.bu).filter(function(p){ return s.bu !== 'Entertainment' || p.n !== 'Anime Hub'; });
@@ -123,7 +123,7 @@ QP.define('business-units', {
         {label:'Consumed', cls:'r', fmt:function(r){ return QP.bar(Math.round(r.a / r.b * 100), 'var(--s2)'); }}
       ]}), foot:'Grain: cost breakdown structure (CBS) line, cumulative. Speed Park S-Curve excludes Iconic Cliff.'}) +
       QP.card({cls:'flush f1', title:'BU Accounts Payable by Vendor', cap:'Apr-26', body:QP.table({id:'bap', rows:ap, total:{n:'Total', b:apt}, cols:[{k:'n', label:'Vendor'}].concat(['Not Due','1-30','>90'].map(function(b, i){
-        return {label:b+' ('+f.sar+')', cls:'r', fmt:function(r){ return i === 2 && r.b[i] > 0 ? '<span style="color:var(--neg-ink);font-weight:700">'+f.i(r.b[i])+'</span>' : f.i(r.b[i]); }}; })).concat([{label:'Total ('+f.sar+')', cls:'r', fmt:function(r){ return '<b>'+f.i(sum(r.b))+'</b>'; }}])}),
+        return {label:b+' ('+f.sar+')', cls:'r', fmt:function(r){ return i === 2 && r.b[i] > 0 ? '<span style="color:var(--neg-ink);font-weight:700">'+f.i(r.b[i])+'</span>' : f.i(r.b[i]); }}; })).concat([{label:'Total ('+f.sar+')', cls:'r', key:true, fmt:function(r){ return f.i(sum(r.b)); }}])}),
         foot:'Grain: vendor, aging bucket. Total reconciles to Total Commitments above. Balances over 90 days are shown in red.'}) +
       '</div>';
     return h;

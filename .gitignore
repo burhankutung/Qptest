@@ -3,5 +3,6 @@
 !Live/
 !Live/**
 !.gitignore
-!index.html
+!vercel.json
+!404.html
 !.nojekyll

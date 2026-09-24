@@ -58,7 +58,7 @@ QP.define('corporate', {
       CATS.slice(0, 5).map(function(c){ return card(c.kpi, A(c), P(c)); }).join('') +
       QP.kpi({label:'Initiatives', status:'amb', pair:'<div class="pair"><div><b>23</b><span>Live</span></div><div class="neg"><b>4</b><span>Behind schedule</span></div></div>',
         meter:'<div class="meter"><span style="width:'+(19/23*100)+'%;background:var(--pos)"></span><span style="width:'+(4/23*100)+'%;background:var(--neg)"></span></div>', sub:'<b>83%</b> of live initiatives on schedule'}) +
-      QP.kpi({label:'Headcount', value:f.i(856), sub:'Plan <b>'+f.i(892)+'</b>', status:'amb', chip:chip(f.varPct(856, 892), {good:'none', cls:'amb'}) + '<span class="muted" style="font-size:11.5px">36 open positions</span>'}) +
+      QP.kpi({label:'Headcount', value:f.i(856), sub:'Plan <b>'+f.i(892)+'</b>', status:'amb', chip:chip(f.varPct(856, 892), {good:'none', cls:'amb'}) + '<span class="muted" style="font-size:var(--fs-sm)">36 open positions</span>'}) +
       '</div>';
 
     /* division cost report */
@@ -117,7 +117,7 @@ QP.define('corporate', {
     h += '<div class="qp-row">' +
       QP.card({cls:'f1', title:'Accounts Payable Aging', sub:'Balance by age bucket, by month', body:'<div class="qp-chart" id="k-ap"></div>'+QP.legendHtml([{l:'Not Due', c:'var(--s1)'},{l:'Past Due ≤ 90 Days', c:'var(--s2)'},{l:'Past Due > 90 Days', c:'var(--neg)'}])}) +
       QP.card({cls:'flush f15', title:'Payables by Function', cap:'Mar-26', body:QP.table({id:'kap', rows:APF, total:{n:'Total', b:bt}, cols:[{k:'n', label:'Function'}].concat(['Not Due','1-30','31-90','91-180'].map(function(b, i){
-        return {label:b+' ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.b[i]); }}; })).concat([{label:'Total ('+f.sar+')', cls:'r', fmt:function(r){ return '<b>'+f.n(sum(r.b))+'</b>'; }}])}),
+        return {label:b+' ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.b[i]); }}; })).concat([{label:'Total ('+f.sar+')', cls:'r', key:true, fmt:function(r){ return f.n(sum(r.b)); }}])}),
         foot:'Grain: function, aging bucket. Total reconciles to the March column.'}) +
       '</div>';
     return h;

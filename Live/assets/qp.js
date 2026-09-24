@@ -1,7 +1,7 @@
 /* Q-Profit · Finance Executive Dashboard — shared runtime.
    Shell (rail, top bar, breadcrumb), slicers, matrix tables, tooltips and a
-   small SVG chart kit. Pages register with QP.define() and are mounted from
-   the persona pages via <html data-persona data-page>. */
+   small SVG chart kit. Pages register with QP.define(); the router maps
+   /user/<user>/<dashboard> onto a user from QP.PERSONAS and a page from QP.PAGES. */
 (function(){
 'use strict';
 var QP = window.QP = {};
@@ -25,7 +25,6 @@ var I = {
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 16v-4.5M12 8h.01"/>',
   lock:'<rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>',
   check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
-  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
   users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
   bars:'<path d="M4 20V13M9 20V9M14 20v-5M19 20V5"/>',
   up:'<path d="M12 5 4 16h16z" fill="currentColor" stroke="none"/>', down:'<path d="M12 19 4 8h16z" fill="currentColor" stroke="none"/>',
@@ -38,29 +37,38 @@ var I = {
 function icon(n, cls){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"'+(cls?' class="'+cls+'"':'')+'>'+(I[n]||'')+'</svg>'; }
 QP.icon = icon;
 
-/* ── registry: dashboards and personas ─────────────────────────────────── */
+/* ── registry: dashboards and users ─────────────────────────────────── */
+/* A dashboard's key is its URL segment: /user/<user>/<key> */
 QP.PAGES = {
-  'consolidated':      {label:'Consolidated',        file:'consolidated.html',       desc:'The company position across every area — company KPIs, area summaries and the tables that carry this month’s movement.'},
-  'development':       {label:'Development',         file:'development.html',        desc:'Development spend across all business units — actual, plan and forecast, with the cost lines beneath each unit.'},
-  'business-units':    {label:'Business Units',      file:'business-units.html',     desc:'Budget, commitments, work performed and variance for one business unit, down to its projects and cost lines.'},
-  'corporate':         {label:'Corporate',           file:'corporate.html',          desc:'Central-office cost by category against plan, with initiatives, headcount and payables by function.'},
-  'corporate-division':{label:'Corporate Divisions', file:'corporate-division.html', desc:'One central-office division’s cost — actual, plan and forecast by cost line — out to FY plan and FY forecast.'},
-  'city-operations':   {label:'City Operations',     file:'city-operations.html',    desc:'City-wide shared services by asset. Amounts are stated in thousands, not millions.'},
-  'operating-assets':  {label:'Operating Assets',    file:'operating-assets.html',   desc:'Visitation, admission yield, per cap, annual pass and channel performance for each operating asset, through to EBITDA.'}
+  'consolidated':      {label:'Consolidated',        desc:'The company position across every area — company KPIs, area summaries and the tables that carry this month’s movement.'},
+  'development':       {label:'Development',         desc:'Development spend across all business units — actual, plan and forecast, with the cost lines beneath each unit.'},
+  'business-units':    {label:'Business Units',      desc:'Budget, commitments, work performed and variance for one business unit, down to its projects and cost lines.'},
+  'corporate':         {label:'Corporate',           desc:'Central-office cost by category against plan, with initiatives, headcount and payables by function.'},
+  'corporate-division':{label:'Corporate Divisions', desc:'One central-office division’s cost — actual, plan and forecast by cost line — out to FY plan and FY forecast.'},
+  'city-operations':   {label:'City Operations',     desc:'City-wide shared services by asset. Amounts are stated in thousands, not millions.'},
+  'operating-assets':  {label:'Operating Assets',    desc:'Visitation, admission yield, per cap, annual pass and channel performance for each operating asset, through to EBITDA.'}
 };
 QP.ORDER = ['consolidated','development','business-units','corporate','corporate-division','city-operations','operating-assets'];
 var ALL = QP.ORDER.slice();
+/* A user's key is their URL segment: /user/<key>. Adding a user here gives
+   them a workspace, a directory entry and a live URL for each of their pages;
+   pages lists their dashboards in order (the first is their home), lock fixes
+   filters to their scope. */
 QP.PERSONAS = {
-  imran:   {name:'Imran Afzal', role:'Board of Director',          ini:'IA', folder:'Persona 1 - Imran (Board of Director)',            pages:ALL, status:'refreshed 8 Sep, 06:00', scope:'Company-wide — every area, read-only'},
-  hala:    {name:'Hala',        role:'Finance Manager',            ini:'HA', folder:'Persona 2 - Hala (Finance Manager)',               pages:ALL, status:'refreshed 8 Sep, 06:00', scope:'Company-wide, with drill-down into every area’s detail', context:true},
-  mohammed:{name:'Mohammed',    role:'Business Unit Manager',      ini:'MO', folder:'Persona 3 - Mohammed (Business Unit Manager)',     pages:['business-units'], status:'as at 30 Apr 2026', scope:'Own business unit only — Entertainment', lock:{bu:'Entertainment'}},
-  yousef:  {name:'Yousef',      role:'Corporate Division Manager', ini:'YO', folder:'Persona 4 - Yousef (Corporate Division Manager)', pages:['corporate-division'], status:'as at 30 Apr 2026', scope:'Own corporate division only — Qiddiya Technology', lock:{division:'Qiddiya Technology'}},
-  reem:    {name:'Reem',        role:'Operating Asset Lead',       ini:'RE', folder:'Persona 5 - Reem (Operating Asset Lead)',          pages:['operating-assets'], status:'as at 30 Apr 2026', scope:'Operating Assets'},
-  nasser:  {name:'Nasser',      role:'City Operations Lead',       ini:'NA', folder:'Persona 6 - Nasser (City Operations Lead)',        pages:['city-operations'], status:'as at 30 Apr 2026', scope:'City Operations only'},
-  sara:    {name:'Sara',        role:'Corporate Auditor',          ini:'SA', folder:'Persona 7 - Sara (Corporate Auditor)',             pages:['corporate','corporate-division'], status:'as at 30 Apr 2026', scope:'Corporate and Corporate Divisions'}
+  imran:   {name:'Imran Afzal', role:'Board of Director',          ini:'IA', pages:ALL, status:'refreshed 8 Sep, 06:00', scope:'Company-wide — every area, read-only'},
+  hala:    {name:'Hala',        role:'Finance Manager',            ini:'HA', pages:ALL, status:'refreshed 8 Sep, 06:00', scope:'Company-wide, with drill-down into every area’s detail', context:true},
+  mohammed:{name:'Mohammed',    role:'Business Unit Manager',      ini:'MO', pages:['business-units'], status:'as at 30 Apr 2026', scope:'Own business unit only — Entertainment', lock:{bu:'Entertainment'}},
+  yousef:  {name:'Yousef',      role:'Corporate Division Manager', ini:'YO', pages:['corporate-division'], status:'as at 30 Apr 2026', scope:'Own corporate division only — Qiddiya Technology', lock:{division:'Qiddiya Technology'}},
+  reem:    {name:'Reem',        role:'Operating Asset Lead',       ini:'RE', pages:['operating-assets'], status:'as at 30 Apr 2026', scope:'Operating Assets'},
+  nasser:  {name:'Nasser',      role:'City Operations Lead',       ini:'NA', pages:['city-operations'], status:'as at 30 Apr 2026', scope:'City Operations only'},
+  sara:    {name:'Sara',        role:'Corporate Auditor',          ini:'SA', pages:['corporate','corporate-division'], status:'as at 30 Apr 2026', scope:'Corporate and Corporate Divisions'}
 };
+QP.USERS = Object.keys(QP.PERSONAS);
+QP.USERS.forEach(function(k){ QP.PERSONAS[k].slug = k; });
+QP.ASSETS = '/Live/assets/';
 QP.can = function(p){ return QP.persona.pages.indexOf(p) >= 0; };
-QP.href = function(p){ return QP.PAGES[p].file; };
+QP.url = function(page, user){ return '/user/' + (user || QP.persona.slug) + (page ? '/' + page : ''); };
+QP.href = function(p){ return QP.url(p); };
 
 /* ── formatting ────────────────────────────────────────────────────────── */
 function n(v, dp){
@@ -89,7 +97,7 @@ QP.chip = function(v, o){
   var good = o.good || 'up';
   var cls = dir === 'flat' || good === 'none' ? 'neu' : ((dir === 'up') === (good === 'up') ? 'pos' : 'neg');
   if (o.cls) cls = o.cls;
-  var txt = o.signed ? F.signed(r, dp, unit) : n(Math.abs(r), dp) + unit;
+  var txt = o.signed === false ? n(Math.abs(r), dp) + unit : F.signed(r, dp, unit);
   return '<span class="qp-chip '+cls+'">'+icon(dir)+txt+(o.suffix ? ' '+o.suffix : '')+'</span>';
 };
 QP.tone = function(v, good){ var r = Math.round(v*10)/10; if (!r || good === 'none') return 'neu'; return (r > 0) === ((good||'up') === 'up') ? 'pos' : 'neg'; };
@@ -141,6 +149,10 @@ QP.dates = function(from, to, kf, kt){
   return '<span class="qp-field">From '+one(kf, from)+'</span><span class="qp-field">to '+one(kt, to)+'</span>';
 };
 QP.clearBtn = function(dirty){ return '<button class="qp-clear" data-clear'+(dirty ? '' : ' disabled')+'>'+icon('reset')+'Clear filters</button>'; };
+/* metric tile for area cards: tone is the status edge; t is the target line */
+QP.tile = function(k, v, t, tone, cls){
+  return '<div class="qp-tile '+(tone||'neu')+(cls ? ' '+cls : '')+'"><span class="k">'+k+'</span><span class="v">'+v+'</span>'+(t ? '<span class="t">'+t+'</span>' : '')+'</div>';
+};
 QP.statusPill = function(){ var p = QP.persona; var closed = /as at/.test(p.status); return '<span class="qp-status"><i></i><b>Month closed</b>· '+p.status+'</span>'; };
 QP.legend = function(){
   return '<span class="qp-legend" aria-label="Status legend">'+
@@ -155,16 +167,16 @@ QP.sec = function(title, cap, rt, cls){
 QP.eyebrow = function(t, cap){ return '<div class="qp-eyebrow">'+t+(cap ? '<span class="cap">'+cap+'</span>' : '')+'</div>'; };
 QP.card = function(o){
   var hd = (o.title || o.rt) ? '<div class="hd"><div class="tt"><h3>'+(o.title||'')+(o.cap ? ' <span class="cap">'+o.cap+'</span>' : '')+'</h3>'+(o.sub ? '<p>'+o.sub+'</p>' : '')+'</div>'+(o.rt ? '<div class="rt">'+o.rt+'</div>' : '')+'</div>' : '';
-  return '<section class="qp-card '+(o.cls||'')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.style ? ' style="'+o.style+'"' : '')+'>'+hd+(o.body||'')+(o.foot ? '<div class="qp-foot">'+icon('info')+'<span>'+o.foot+'</span></div>' : '')+'</section>';
+  return '<section class="qp-card '+(o.cls||'')+(o.status ? ' st-'+o.status : '')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.style ? ' style="'+o.style+'"' : '')+'>'+hd+(o.body||'')+(o.foot ? '<div class="qp-foot">'+icon('info')+'<span>'+o.foot+'</span></div>' : '')+'</section>';
 };
 QP.kpi = function(o){
   var info = o.info ? '<span class="info" data-tip="'+esc(o.info)+'" tabindex="0" role="img" aria-label="Definition">'+icon('info')+'</span>' : '';
   return '<div class="qp-kpi '+(o.status||'neu')+' '+(o.cls||'')+'"'+(o.id ? ' id="'+o.id+'"' : '')+'>'+
     '<div class="k"><span class="lab">'+o.label+'</span>'+(o.st ? '<span class="st">'+o.st+'</span>' : '')+info+'</div>'+
     (o.pair ? o.pair : '<div class="v">'+o.value+(o.unit ? '<small>'+o.unit+'</small>' : '')+'</div>')+
-    (o.sub ? '<div class="t">'+o.sub+'</div>' : '')+
     (o.meter || '')+
     ((o.chip || o.foot) ? '<div class="ft">'+(o.chip||'')+(o.foot||'')+'</div>' : '')+
+    (o.sub ? '<div class="t">'+o.sub+'</div>' : '')+
     (o.spark ? '<svg class="spark" viewBox="0 0 56 20" preserveAspectRatio="none">'+o.spark+'</svg>' : '')+
   '</div>';
 };
@@ -175,43 +187,52 @@ QP.sparkPath = function(vals, tone){
   var last = pts[pts.length-1].split(',');
   return '<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+c+'" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/><circle cx="'+last[0]+'" cy="'+last[1]+'" r="1.8" fill="'+c+'"/>';
 };
-QP.ring = function(pct, color, label, value){
+QP.ring = function(pct, color, label, value, ctx){
   var r = 50, c = 2 * Math.PI * r, d = Math.max(0, Math.min(100, pct)) / 100 * c;
   return '<div class="qp-ring"><svg viewBox="0 0 124 124" role="img" aria-label="'+esc(label)+' '+pct+'%">'+
     '<circle cx="62" cy="62" r="'+r+'" fill="none" stroke="var(--card2)" stroke-width="12"/>'+
     '<circle cx="62" cy="62" r="'+r+'" fill="none" stroke="var(--line)" stroke-width="12"/>'+
     '<circle cx="62" cy="62" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+d.toFixed(1)+' '+c.toFixed(1)+'" transform="rotate(-90 62 62)"/>'+
-    '<text x="62" y="68" text-anchor="middle" font-size="22" font-weight="700" fill="var(--ink)">'+(value || pct+'%')+'</text></svg><div class="k">'+label+'</div></div>';
+    '<text x="62" y="68" text-anchor="middle" font-size="22" font-weight="700" fill="var(--ink)">'+(value || pct+'%')+'</text></svg><div class="k">'+label+'</div>'+(ctx ? '<div class="ctx">'+ctx+'</div>' : '')+'</div>';
 };
 QP.bar = function(pct, color){ return '<span class="qp-bar"><span class="tk"><i style="width:'+Math.min(100,pct)+'%;'+(color ? 'background:'+color : '')+'"></i></span><b>'+pct+'%</b></span>'; };
 
 /* matrix table with drill-down (Power BI matrix +/-) */
 QP.table = function(o){
-  var cols = o.cols, hasExp = o.rows.some(function(r){ return r.children && r.children.length; }) || o.expAll;
-  var open = QP.state._open || {};
-  var h = '<div class="qp-tbl"'+(o.maxh ? ' style="max-height:'+o.maxh+'px"' : '')+'><table>';
+  var cols = o.cols, tid = o.id || 't', hasExp = o.rows.some(function(r){ return r.children && r.children.length; }) || o.expAll;
+  var open = QP.state._open || {}, xl = o.expLabel || 'Cost lines';
+  var spacer = '<span class="qp-exp-sp" aria-hidden="true"></span>';
+  function cc(c){ return (c.cls||'')+(c.band ? ' band' : '')+(c.key ? ' key' : ''); }
+  function unit(l){ return String(l).replace(/\s*\(([^()]*)\)\s*$/, ' <span class="u">($1)</span>'); }
+  var h = '<div class="qp-tbl'+(hasExp ? ' has-exp' : '')+'"'+(o.maxh ? ' style="max-height:'+o.maxh+'px"' : '')+'><table>';
   h += '<thead>';
   if (o.groups) {
-    h += '<tr class="grp">' + o.groups.map(function(g){ return '<th colspan="'+g.span+'"'+(g.band ? ' class="band"' : '')+'>'+(g.label ? '<span>'+g.label+'</span>' : '')+'</th>'; }).join('') + (hasExp ? '<th></th>' : '') + '</tr>';
+    h += '<tr class="grp">' + o.groups.map(function(g){ return '<th scope="colgroup" colspan="'+g.span+'"'+(g.band ? ' class="band"' : '')+'>'+(g.label ? '<span>'+g.label+'</span>' : '')+'</th>'; }).join('') + '</tr>';
   }
-  h += '<tr>' + cols.map(function(c){ return '<th class="'+(c.cls||'')+(c.band ? ' band' : '')+'"'+(c.w ? ' style="width:'+c.w+'"' : '')+'>'+c.label+'</th>'; }).join('') + (hasExp ? '<th class="r" style="width:1%"></th>' : '') + '</tr></thead><tbody>';
-  function cells(r, child){
+  h += '<tr>' + cols.map(function(c){ return '<th scope="col" class="'+cc(c)+'"'+(c.w ? ' style="width:'+c.w+'"' : '')+'>'+unit(c.label)+'</th>'; }).join('') + '</tr></thead><tbody>';
+  function cells(r, child, lead){
     return cols.map(function(c, i){
       var v = c.fmt ? c.fmt(r, child) : r[c.k];
-      return '<td class="'+(c.cls||'')+(i === 0 ? ' nm' : '')+(c.band ? ' band' : '')+'">'+(v == null ? '—' : v)+'</td>';
+      if (v == null || v === '—') v = '<span class="qp-na" data-tip="Not applicable to this line">n/a</span>';
+      if (i === 0 && lead) v = '<span class="nmx">'+lead+'<span>'+v+'</span></span>';
+      return '<td class="'+cc(c)+(i === 0 ? ' nm' : '')+'">'+v+'</td>';
     }).join('');
   }
   o.rows.forEach(function(r, ri){
-    var id = (o.id||'t') + '-' + ri, isOpen = !!open[id];
-    var kids = r.children && r.children.length;
-    h += '<tr class="'+(r.flag ? 'flag ' : '')+(r.sel ? 'sel ' : '')+(r.cls||'')+'"'+(r.tip ? ' data-tip="'+esc(r.tip)+'"' : '')+'>' + cells(r) +
-      (hasExp ? '<td class="r">'+(kids ? '<button class="qp-exp" data-exp="'+id+'" aria-expanded="'+isOpen+'">'+(o.expLabel||'Cost lines')+icon('chevr')+'</button>' : '')+'</td>' : '') + '</tr>';
-    if (kids) r.children.forEach(function(c){
-      h += '<tr class="child'+(c.flag ? ' flag' : '')+'" data-parent="'+id+'"'+(isOpen ? '' : ' hidden')+'>' + cells(c, true) + (hasExp ? '<td></td>' : '') + '</tr>';
+    var id = tid + '-' + ri, isOpen = !!open[id];
+    var kids = r.children && r.children.length, lead = hasExp ? spacer : '';
+    if (kids) {
+      var name = String(cols[0].fmt ? cols[0].fmt(r) : r[cols[0].k]).replace(/<[^>]*>/g, '');
+      var ctl = r.children.map(function(_, ci){ return id + '-c' + ci; }).join(' ');
+      lead = '<button class="qp-exp" data-exp="'+id+'" aria-expanded="'+isOpen+'" aria-controls="'+ctl+'" aria-label="'+esc(xl+': '+name)+'" data-tip="'+esc(xl)+'">'+icon('chevr')+'</button>';
+    }
+    h += '<tr class="'+(r.flag ? 'flag ' : '')+(r.sel ? 'sel ' : '')+(kids ? 'xp ' : '')+(r.cls||'')+'"'+(kids ? ' data-xp="'+id+'"' : '')+(r.tip ? ' data-tip="'+esc(r.tip)+'"' : '')+'>' + cells(r, false, lead) + '</tr>';
+    if (kids) r.children.forEach(function(c, ci){
+      h += '<tr id="'+id+'-c'+ci+'" class="child'+(c.flag ? ' flag' : '')+'" data-parent="'+id+'"'+(isOpen ? '' : ' hidden')+'>' + cells(c, true) + '</tr>';
     });
   });
   h += '</tbody>';
-  if (o.total) h += '<tfoot><tr>' + cells(o.total) + (hasExp ? '<td></td>' : '') + '</tr></tfoot>';
+  if (o.total) h += '<tfoot><tr>' + cells(o.total, false, hasExp ? spacer : '') + '</tr></tfoot>';
   return h + '</table></div>';
 };
 
@@ -219,7 +240,7 @@ QP.table = function(o){
 var tipEl;
 QP.tip = {
   show:function(html, x, y){
-    if (!tipEl) { tipEl = document.createElement('div'); tipEl.className = 'qp-tip'; tipEl.setAttribute('role','tooltip'); document.body.appendChild(tipEl); }
+    if (!tipEl || !tipEl.isConnected) { tipEl = document.createElement('div'); tipEl.className = 'qp-tip'; tipEl.setAttribute('role','tooltip'); document.body.appendChild(tipEl); }
     tipEl.innerHTML = html; tipEl.classList.add('on');
     var w = tipEl.offsetWidth, hh = tipEl.offsetHeight;
     var left = Math.min(window.innerWidth - w - 10, Math.max(10, x + 14));
@@ -427,60 +448,105 @@ QP.legendHtml = function(items, key){
 function shell(){
   var p = QP.persona, pageId = QP.pageId, pg = QP.PAGES[pageId];
   var multi = p.pages.length > 1;
-  var rail = multi ? '<nav class="qp-rail" aria-label="Dashboards"><span class="lg"><span><img src="../assets/qiddiya-mark.png" alt="Qiddiya"></span></span>' +
+  var rail = multi ? '<nav class="qp-rail" aria-label="Dashboards"><a class="lg" href="'+QP.url()+'" aria-label="'+esc(p.name)+' — home"><span><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span></a>' +
     QP.ORDER.filter(QP.can).map(function(id){ return '<a href="'+QP.href(id)+'" class="'+(id === pageId ? 'on' : '')+'" data-tip="'+QP.PAGES[id].label+'" aria-label="'+QP.PAGES[id].label+'"'+(id === pageId ? ' aria-current="page"' : '')+'>'+icon(id)+'</a>'; }).join('') + '</nav>' : '';
-  var access = p.pages.map(function(id){ return '<a href="'+QP.href(id)+'">'+icon(id)+QP.PAGES[id].label+'</a>'; }).join('');
+  var access = p.pages.map(function(id){ return '<a href="'+QP.href(id)+'" role="menuitem"'+(id === pageId ? ' aria-current="page"' : '')+'>'+icon(id)+QP.PAGES[id].label+'</a>'; }).join('');
   var top = '<header class="qp-top"><div class="qp-brand">'+
-    '<span class="mk">'+icon('bars')+'</span><h1>Q-Profit</h1><span class="prod">Finance Executive Dashboard</span></div>'+
-    '<div class="qp-who" data-who tabindex="0" role="button" aria-haspopup="true"><span class="av">'+p.ini+'</span><span><b>'+p.name+'</b><span>'+p.role+'</span></span>'+icon('chevd','cv')+
-      '<div class="qp-pop" role="menu"><div class="hd"><b>'+p.name+'</b><span>'+p.role+'</span></div><div class="acc">Your access</div><div class="scope">'+p.scope+'</div>'+access+
-      '<a href="../index.html" data-logout>'+icon('logout')+'Logout</a></div></div></header>';
+    (multi ? '' : '<span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span>')+'<h1>Q-Profit</h1><span class="prod">Finance Executive Dashboard</span></div>'+
+    '<div class="qp-who" data-who tabindex="0" role="button" aria-haspopup="true" aria-label="'+esc(p.name)+', '+esc(p.role)+' — dashboards menu"><span class="av">'+p.ini+'</span><span><b>'+p.name+'</b><span>'+p.role+'</span></span>'+icon('chevd','cv')+
+      '<div class="qp-pop" role="menu"><div class="hd"><b>'+p.name+'</b><span>'+p.role+'</span></div><div class="acc">Access</div><div class="scope">'+p.scope+'</div>'+access+
+      '<a href="/" class="all" role="menuitem">'+icon('users')+'All users</a></div></div></header>';
   return {rail:rail, top:top};
 }
 function crumb(){
   var pg = QP.PAGES[QP.pageId], def = QP.def, s = QP.state;
-  var back = QP.pageId !== 'consolidated' && QP.can('consolidated') ? '<a class="bk" href="consolidated.html" data-tip="Back to Consolidated" aria-label="Back to Consolidated">'+icon('chevl')+'</a>' : '';
+  var back = QP.pageId !== 'consolidated' && QP.can('consolidated') ? '<a class="bk" href="'+QP.url('consolidated')+'" data-tip="Back to Consolidated" aria-label="Back to Consolidated">'+icon('chevl')+'</a>' : '';
   var scope = def.scope ? def.scope(s) : '';
-  return '<div class="qp-crumb">'+back+'<b>'+pg.label+'</b>'+(scope ? '<span class="sep">/</span><span class="cur">'+scope+'</span>' : '')+'<span style="flex:1"></span>'+QP.statusPill()+'</div><div class="qp-orient"><p class="qp-desc">'+(def.desc ? def.desc(s) : pg.desc)+'</p>'+QP.legend()+'</div>';
+  return '<div class="qp-crumb">'+back+'<b>'+pg.label+'</b>'+(scope ? '<span class="sep">/</span><span class="cur">'+scope+'</span>' : '')+'<span style="flex:1"></span>'+QP.statusPill()+'</div><div class="qp-orient"><p class="qp-desc">'+(def.desc ? def.desc(s) : pg.desc)+'</p></div>';
 }
 
 QP.define = function(id, def){ QP.DEFS = QP.DEFS || {}; QP.DEFS[id] = def; };
 QP.set = function(k, v, silent){
-  if (k === 'tab') { if (v !== QP.pageId && QP.PAGES[v]) location.href = QP.href(v); return; }
+  if (k === 'tab') { if (v !== QP.pageId && QP.PAGES[v]) QP.go(QP.url(v)); return; }
   QP.state[k] = v;
   if (QP.def.onSet) QP.def.onSet(QP.state, k, v);
   if (!silent) QP.render();
 };
 QP.dirty = function(){ var d = QP.def.defaults(), s = QP.state; return (QP.def.filterKeys || []).some(function(k){ return String(d[k]) !== String(s[k]); }); };
 
+var FOOTER = '<footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span><span class="sp"></span><span>Amounts in '+F.sar+' millions unless stated · Source: SAP actuals, plan &amp; forecast workbooks</span></footer>';
 QP.render = function(){
   var main = document.getElementById('qp-body'), y = window.scrollY;
   QP.charts = []; QP.tip.hide();
-  main.innerHTML = crumb() + '<div class="qp-ctl">'+QP.def.controls(QP.state)+'</div>' + QP.def.body(QP.state) +
-    '<footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span><span class="sp"></span><span>Amounts in '+F.sar+' millions unless stated · Source: SAP actuals, plan &amp; forecast workbooks</span></footer>';
-  if (QP.def.mount) QP.def.mount(QP.state);
+  try {
+    main.innerHTML = crumb() + '<div class="qp-ctl">'+QP.def.controls(QP.state)+'</div><div class="qp-legrow">'+QP.legend()+'</div>' + QP.def.body(QP.state) + FOOTER;
+    if (QP.def.mount) QP.def.mount(QP.state);
+  } catch (e) {
+    if (window.console) console.error(e);
+    QP.charts = [];
+    main.innerHTML = notice('info', 'This dashboard couldn’t be displayed', 'Something went wrong while preparing '+QP.PAGES[QP.pageId].label+'. Reloading usually fixes it; your other dashboards are unaffected.',
+      '<button type="button" class="qp-link" data-reload>'+icon('reset')+'Reload</button>' + otherPages(QP.pageId)) + FOOTER;
+    return;
+  }
+  labelTables(main); fitTables();
   window.scrollTo(0, y);
 };
+
+/* full-width message card: not found, outside access, render error */
+function notice(ic, title, text, actions, code){
+  return '<section class="qp-card qp-notice" role="status"><span class="ic">'+icon(ic)+'</span>'+(code ? '<span class="code">'+code+'</span>' : '')+
+    '<h2>'+title+'</h2><p>'+text+'</p>'+(actions ? '<div class="lk">'+actions+'</div>' : '')+'</section>';
+}
+function otherPages(except){
+  return QP.persona.pages.filter(function(id){ return id !== except; }).map(function(id){ return '<a class="qp-navlink" href="'+QP.url(id)+'">'+icon(id)+QP.PAGES[id].label+'</a>'; }).join('');
+}
+/* a table's accessible name is its card title, else the nearest section heading above it */
+function labelTables(root){
+  root.querySelectorAll('.qp-tbl table:not([aria-label])').forEach(function(t){
+    var card = t.closest('.qp-card'), hd = card && card.querySelector('.hd h3'), el = card;
+    while (!hd && el && el !== root) {
+      var s = el.previousElementSibling;
+      while (s && !s.classList.contains('qp-sec')) s = s.previousElementSibling;
+      if (s) hd = s.querySelector('h2'); else el = el.parentElement;
+    }
+    if (hd) t.setAttribute('aria-label', hd.firstChild.textContent.trim());
+  });
+}
+/* tables that fit their frame drop the scroll container so the header can stick to the page */
+function fitTables(){
+  document.querySelectorAll('.qp-tbl').forEach(function(t){
+    if (t.style.maxHeight) return;
+    t.classList.remove('fit');
+    t.classList.toggle('fit', t.scrollWidth <= t.clientWidth + 1);
+  });
+}
 
 function closeMenus(except){ document.querySelectorAll('.qp-dd.open,.qp-who.open').forEach(function(d){ if (d !== except) { d.classList.remove('open'); var b = d.querySelector('button'); if (b) b.setAttribute('aria-expanded','false'); } }); }
 
 function bind(){
   document.addEventListener('click', function(ev){
     var t = ev.target;
-    if (t.closest('[data-logout]')) { ev.preventDefault(); try { localStorage.removeItem('qp-user'); } catch(e){} location.replace('../index.html'); return; }
+    /* in-app links route without a page load; modified clicks keep browser behaviour */
+    var a = t.closest('a[href]');
+    if (a && ev.button === 0 && !ev.metaKey && !ev.ctrlKey && !ev.shiftKey && !ev.altKey && !a.target && !a.hasAttribute('download')) {
+      var u = new URL(a.href, location.href);
+      if (u.origin === location.origin && /^\/user\//.test(u.pathname)) { ev.preventDefault(); QP.go(u.pathname); return; }
+    }
+    if (t.closest('[data-reload]')) { location.reload(); return; }
     var seg = t.closest('.qp-seg button[data-k]'); if (seg && !seg.disabled) { QP.set(seg.dataset.k, seg.dataset.v); return; }
     var ddb = t.closest('.qp-dd:not(.locked)>button');
     if (ddb) { var dd = ddb.parentNode, open = !dd.classList.contains('open'); closeMenus(dd); dd.classList.toggle('open', open); ddb.setAttribute('aria-expanded', open); if (open) { var sel = dd.querySelector('[aria-selected=true]') || dd.querySelector('[role=option]'); if (sel) sel.focus(); } return; }
     var opt = t.closest('.qp-menu [role=option]'); if (opt) { closeMenus(); QP.set(opt.dataset.k, opt.dataset.v); return; }
     if (t.closest('.qp-dd.locked')) { QP.toast('This filter is fixed to your access scope'); return; }
-    var ex = t.closest('[data-exp]');
+    var xr = t.closest('tr[data-xp]');
+    var ex = t.closest('[data-exp]') || (xr && !t.closest('a,button,input') && !String(window.getSelection()) ? xr.querySelector('[data-exp]') : null);
     if (ex) { var id = ex.dataset.exp, o = !(ex.getAttribute('aria-expanded') === 'true'); QP.state._open = QP.state._open || {}; QP.state._open[id] = o; ex.setAttribute('aria-expanded', o);
-      document.querySelectorAll('tr[data-parent="'+id+'"]').forEach(function(r){ r.hidden = !o; }); return; }
+      document.querySelectorAll('tr[data-parent="'+id+'"]').forEach(function(r){ r.hidden = !o; }); fitTables(); return; }
     if (t.closest('[data-clear]')) { var keep = QP.state._open; QP.state = QP.def.defaults(); QP.state._open = Object.assign({}, QP.def._open || {}); QP.render(); QP.toast('Filters reset to the default view'); return; }
     var dt = t.closest('[data-date]'); if (dt) { var pk = dt.parentNode.querySelector('[data-picker]'); try { pk.showPicker(); } catch(e){ pk.click(); } return; }
     var sr = t.closest('[data-series]'); if (sr) { var p = sr.dataset.series.split(':'); QP.state[p[0]] = QP.state[p[0]] || {}; QP.state[p[0]][p[1]] = !QP.state[p[0]][p[1]]; QP.render(); return; }
     var who = t.closest('[data-who]'); if (who && !t.closest('.qp-pop a')) { var wo = !who.classList.contains('open'); closeMenus(who); who.classList.toggle('open', wo); return; }
-    var act = t.closest('[data-act]'); if (act && QP.def.act) { QP.def.act(act.dataset.act, act, QP.state); return; }
+    var act = t.closest('[data-act]'); if (act && QP.def && QP.def.act) { QP.def.act(act.dataset.act, act, QP.state); return; }
     if (!t.closest('.qp-dd,.qp-who')) closeMenus();
   });
   document.addEventListener('change', function(ev){
@@ -492,14 +558,15 @@ function bind(){
     if (dd && (ev.key === 'ArrowDown' || ev.key === 'ArrowUp')) { ev.preventDefault(); var os = [].slice.call(dd.querySelectorAll('[role=option]')), i = os.indexOf(document.activeElement); i = ev.key === 'ArrowDown' ? Math.min(os.length - 1, i + 1) : Math.max(0, i - 1); os[i].focus(); }
     if (dd && ev.key === 'Enter' && ev.target.getAttribute('role') === 'option') { ev.preventDefault(); ev.target.click(); }
     if (ev.key === 'Enter' && ev.target.matches('[data-who]')) ev.target.click();
-    if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.closest('[data-act]') && QP.def.act) { ev.preventDefault(); var ae = ev.target.closest('[data-act]'); QP.def.act(ae.dataset.act, ae, QP.state); }
+    if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.closest('[data-act]') && QP.def && QP.def.act) { ev.preventDefault(); var ae = ev.target.closest('[data-act]'); QP.def.act(ae.dataset.act, ae, QP.state); }
   });
   /* data-tip tooltips */
   document.addEventListener('mouseover', function(ev){ var el = ev.target.closest('[data-tip]'); if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left + r.width / 2 - 14, r.top); } });
   document.addEventListener('mouseout', function(ev){ var el = ev.target.closest('[data-tip]'); if (el && !el.contains(ev.relatedTarget)) QP.tip.hide(); });
   document.addEventListener('focusin', function(ev){ var el = ev.target.closest('[data-tip]'); if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left, r.top); } });
   document.addEventListener('focusout', QP.tip.hide);
-  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ QP.charts.forEach(function(c){ c.fn(c.el, c.cfg); }); }, 120); });
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ QP.charts.forEach(function(c){ c.fn(c.el, c.cfg); }); fitTables(); }, 120); });
+  document.addEventListener('scroll', function(ev){ var t = ev.target; if (t.classList && t.classList.contains('qp-tbl')) t.classList.toggle('sx', t.scrollLeft > 0); }, true);
 }
 function mountShell(){
   var sh = shell();
@@ -507,21 +574,68 @@ function mountShell(){
   document.getElementById('qp-top-slot').innerHTML = sh.top;
 }
 
-QP.boot = function(){
-  var html = document.documentElement;
-  var slug = html.dataset.persona; QP.pageId = html.dataset.page;
-  /* demo session: only the signed-in persona may open this persona's pages */
-  var user = null; try { user = localStorage.getItem('qp-user'); } catch(e){}
-  if (user !== slug) { location.replace('../index.html'); return; }
-  QP.persona = QP.PERSONAS[slug]; QP.persona.slug = slug;
-  QP.def = QP.DEFS[QP.pageId];
-  QP.state = QP.def.defaults(); QP.state._open = Object.assign({}, QP.def._open || {});
-  document.title = QP.PAGES[QP.pageId].label + ' · Q-Profit';
-  document.body.innerHTML = '<div class="qp-app"><div id="qp-rail-slot" style="display:contents"></div><main class="qp-main"><div id="qp-top-slot"></div><div id="qp-body"></div></main></div>';
-  mountShell(); bind(); QP.render();
-  window.addEventListener('pageshow', function(){ var u = null; try { u = localStorage.getItem('qp-user'); } catch(e){} if (u !== slug) location.replace('../index.html'); });
+/* ── router: /user/<user> opens the user's first dashboard,
+   /user/<user>/<dashboard> opens that dashboard. Filters are kept per
+   user + dashboard for the session, so moving between pages and back
+   returns to the same view. ─────────────────────────────────────────── */
+var FRAME = '<div class="qp-app"><div id="qp-rail-slot" style="display:contents"></div><main class="qp-main"><div id="qp-top-slot"></div><div id="qp-body"></div></main></div>';
+var kept = {};
+QP.go = function(path){
+  closeMenus();
+  if (path === location.pathname) return;
+  history.replaceState({y:window.scrollY}, '');
+  history.pushState({y:0}, '', path);
+  route(0);
 };
-/* persona pages boot themselves; the launcher loads this file for its registry only */
+QP.parse = function(path){
+  var m = path.replace(/\/+$/, '').match(/^\/user\/([^\/]+)(?:\/([^\/]+))?$/i);
+  return m ? {user:decodeURIComponent(m[1]).toLowerCase(), page:m[2] ? decodeURIComponent(m[2]).toLowerCase() : null} : null;
+};
+function ensureFrame(){ if (!document.getElementById('qp-body')) document.body.innerHTML = FRAME; }
+function route(y){
+  if (QP.persona && QP.def && QP.state) kept[QP.persona.slug + '/' + QP.pageId] = QP.state;
+  QP.tip.hide(); QP.charts = [];
+  var r = QP.parse(location.pathname), per = r && QP.PERSONAS[r.user];
+  if (!per) return unknownUser(r && r.user);
+  QP.persona = per;
+  var page = r.page || per.pages[0];
+  ensureFrame();
+  if (!QP.PAGES[page] || !QP.DEFS[page]) return outside(page, 'missing');
+  if (per.pages.indexOf(page) < 0) return outside(page, 'access');
+  QP.pageId = page; QP.def = QP.DEFS[page];
+  QP.state = kept[per.slug + '/' + page] || Object.assign(QP.def.defaults(), {_open:Object.assign({}, QP.def._open || {})});
+  document.title = QP.PAGES[page].label + ' · ' + per.name + ' · Q-Profit';
+  mountShell(); QP.render();
+  window.scrollTo(0, y || 0);
+}
+/* a known user, but a dashboard that doesn't exist or isn't in their workspace */
+function outside(page, why){
+  QP.pageId = null; QP.def = null; QP.state = null;
+  mountShell();
+  var p = QP.persona, known = QP.PAGES[page];
+  document.title = (why === 'access' ? known.label + ' · not in workspace' : 'Page not found') + ' · Q-Profit';
+  var links = '<a class="qp-link" href="'+QP.url()+'">'+icon('consolidated')+'Go to '+esc(p.name)+'’s home</a>' + otherPages(p.pages[0]);
+  document.getElementById('qp-body').innerHTML = why === 'access'
+    ? notice('lock', known.label+' isn’t part of '+esc(p.name)+'’s workspace', esc(p.name)+'’s access: '+esc(p.scope)+'. '+(p.pages.length > 1 ? 'Open one of their dashboards instead.' : 'Open their dashboard instead.'), links, '403')
+    : notice('info', 'Page not found', 'There’s no dashboard called “'+esc(page)+'”. Check the link, or open one of '+esc(p.name)+'’s dashboards.', links, '404');
+  document.getElementById('qp-body').insertAdjacentHTML('beforeend', FOOTER);
+  window.scrollTo(0, 0);
+}
+function unknownUser(user){
+  QP.persona = null; QP.pageId = null; QP.def = null; QP.state = null;
+  document.title = 'Page not found · Q-Profit';
+  document.body.innerHTML = '<div class="qp-solo"><header class="qp-top"><div class="qp-brand"><span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span><h1>Q-Profit</h1><span class="prod">Finance Executive Dashboard</span></div></header>'+
+    notice('users', 'Page not found', user ? 'There’s no user called “'+esc(user)+'”. Open the directory to find the right workspace.' : 'This address doesn’t match a Q-Profit page.',
+      '<a class="qp-link" href="/">'+icon('users')+'All users</a>', '404') + '<footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span></footer></div>';
+  window.scrollTo(0, 0);
+}
+QP.boot = function(){
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  bind();
+  window.addEventListener('popstate', function(ev){ route(ev.state && ev.state.y); });
+  route(0);
+};
+/* the app page boots itself; the directory and reference pages load this file for its registry only */
 var me = document.currentScript;
 if (!(me && me.hasAttribute('data-noboot'))) {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ QP.boot(); }); else setTimeout(QP.boot);

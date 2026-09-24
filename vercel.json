@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/", "destination": "/Live/index.html" },
+    { "source": "/user/:path*", "destination": "/Live/app.html" },
+    { "source": "/design-system", "destination": "/Live/design-system.html" }
+  ],
+  "headers": [
+    {
+      "source": "/Live/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=300, must-revalidate" }]
+    }
+  ]
+}
