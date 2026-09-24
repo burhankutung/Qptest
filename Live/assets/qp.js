@@ -17,12 +17,14 @@ var I = {
   'city-operations':'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
   'operating-assets':'<path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/>',
   moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  expand:'<path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/>',
   sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   chevd:'<path d="m6 9 6 6 6-6"/>', chevr:'<path d="m9 6 6 6-6 6"/>', chevl:'<path d="m15 6-6 6 6 6"/>',
   arrowr:'<path d="M5 12h14M13 6l6 6-6 6"/>',
   cal:'<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',
   reset:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 16v-4.5M12 8h.01"/>',
+  nomatch:'<circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.5-4.5"/><path d="m8.6 8.6 4.8 4.8M13.4 8.6l-4.8 4.8"/>',
   lock:'<rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>',
   check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
   users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
@@ -308,6 +310,36 @@ document.addEventListener('mouseover', function(ev){
 document.addEventListener('mousemove', function(ev){ if (kcard) placeKTip(ev.clientX, ev.clientY); });
 document.addEventListener('mouseout', function(ev){ if (kcard && !kcard.contains(ev.relatedTarget)) hideKTip(); });
 window.addEventListener('scroll', hideKTip, true);
+/* ── viewer preferences: light / dark theme and an expanded rail. Stored per
+   browser; each page's head applies them before first paint. ─────────── */
+var ROOT = document.documentElement;
+function pref(k, v){ try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch(e){} return null; }
+if (pref('qp-theme') === 'dark') ROOT.setAttribute('data-theme', 'dark');
+if (pref('qp-rail') === 'open') ROOT.setAttribute('data-rail', 'open');
+function isDark(){ return ROOT.getAttribute('data-theme') === 'dark'; }
+function railOpen(){ return ROOT.getAttribute('data-rail') === 'open'; }
+function themeAttrs(){ var d = isDark(); return ' aria-pressed="'+d+'" aria-label="Switch to '+(d ? 'light' : 'dark')+' theme" data-tip="'+(d ? 'Light' : 'Dark')+' theme"'; }
+function railAttrs(){ var o = railOpen(); return ' aria-expanded="'+o+'" aria-label="'+(o ? 'Collapse' : 'Expand')+' menu" data-tip="'+(o ? 'Collapse' : 'Expand')+' menu"'; }
+QP.themeButton = function(){ return '<button type="button" class="qp-theme" data-theme-toggle'+themeAttrs()+'>'+icon('moon', 'moon')+icon('sun', 'sun')+'</button>'; };
+QP.railButton = function(){ return '<button type="button" class="qp-rail-tg" data-rail-toggle'+railAttrs()+'>'+icon('expand')+'</button>'; };
+function refit(){ (QP.charts || []).forEach(function(c){ c.fn(c.el, c.cfg); }); fitTables(); }
+document.addEventListener('click', function(ev){
+  var t = ev.target.closest && ev.target.closest('[data-theme-toggle],[data-rail-toggle]');
+  if (!t) return;
+  QP.tip.hide();
+  var sel = t.hasAttribute('data-theme-toggle') ? '[data-theme-toggle]' : '[data-rail-toggle]', hadFocus = document.activeElement === t;
+  setTimeout(function(){ var nb = hadFocus && document.querySelector(sel); if (nb) nb.focus(); });
+  if (t.hasAttribute('data-theme-toggle')) {
+    var dark = !isDark();
+    ROOT.setAttribute('data-theme', dark ? 'dark' : 'light'); pref('qp-theme', dark ? 'dark' : 'light');
+    document.querySelectorAll('[data-theme-toggle]').forEach(function(b){ b.outerHTML = QP.themeButton(); });
+  } else {
+    if (railOpen()) ROOT.removeAttribute('data-rail'); else ROOT.setAttribute('data-rail', 'open');
+    pref('qp-rail', railOpen() ? 'open' : 'closed');
+    document.querySelectorAll('[data-rail-toggle]').forEach(function(b){ b.outerHTML = QP.railButton(); });
+    setTimeout(refit, 230);
+  }
+});
 QP.toast = function(msg){
   var t = document.querySelector('.qp-toast'); if (!t) { t = document.createElement('div'); t.className = 'qp-toast'; document.body.appendChild(t); }
   t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove('on'); }, 2200);
@@ -505,20 +537,21 @@ function shell(){
   var p = QP.persona, pageId = QP.pageId, pg = QP.PAGES[pageId];
   var multi = p.pages.length > 1;
   var rail = multi ? '<nav class="qp-rail" aria-label="Dashboards"><a class="lg" href="'+QP.url()+'" aria-label="'+esc(p.name)+' — home"><span><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span></a>' +
-    QP.ORDER.filter(QP.can).map(function(id){ return '<a href="'+QP.href(id)+'" class="'+(id === pageId ? 'on' : '')+'" data-tip="'+QP.PAGES[id].label+'" aria-label="'+QP.PAGES[id].label+'"'+(id === pageId ? ' aria-current="page"' : '')+'>'+icon(id)+'</a>'; }).join('') + '</nav>' : '';
+    QP.ORDER.filter(QP.can).map(function(id){ return '<a href="'+QP.href(id)+'" class="'+(id === pageId ? 'on' : '')+'" data-tip="'+QP.PAGES[id].label+'" aria-label="'+QP.PAGES[id].label+'"'+(id === pageId ? ' aria-current="page"' : '')+'>'+icon(id)+'<span class="lb">'+QP.PAGES[id].label+'</span></a>'; }).join('') +
+    QP.railButton() + '</nav>' : '';
   var access = p.pages.map(function(id){ return '<a href="'+QP.href(id)+'" role="menuitem"'+(id === pageId ? ' aria-current="page"' : '')+'>'+icon(id)+QP.PAGES[id].label+'</a>'; }).join('');
   var top = '<header class="qp-top"><div class="qp-brand">'+
-    (multi ? '' : '<span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span>')+'<h1>Q-Profit</h1><span class="prod">Finance Executive Dashboard</span></div>'+
+    (multi ? '' : '<span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span>')+'<h1>Q-Profit</h1></div>'+
+    QP.themeButton() +
     '<div class="qp-who" data-who tabindex="0" role="button" aria-haspopup="true" aria-label="'+esc(p.name)+', '+esc(p.role)+' — dashboards menu"><span class="av">'+p.ini+'</span><span><b>'+p.name+'</b><span>'+p.role+'</span></span>'+icon('chevd','cv')+
-      '<div class="qp-pop" role="menu"><div class="hd"><b>'+p.name+'</b><span>'+p.role+'</span></div><div class="acc">Access</div><div class="scope">'+p.scope+'</div>'+access+
-      '<a href="'+QP.HOME+'" class="all" role="menuitem">'+icon('users')+'All users</a></div></div></header>';
+      '<div class="qp-pop" role="menu"><div class="hd"><b>'+p.name+'</b><span>'+p.role+'</span></div>'+access+
+      '</div></div></header>';
   return {rail:rail, top:top};
 }
 function crumb(){
   var pg = QP.PAGES[QP.pageId], def = QP.def, s = QP.state;
-  var back = QP.pageId !== 'consolidated' && QP.can('consolidated') ? '<a class="bk" href="'+QP.url('consolidated')+'" data-tip="Back to Consolidated" aria-label="Back to Consolidated">'+icon('chevl')+'</a>' : '';
   var scope = def.scope ? def.scope(s) : '';
-  return '<div class="qp-crumb">'+back+'<b>'+pg.label+'</b>'+(scope ? '<span class="sep">/</span><span class="cur">'+scope+'</span>' : '')+'<span style="flex:1"></span>'+QP.statusPill()+'</div><div class="qp-orient"><p class="qp-desc">'+(def.desc ? def.desc(s) : pg.desc)+'</p></div>';
+  return '<div class="qp-crumb"><b>'+pg.label+'</b>'+(scope ? '<span class="sep">/</span><span class="cur">'+scope+'</span>' : '')+'<span style="flex:1"></span>'+QP.statusPill()+'</div><div class="qp-orient"><p class="qp-desc">'+(def.desc ? def.desc(s) : pg.desc)+'</p></div>';
 }
 
 QP.define = function(id, def){ QP.DEFS = QP.DEFS || {}; QP.DEFS[id] = def; };
@@ -618,7 +651,7 @@ function bind(){
     if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.closest('[data-act]') && QP.def && QP.def.act) { ev.preventDefault(); var ae = ev.target.closest('[data-act]'); QP.def.act(ae.dataset.act, ae, QP.state); }
   });
   /* data-tip tooltips */
-  document.addEventListener('mouseover', function(ev){ var el = ev.target.closest('[data-tip]'); if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left + r.width / 2 - 14, r.top); } });
+  document.addEventListener('mouseover', function(ev){ var el = ev.target.closest('[data-tip]'); if (el && el.closest('.qp-rail') && document.documentElement.getAttribute('data-rail') === 'open') return; if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left + r.width / 2 - 14, r.top); } });
   document.addEventListener('mouseout', function(ev){ var el = ev.target.closest('[data-tip]'); if (el && !el.contains(ev.relatedTarget)) QP.tip.hide(); });
   document.addEventListener('focusin', function(ev){ var el = ev.target.closest('[data-tip]'); if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left, r.top); } });
   document.addEventListener('focusout', QP.tip.hide);
@@ -687,7 +720,7 @@ function outside(page, why){
 function unknownUser(user){
   QP.persona = null; QP.pageId = null; QP.def = null; QP.state = null;
   document.title = 'Page not found · Q-Profit';
-  document.body.innerHTML = '<div class="qp-solo"><header class="qp-top"><div class="qp-brand"><span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span><h1>Q-Profit</h1><span class="prod">Finance Executive Dashboard</span></div></header>'+
+  document.body.innerHTML = '<div class="qp-solo"><header class="qp-top"><div class="qp-brand"><span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span><h1>Q-Profit</h1></div>'+QP.themeButton()+'</header>'+
     notice('users', 'Page not found', user ? 'There’s no user called “'+esc(user)+'”. Open the directory to find the right workspace.' : 'This address doesn’t match a Q-Profit page.',
       '<a class="qp-link" href="'+QP.HOME+'">'+icon('users')+'All users</a>', '404') + '<footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span></footer></div>';
   window.scrollTo(0, 0);

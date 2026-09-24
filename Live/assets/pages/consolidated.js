@@ -212,7 +212,7 @@ QP.define('consolidated', {
         QP.card({cls:'tight', body:QP.ring(pm.mc, pm.mc >= pm.time ? 'var(--s1)' : 'var(--amb)', 'Physical Progress', null, ringCtx(pm.mc))}) +
         QP.card({cls:'tight', body:QP.ring(pm.acct, 'var(--s3)', 'Accounting Progress', null, ringCtx(pm.acct))}) + '</div>';
     } else {
-      h += QP.card({body:'<div class="qp-empty">'+QP.icon('info')+'No project matches this Project and Business Unit combination.</div>'});
+      h += QP.card({body:'<div class="qp-empty">'+QP.icon('nomatch')+'No project matches this Project and Business Unit combination.</div>'});
     }
     h += '<div class="qp-foot" style="margin:10px 4px 0">'+QP.icon('info')+'<span>Time consumed is calculated based on project completion date. Physical progress is measured completion; accounting progress is invoiced-to-date.'+(pm && pm.mc < pm.time ? ' Physical progress trails time consumed — shown in amber.' : '')+'</span></div>';
 

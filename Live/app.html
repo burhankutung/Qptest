@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>/* Clean URLs (/, /user/…, /design-system) are served through vercel.json rewrites and load assets from /Live/. Opened from the folder or any plain static server, pages use relative assets and #/user/… routes. */
-(function(){var p=location.pathname,clean=location.protocol!=='file:'&&(p==='/'||/^\/user(\/|$)/.test(p)||p==='/design-system');window.QP_MODE=clean?'path':'hash';if(clean)document.write('<base href="/Live/">');})();</script>
+(function(){var p=location.pathname,clean=location.protocol!=='file:'&&(p==='/'||/^\/user(\/|$)/.test(p)||p==='/design-system');window.QP_MODE=clean?'path':'hash';if(clean)document.write('<base href="/Live/">');try{var d=document.documentElement;if(localStorage.getItem('qp-theme')==='dark')d.setAttribute('data-theme','dark');if(localStorage.getItem('qp-rail')==='open')d.setAttribute('data-rail','open')}catch(e){}})();</script>
 <title>Q-Profit</title>
 <meta name="description" content="Q-Profit — Finance Executive Dashboard for Qiddiya Investment Company.">
 <link rel="icon" href="assets/qiddiya-mark.png">
