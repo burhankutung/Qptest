@@ -88,7 +88,7 @@ QP.define('operating-assets', {
 
     /* KPI block */
     function t(label, val, v, o){ o = o || {}; var tone = QP.tone(v, 'up'); return QP.kpi({label:label, value:val, status:o.st || (Math.abs(v) < 1 ? 'amb' : tone), chip:chip(v, {unit:o.unit, dp:o.dp}) + '<span class="muted" style="font-size:var(--fs-sm)">'+(o.vs || 'vs budget')+'</span>', sub:o.sub, cls:o.cls}); }
-    var body = QP.eyebrow('KPIs', perL) + '<div class="qp-grid g2">' +
+    var body = '<div class="qp-grid g2">' +
         t('Visitation', f.i(visits), f.varPct(visits, vb), {sub:'Budget <b>'+f.i(vb)+'</b> guests'}) +
         t('Admission Yield %', M(a.yld, 2), a.yldV, {sub:'Admission revenue per guest'}) + '</div>' +
       QP.eyebrow('Per Cap', f.sar + ' per guest') + '<div class="qp-grid g5">' +
@@ -97,7 +97,7 @@ QP.define('operating-assets', {
       QP.eyebrow('Annual Pass KPIs', perL) + '<div class="qp-grid g3">' +
         t('Annual Pass Sales (No.)', f.i(a.ap.sales[0] * mult), a.ap.sales[1]) + t('Annual Pass Visits (No.)', f.i(a.ap.visits[0] * mult), a.ap.visits[1]) +
         t('Annual Pass Visits % of Total', f.pct(a.ap.share[0]), a.ap.share[1], {unit:' pt', vs:'vs budget share'}) + '</div>';
-    h += QP.card({cls:'kpiwrap', body:body, foot:'Grain: metric, monthly. Deltas compare '+(ytd ? 'YTD actual against YTD budget' : ml + ' actual against ' + ml + ' budget')+'. Per cap and yield are ratios and do not change with the period basis.', style:'margin-top:22px'});
+    h += QP.card({cls:'kpiwrap', body:body, foot:'Grain: metric, monthly. Deltas compare '+(ytd ? 'YTD actual against YTD budget' : ml + ' actual against ' + ml + ' budget')+'. Per cap and yield are ratios and do not change with the period basis.', style:'margin-top:24px'});
 
     /* visitor metrics + rides */
     h += '<div class="qp-row" style="margin-top:16px">' +

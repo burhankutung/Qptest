@@ -69,7 +69,6 @@ QP.define('corporate-division', {
         chip:chip(v, {good:'down', suffix:v >= 0 ? 'over plan' : 'under plan'}),
         meter:'<div class="meter" style="position:relative;overflow:visible"><span style="width:'+(a/mx*100)+'%;background:'+(st === 'pos' ? 'var(--s1)' : 'var(--'+st+')')+';border-radius:99px"></span><i style="position:absolute;left:'+(p/mx*100)+'%;top:-4px;bottom:-4px;border-left:2px dashed var(--target)"></i></div>'});
     }
-    h += QP.eyebrow(s.division + ' · cost against plan', (ytd ? 'YTD to Feb-26' : 'Feb-26') + ' · ' + f.sar + ' millions · dashed marker = plan');
     h += '<div class="qp-grid g5">' + tile('Total', totA, totP, 5, 10) + tile('Personnel Cost', pers[0], pers[1], 5, 10) + tile('Professional Svcs', kp[0], kp[1], 5, 15) + tile('IT Cost', ki[0], ki[1], 6, 15) +
       QP.kpi({label:'Headcount', st:QP.pill('No data', 'neu'), value:f.i(D.hc), sub:'Plan <b>'+f.i(D.hcp)+'</b>', status:'neu', chip:'<span class="muted" style="font-size:var(--fs-sm)">Status not set for headcount</span>'}) + '</div>';
 

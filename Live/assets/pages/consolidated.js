@@ -93,8 +93,7 @@ QP.define('consolidated', {
     var mi = +s.month, mo = MIDX[mi], ml = QP.mlabel(mo.y, mo.m), ytd = s.basis === 'ytd';
     var h = '';
 
-    /* Company KPIs */
-    h += QP.eyebrow('Company KPIs', 'YTD to ' + ml + ' · ' + f.sar + ' millions · variance against YTD plan');
+    /* KPI cards */
     h += '<div class="qp-grid g6">' + KPIS.map(function(k){
       var base = k.sec != null ? k.sec : k.p, v = f.varPct(k.a, base);
       var val = k.hc ? f.i(k.a) : M(k.a, 1);

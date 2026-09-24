@@ -36,7 +36,6 @@ QP.define('city-operations', {
   body:function(s){
     var h = '', ytd = s.basis === 'ytd';
     var tr = sum(REV.map(function(r){ return r.a; })), tly = sum(REV.map(function(r){ return r.ly; }));
-    h += QP.eyebrow('Worker’s Village · at a glance', 'January 2026 · ' + f.sar + ' thousands');
     h += '<div class="qp-grid g4">' +
       QP.kpi({label:'Occupancy', value:'92%', sub:'Dec 2025 <b>90%</b> · Nov 2025 <b>88%</b>', status:'pos', chip:chip(2, {unit:' pt', suffix:'vs Dec'})}) +
       QP.kpi({label:'Revenue', value:M(31410, 0), unit:'K', sub:'Budget <b>'+M(30760, 0)+' K</b>', status:'pos', chip:chip(f.varPct(31410, 30760), {suffix:'vs budget'})}) +

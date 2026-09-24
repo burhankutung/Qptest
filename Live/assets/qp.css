@@ -2,8 +2,12 @@
    Q-Profit · Finance Executive Dashboard — design system
    Layout language from the OE Performance View; COLOUR comes exclusively from
    the client-approved palette (Design-system/Colors.pdf + Branding.pdf).
-   No tints, transparencies, gradients or shadows are used: every painted
-   pixel is one of the 22 approved values below.
+   Surfaces are flat and every painted colour is one of the approved values
+   below. Deliberate, requested exceptions: area-summary headers carry a
+   faint white line-art overlay; the KPI hover card uses the OE reference
+   tooltip's own panel, border and shadow; table hover / selected rows use
+   light mixes of the canvas and light purple. These stay decorative
+   and never sit behind text at a strength that changes its contrast.
 
    Approved palette and the role the client assigned to each colour:
      Purple        #7122F4  buttons & icon-button backgrounds, link text
@@ -34,7 +38,8 @@
 @font-face{font-family:"QP Riyal";src:local("Arial"),local("ArialMT");unicode-range:U+20C1}
 
 :root{
-  --font:"QP Riyal","Proxima Nova",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  /* the Adobe Fonts kit registers the family as proxima-nova (100–900) */
+  --font:"QP Riyal","proxima-nova","Proxima Nova",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
 
   /* client palette */
   --c-purple:#7122F4; --c-light-gray:#FBFBFB; --c-white:#FFFFFF; --c-soft-gray:#EAEAEA;
@@ -117,8 +122,7 @@ a{color:inherit}
   color:var(--mut);text-decoration:none;transition:background .15s,color .15s}
 .qp-rail a svg{width:20px;height:20px}
 .qp-rail a:hover{color:var(--ink);background:var(--hover)}
-.qp-rail a.on{background:var(--acc-bg);color:var(--acc-ink)}
-.qp-rail a.on::before{content:"";position:absolute;left:-16px;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--acc)}
+.qp-rail a.on,.qp-rail a.on:hover,.qp-rail a.on:active{background:var(--acc-bg);color:var(--acc-ink)}
 
 /* topbar */
 /* top bar: the product name is the page's largest type; the logo lives in the rail */
@@ -155,6 +159,10 @@ a{color:inherit}
 .qp-ctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
 .qp-ctl .sp{flex:1 1 auto}
 .qp-legrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px}
+/* KPI cards open the page body directly under the legend */
+.qp-legrow+.qp-grid{margin-top:24px}
+/* a page control that shares the legend's line, e.g. vs Plan / vs Forecast */
+.qp-legrow>.rt{margin-left:auto;display:flex;align-items:center;gap:8px}
 /* period switch: light-gray pill track, purple selected with lighter-gray-2 text */
 .qp-seg{display:inline-flex;gap:4px;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:4px}
 .qp-seg button{appearance:none;border:0;background:transparent;border-radius:9px;cursor:pointer;font-size:var(--fs-sm);font-weight:600;
@@ -281,8 +289,6 @@ a{color:inherit}
 .qp-kpi.pos{--tc:var(--pos)}.qp-kpi.neg{--tc:var(--neg)}.qp-kpi.amb{--tc:var(--amb)}.qp-kpi.neu{--tc:var(--neu)}
 .qp-kpi .k{display:flex;align-items:flex-start;gap:6px;font-size:var(--fs-xs);font-weight:400;color:var(--mut);line-height:1.35;min-height:16px}
 .qp-kpi .k .lab{flex:1 1 auto;min-width:0}
-.qp-kpi .k .info{flex:none;width:14px;height:14px;color:var(--c-disabled-font);cursor:help;margin-top:1px}
-.qp-kpi .k .info:hover{color:var(--mut)}
 .qp-kpi .v{font-size:var(--fs-metric);font-weight:700;letter-spacing:-.025em;line-height:1.1;margin-top:8px;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--ink)}
 .qp-kpi .v small{font-size:var(--fs-xs);font-weight:600;color:var(--mut);margin-left:4px;letter-spacing:0}
 .qp-kpi .ft{display:flex;align-items:center;column-gap:6px;row-gap:4px;margin-top:8px;flex-wrap:wrap;font-size:var(--fs-xs);color:var(--mut)}
@@ -326,7 +332,15 @@ a{color:inherit}
 /* area card (OE reference asset card): the area's colour fills the header;
    the body is a grid of status-edged metric tiles on the light-gray inset */
 .qp-area{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden;min-width:0}
-.qp-area .hdr{display:flex;align-items:flex-end;gap:12px;padding:26px 20px 22px;min-height:112px;background:var(--ac);color:var(--c-white)}
+.qp-area .hdr{position:relative;overflow:hidden;display:flex;align-items:flex-end;gap:12px;padding:26px 20px 22px;min-height:112px;background:var(--ac);color:var(--c-white)}
+/* decorative layer: thin concentric arcs off the right edge and a soft
+   highlight in the top corner, white at low opacity over the area colour */
+.qp-area .hdr::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320' fill='none' stroke='white' stroke-width='1'%3E%3Ccircle cx='160' cy='160' r='58' stroke-opacity='.16'/%3E%3Ccircle cx='160' cy='160' r='92' stroke-opacity='.13'/%3E%3Ccircle cx='160' cy='160' r='126' stroke-opacity='.10'/%3E%3Ccircle cx='160' cy='160' r='158' stroke-opacity='.07'/%3E%3C/svg%3E") right -118px bottom -150px / 320px 320px no-repeat,
+    radial-gradient(120% 140% at 100% 0%, rgba(255,255,255,.12) 0%, rgba(255,255,255,0) 55%),
+    linear-gradient(180deg, rgba(255,255,255,0) 40%, rgba(0,0,0,.06) 100%)}
+.qp-area .hdr>*{position:relative;z-index:1}
 .qp-area .hdr .ic{display:none}
 .qp-area .hdr .tt{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1 1 auto}
 .qp-area .hdr b{font-size:21px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
@@ -395,63 +409,87 @@ a{color:inherit}
 .qp-link[aria-disabled=true]{color:var(--dis-ink);background:none;cursor:not-allowed;box-shadow:none}
 .qp-link:not(.ghost)[aria-disabled=true]{background:var(--dis)}
 
-/* ── tables (Power BI matrix) ──────────────────────────────────────────── */
-.qp-tbl{width:100%;overflow:auto;border:1px solid var(--line);border-radius:12px}
+/* ── tables — OE reference list (ride throughput): uppercase letter-spaced
+   column titles on the card surface, no fills or row rules, 40px rows,
+   a status dot before the name, variance as signed coloured text and a
+   quiet chevron at the row end; the selected row is lavender ─────────── */
+.qp-tbl{--row-hover:color-mix(in srgb, var(--c-canvas) 70%, var(--c-white));
+  width:100%;overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
 .qp-tbl.fit{overflow:visible}
-.qp-card.flush .qp-tbl{border:0;border-radius:0;border-top:1px solid var(--line)}
+.qp-card.flush .qp-tbl{border:0;border-radius:0}
 .qp-tbl table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-md);color:var(--ink)}
 .qp-tbl thead{position:sticky;top:0;z-index:3}
-.qp-tbl th{background:var(--card);text-align:left;font-size:var(--fs-xs);font-weight:600;letter-spacing:0;
-  color:var(--mut);padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
-.qp-tbl th .u{font-weight:400}
-.qp-tbl thead tr.grp th{font-size:var(--fs-xs);font-weight:600;color:var(--ink);padding:12px 14px 0;border-bottom:0;text-align:center}
-.qp-tbl thead tr.grp th span{display:block;border-bottom:1px solid var(--line);padding-bottom:8px}
-.qp-tbl td{height:48px;padding:8px 14px;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:middle;background:var(--card)}
+.qp-tbl th{background:var(--card);text-align:left;font-size:var(--fs-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--mut);padding:12px 14px 10px;white-space:nowrap;border:0}
+.qp-tbl th .u{font-weight:500;letter-spacing:0;text-transform:none}
+.qp-tbl thead tr.grp th{padding:12px 14px 0;text-align:center;color:var(--ink)}
+.qp-tbl thead tr.grp th span{display:block;border-bottom:1px solid var(--line);padding-bottom:6px}
+/* the active period: purple rule under the group label */
+.qp-tbl thead tr.grp th.band span{border-bottom:2px solid var(--acc);color:var(--acc-ink)}
+.qp-tbl td{height:40px;padding:0 14px;white-space:nowrap;vertical-align:middle;background:var(--card);border:0}
 /* the row label stays in view while a wide table scrolls sideways */
 .qp-tbl td:first-child,.qp-tbl tr:not(.grp)>th:first-child,.qp-tbl tr.grp>th:first-child[colspan="1"]{position:sticky;left:0;z-index:1}
 .qp-tbl.sx td:first-child,.qp-tbl.sx tr:not(.grp)>th:first-child,.qp-tbl.sx tr.grp>th:first-child[colspan="1"]{box-shadow:6px 0 8px -6px rgba(26,26,26,.2)}
-.qp-tbl.sx tr.flag td:first-child{box-shadow:inset 3px 0 0 var(--neg),6px 0 8px -6px rgba(26,26,26,.2)}
-.qp-tbl tbody tr:last-child td{border-bottom:0}
 .qp-tbl .r,.qp-tbl th.r{text-align:right}
 .qp-tbl .c,.qp-tbl th.c{text-align:center}
 .qp-tbl td.r{font-variant-numeric:tabular-nums}
-.qp-tbl td.nm{font-weight:500;white-space:normal}
-.qp-tbl tbody tr:hover td{background:var(--hover)}
-.qp-tbl tr.tot td{font-weight:700;background:var(--card);border-top:1px solid var(--ink);border-bottom:0}
-/* totals row mirrors the header row: same surface, rule, inset and type */
-.qp-tbl tfoot td{height:auto;padding-top:12px;padding-bottom:12px;background:var(--card);border-top:1px solid var(--line);border-bottom:0;
-  font-size:var(--fs-xs);font-weight:600;color:var(--ink)}
-.qp-tbl tfoot td.nm{color:var(--mut);font-weight:600}
-.qp-tbl tfoot .qp-chip{font-size:var(--fs-xs);font-weight:600}
-.qp-tbl tr.child td{height:40px;background:var(--card);font-size:var(--fs-sm);color:var(--mut)}
-.qp-tbl tr.child td.r{color:var(--ink)}
-.qp-tbl tr.child td.nm,.qp-card.flush .qp-tbl tr.child td.nm{font-weight:400;padding-left:44px}
-.qp-tbl.has-exp tr.child td.nm,.qp-card.flush .qp-tbl.has-exp tr.child td.nm{padding-left:72px}
-.qp-tbl td.key,.qp-tbl th.key{font-weight:700;color:var(--ink)}
-.qp-tbl .qp-na{color:var(--mut);font-size:var(--fs-sm);font-weight:500;cursor:help}
-.qp-tbl .nmx{display:flex;align-items:center;gap:6px}
-.qp-tbl.has-exp td.nm{min-width:170px}
-.qp-exp-sp{width:24px;flex:none}
+.qp-tbl td.nm{font-weight:400;white-space:normal}
+.qp-tbl tbody tr:hover td{background:var(--row-hover)}
 .qp-tbl tr.xp{cursor:pointer}
+/* status dot: from the row's own status or variance; 'none' keeps names aligned */
+.qp-tbl .nmx{display:flex;align-items:center;gap:10px}
+.qp-tbl .dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--neu)}
+.qp-tbl .dot.pos{background:var(--pos)}
+.qp-tbl .dot.neg{background:var(--neg)}
+.qp-tbl .dot.amb{background:var(--amb)}
+.qp-tbl .dot.none{background:none}
+/* variance: the signed figure in the state colour, no arrow or chip */
+.qp-tbl .qp-chip{font-size:var(--fs-md);font-weight:500;gap:0}
+.qp-tbl .qp-chip svg{display:none}
+.qp-tbl .qp-chip.pos{color:var(--pos)}
+.qp-tbl .qp-chip.neg{color:var(--neg)}
+.qp-tbl .qp-chip.amb{color:var(--amb)}
+.qp-tbl .qp-chip.neu{color:var(--mut)}
+/* selected row */
+.qp-tbl tr.sel td,.qp-tbl tr.sel:hover td{background:color-mix(in srgb, var(--acc-bg) 55%, var(--c-white))}
+.qp-tbl tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--acc)}
+/* in-body subtotal lines (e.g. Net Income) */
+.qp-tbl tr.tot td{font-weight:600;border-top:1px solid var(--line)}
+/* totals row mirrors the header: uppercase label, same size, one hairline above */
+.qp-tbl tfoot td{height:auto;padding-top:11px;padding-bottom:11px;background:var(--card);border-top:1px solid var(--line);
+  font-size:var(--fs-xs);font-weight:600;color:var(--ink)}
+.qp-tbl tfoot td.nm{color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+.qp-tbl tfoot .qp-chip{font-size:var(--fs-xs);font-weight:600}
+/* child lines under an open row */
+.qp-tbl tr.child td{height:34px;font-size:var(--fs-sm);color:var(--mut)}
+.qp-tbl tr.child td.r{color:var(--ink)}
+.qp-tbl tr.child td.nm,.qp-card.flush .qp-tbl tr.child td.nm{padding-left:44px}
+.qp-tbl.has-dot tr.child td.nm,.qp-card.flush .qp-tbl.has-dot tr.child td.nm{padding-left:62px}
 .qp-tbl tr.child td.nm::before{content:"";display:inline-block;width:8px;height:1px;background:var(--c-disabled-font);vertical-align:middle;margin:0 10px 0 -18px}
-.qp-tbl tr.flag td:first-child{box-shadow:inset 2px 0 0 var(--neg)}
-.qp-tbl tr.sel td{background:var(--hover)}
-.qp-tbl tr.sel td:first-child{box-shadow:inset 2px 0 0 var(--acc)}
-/* the active period: purple rule under the group label, no filled block */
-.qp-tbl thead tr.grp th.band span{border-bottom:2px solid var(--acc);color:var(--acc-ink)}
-.qp-tbl th.band{color:var(--ink)}
+.qp-tbl td.key{font-weight:600}
+.qp-tbl .qp-na{color:var(--mut);font-size:var(--fs-sm);cursor:help}
+.qp-tbl.has-exp td.nm{min-width:150px}
 .qp-tbl .sub{display:block;font-size:var(--fs-xs);color:var(--mut);font-weight:500;margin-top:2px}
 .qp-card.flush .qp-tbl td,.qp-card.flush .qp-tbl th{padding-left:12px;padding-right:12px}
 .qp-card.flush .qp-tbl td:first-child,.qp-card.flush .qp-tbl th:first-child{padding-left:var(--pad)}
 .qp-card.flush .qp-tbl td:last-child,.qp-card.flush .qp-tbl th:last-child{padding-right:var(--pad)}
-/* row expander: a quiet chevron that turns purple once the row is open */
+/* row expander: a quiet chevron in the last column; turns and goes purple when open */
+.qp-tbl .xc{width:1%;text-align:right}
+.qp-card.flush .qp-tbl .xc{padding-left:4px}
 .qp-exp{appearance:none;display:inline-grid;place-items:center;flex:none;width:24px;height:24px;border:0;background:none;border-radius:6px;
-  color:var(--mut);padding:0;cursor:pointer;transition:background .15s,color .15s}
-.qp-tbl tr.xp:hover .qp-exp,.qp-exp:hover{background:var(--line);color:var(--ink)}
+  color:var(--c-disabled-font);padding:0;cursor:pointer;transition:color .15s}
+.qp-tbl tr.xp:hover .qp-exp,.qp-exp:hover{color:var(--ink)}
 .qp-exp:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
 .qp-exp svg{width:14px;height:14px;transition:transform .18s}
 .qp-exp[aria-expanded=true]{color:var(--acc-ink)}
 .qp-exp[aria-expanded=true] svg{transform:rotate(90deg)}
+/* a card that holds a table titles it like the reference list: small uppercase
+   label with its caption on the same line */
+.qp-card.flush:has(>.qp-tbl)>.hd{padding:16px var(--pad) 2px;margin-bottom:0;align-items:center}
+.qp-card.flush:has(>.qp-tbl)>.hd .tt{flex-direction:row;flex-wrap:wrap;align-items:baseline;column-gap:12px;row-gap:2px}
+.qp-card.flush:has(>.qp-tbl)>.hd h3{font-size:var(--fs-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.qp-card.flush:has(>.qp-tbl)>.hd h3 .cap{font-size:var(--fs-sm);font-weight:400;letter-spacing:0;text-transform:none}
+.qp-card.flush:has(>.qp-tbl)>.hd p{font-size:var(--fs-sm)}
 .qp-bar{display:flex;align-items:center;gap:12px;justify-content:flex-end}
 .qp-bar .tk{width:96px;height:6px;border-radius:3px;background:var(--line);overflow:hidden;flex:none}
 .qp-bar .tk i{display:block;height:100%;border-radius:3px;background:var(--s2)}
@@ -547,6 +585,22 @@ a{color:inherit}
 .qp-stats.rows .qp-stat .ic svg{width:18px;height:18px}
 
 /* tooltip & toast: carbon surface, lighter-gray-2 text */
+/* KPI hover card — matches the OE reference tooltip: very light panel, faint
+   border, soft two-layer shadow, uppercase title, large value, dot rows */
+.qp-ktip{position:fixed;left:0;top:0;z-index:210;pointer-events:none;min-width:190px;max-width:320px;padding:12px 15px 13px;
+  background:#F7F8FB;border:1px solid rgba(15,20,35,.16);border-radius:12px;color:var(--ink);
+  box-shadow:0 18px 44px rgba(18,28,55,.16),0 2px 6px rgba(18,28,55,.10);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.qp-ktip.on{opacity:1;transform:none}
+.qp-ktip .k{display:block;font-size:var(--fs-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:3px}
+.qp-ktip .v{display:block;font-size:var(--fs-2xl);font-weight:700;letter-spacing:-.02em;line-height:1.2;font-variant-numeric:tabular-nums;white-space:nowrap}
+.qp-ktip .v small{font-size:var(--fs-xs);font-weight:600;color:var(--mut);margin-left:3px;letter-spacing:0}
+.qp-ktip .rows{display:flex;flex-direction:column;gap:5px;margin-top:9px}
+.qp-ktip .r{display:flex;align-items:flex-start;gap:8px;font-size:var(--fs-xs);line-height:1.45;color:var(--mut)}
+.qp-ktip .r.lead{color:var(--ink)}
+.qp-ktip .r i{flex:none;width:5px;height:5px;border-radius:50%;background:rgba(15,20,35,.16);margin-top:6.5px}
+.qp-ktip .r .qp-chip{font-size:var(--fs-xs)}
+.qp-ktip .r .qp-chip svg{width:9px;height:9px}
+@media (hover:none){.qp-ktip{display:none}}
 .qp-tip{position:fixed;z-index:200;pointer-events:none;background:var(--ink);color:var(--c-lighter-gray-2);border-radius:9px;padding:9px 11px;font-size:var(--fs-sm);
   line-height:1.45;max-width:280px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
 .qp-tip.on{opacity:1;transform:none}
@@ -619,6 +673,14 @@ a{color:inherit}
 .qp-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:26px;text-align:center;color:var(--mut);font-size:var(--fs-md)}
 .qp-empty svg{width:22px;height:22px;color:var(--mut)}
 
+/* supporting grey text — legends, captions, descriptions, labels, notes — is set
+   in Proxima Nova Light; figures, titles and bold values keep their own weights */
+.qp-legend,.qp-desc,.qp-sec .cap,.qp-eyebrow .cap,.qp-card>.hd p,.qp-card>.hd h3 .cap,.qp-card.flush:has(>.qp-tbl)>.hd h3 .cap,
+.qp-foot,.qp-footer,.qp-status,.qp-brand .prod,.qp-who span,.qp-field,.qp-dd>button,.muted,
+.qp-kpi .k,.qp-kpi .ft .muted,.qp-tile .k,.qp-tile .t,.qp-area .lead .k,.qp-area .lead .cmp,.qp-area .ft,
+.qp-lg,.qp-lg button,.qp-meta,.qp-stat .t,.qp-dl .r .l,.qp-kv .k,.qp-trio .k,.qp-ring .ctx,
+.qp-person .scope,.qp-person .who span,.qp-notice p,.qp-ktip .r:not(.lead),.qp-tbl .qp-na{font-weight:300}
+
 @media print{.qp-rail,.qp-ctl,.qp-top .qp-ic{display:none}.qp-app{padding:0}body{min-width:0}}
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -629,14 +691,16 @@ a{color:inherit}
 
 @media (max-width:1440px){
   .qp-tbl td,.qp-tbl th,.qp-card.flush .qp-tbl td,.qp-card.flush .qp-tbl th{padding-left:9px;padding-right:9px}
+  .qp-tbl th{letter-spacing:.03em}
+  .qp-tbl .qp-bar .tk{width:64px}
 }
 
-/* laptop: trim the outer gutters, ease the widest grids down a column */
-@media (max-width:1280px){
-  .g8{grid-template-columns:repeat(4,minmax(0,1fr))}
-}
+/* laptop: ease the widest grids down only once their cards run out of room */
 @media (max-width:1180px){
   .g6{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:1100px){
+  .g8{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 
 /* tablet: area/detail rows stack, grids ease down further, rail stays put */
@@ -661,7 +725,6 @@ a{color:inherit}
     box-shadow:0 8px 24px rgba(26,26,26,.12)}
   .qp-rail .lg{display:none}
   .qp-rail a{width:auto;flex:1 1 0;height:42px}
-  .qp-rail a.on::before{left:10px;right:10px;top:2px;bottom:auto;width:auto;height:3px;border-radius:3px}
   .qp-main{padding-bottom:64px}
 
   .qp-top{flex-wrap:wrap;gap:10px;padding:12px 14px}
@@ -691,7 +754,8 @@ a{color:inherit}
 }
 
 @media (max-width:420px){
-  .g2,.g3,.g4,.g5,.g6,.g8{grid-template-columns:1fr}
+  .g2,.g3,.g4,.g5,.g6{grid-template-columns:1fr}
+  .g8{grid-template-columns:repeat(2,minmax(0,1fr))}
   .qp-tiles{grid-template-columns:1fr}
   .qp-kpi .v{font-size:var(--fs-3xl)}
   .qp-area .lead .v{font-size:var(--fs-metric)}

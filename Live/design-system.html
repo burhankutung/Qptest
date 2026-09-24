@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>/* Clean URLs (/, /user/…, /design-system) are served through vercel.json rewrites and load assets from /Live/. Opened from the folder or any plain static server, pages use relative assets and #/user/… routes. */
+(function(){var p=location.pathname,clean=location.protocol!=='file:'&&(p==='/'||/^\/user(\/|$)/.test(p)||p==='/design-system');window.QP_MODE=clean?'path':'hash';if(clean)document.write('<base href="/Live/">');})();</script>
 <title>Q-Profit Design System</title>
-<link rel="icon" href="/Live/assets/qiddiya-mark.png">
+<link rel="icon" href="assets/qiddiya-mark.png">
 <link rel="stylesheet" href="https://use.typekit.net/fkj2upu.css">
-<link rel="stylesheet" href="/Live/assets/qp.css">
+<link rel="stylesheet" href="assets/qp.css">
 <style>
   body{min-width:0}
   .wrap{max-width:1240px;margin:0 auto;padding:18px 18px 40px}
@@ -27,13 +29,13 @@
 <div class="wrap">
   <header class="qp-top">
     <div class="qp-brand"><span class="mk" id="mk"></span><h1>Q-Profit</h1><span class="prod">Design system &amp; Power BI build notes</span></div>
-    <a class="qp-link" href="/">All workspaces</a>
+    <a class="qp-link" href="index.html">All workspaces</a>
   </header>
-  <div class="qp-crumb"><a class="bk" href="/" aria-label="Back to all workspaces"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a><b>Design system</b><span class="sep">/</span><span class="cur">Foundations, components and Power BI mapping</span></div>
+  <div class="qp-crumb"><a class="bk" href="index.html" aria-label="Back to all workspaces"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a><b>Design system</b><span class="sep">/</span><span class="cur">Foundations, components and Power BI mapping</span></div>
   <p class="qp-desc">One language across all seven dashboards, layout from the OE Performance View, colour strictly from the client palette: Light gray surface, White cards with Soft gray borders, Purple for buttons, links and the selected period, Light gray for the period-switch track, the Qiddiya blue / aqua ramp for charts, and Red / Green / Amber only for state.</p>
   <div id="ds"></div>
 </div>
-<script src="/Live/assets/qp.js" data-noboot></script>
+<script src="assets/qp.js" data-noboot></script>
 <script>
 (function(){
   var f = QP.f, M = f.m, chip = QP.chip, h = '';
@@ -41,7 +43,7 @@
   QP.state = {_open:{'ds-0':true}}; QP.persona = QP.PERSONAS.imran;
   function sw(n, v, hex, role){ return '<div><i style="background:var('+v+')"></i><span><b>'+n+' · '+hex+'</b><em>'+role+'</em></span></div>'; }
 
-  h += QP.sec('Colour', 'Only the client-approved palette (Design-system / Colors.pdf, Branding.pdf) — no tints, transparencies, gradients or shadows', '<a class="qp-link" href="/Live/assets/qprofit-powerbi-theme.json" download>Power BI theme (.json)</a>', 'first');
+  h += QP.sec('Colour', 'Only the client-approved palette (Design-system / Colors.pdf, Branding.pdf) — no tints, transparencies, gradients or shadows', '<a class="qp-link" href="assets/qprofit-powerbi-theme.json" download>Power BI theme (.json)</a>', 'first');
   h += QP.card({body:
     QP.eyebrow('Primary & UI') + '<div class="sw">'+
       sw('Purple','--c-purple','#7122F4','Buttons & icon-button backgrounds; link text')+
@@ -71,7 +73,7 @@
     '<div class="r"><code>KPI value · 26 / 700</code><span style="font-size:26px;font-weight:700;letter-spacing:-.025em">'+M(3214.6)+'</span></div>'+
     '<div class="r"><code>Body · 14 / 400</code><span style="font-size:14px">Personnel Cost</span></div>'+
     '<div class="r"><code>Label & target · 12–13 / 400, dark gray</code><span style="font-size:13px;color:var(--mut)">YTD plan '+M(3352.0)+' · Forecast '+M(3388.4)+'</span></div>'+
-    '<div class="r"><code>Column title · 12 / 600, dark gray</code><span style="font-size:12px;font-weight:600;color:var(--mut)">YTD Actual ('+f.sar+')</span></div>'+
+    '<div class="r"><code>Column title · 12 / 600 uppercase, dark gray</code><span style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)">YTD Actual ('+f.sar+')</span></div>'+
     '<div class="r"><code>Note · 12 / 400, dark gray</code><span style="font-size:12px;color:var(--mut)">Grain: business unit, then cost line.</span></div>'+
     '<div class="qp-foot">'+QP.icon('info')+'<span>Currency: amounts carry '+f.sar+' before the value on cards; tables never repeat it per cell — the column heading states <b>('+f.sar+')</b>. "SAR" is not used anywhere.</span></div>'});
 
@@ -85,12 +87,12 @@
     QP.seg('a', 'm', [{v:'m', l:'Mar'}, {v:'ytd', l:'YTD'}]) + QP.seg('b', 'plan', [{v:'forecast', l:'Forecast'}, {v:'plan', l:'Plan'}], 'sm') +
     QP.dd('c', 'Month', 'Mar', ['Mar']) + QP.dd('d', 'Business Unit', 'Entertainment', ['Entertainment'], {locked:'Fixed to access scope'}) + QP.clearBtn(true) + QP.statusPill() +
     '</div><div class="spec" style="margin-top:14px">' + chip(2.9, {good:'down'}) + chip(-5.8, {good:'down'}) + chip(1.3) + chip(0) + QP.pill('On track','pos') + QP.pill('At risk','amb') + QP.pill('Underperforming','neg') + QP.pill('No data','neu') +
-    '<a class="qp-link" href="/user/imran/consolidated">View details'+QP.icon('arrowr')+'</a><span class="qp-badge">Badge</span></div>'});
-  h += QP.card({cls:'flush', style:'margin-top:16px', title:'Matrix with drill-down', sub:'Power BI matrix, stepped layout; the chevron at the start of a row is the +/- expand, and the whole row is clickable', body:QP.table({id:'ds', rows:[
+    '<a class="qp-link" href="'+QP.url('consolidated','imran')+'">View details'+QP.icon('arrowr')+'</a><span class="qp-badge">Badge</span></div>'});
+  h += QP.card({cls:'flush', style:'margin-top:16px', title:'Matrix with drill-down', sub:'Power BI matrix, stepped layout; uppercase column titles, 40px rows without rules, a status dot before each name, signed coloured variance, and a chevron at the row end (the +/- expand; the whole row is clickable)', body:QP.table({id:'ds', rows:[
       {n:'Professional Services', a:61.2, p:52.8, flag:true, children:[{n:'Consulting', a:28.2, p:24.3}, {n:'Legal advisory', a:14.7, p:12.7}]},
       {n:'Marketing & Events', a:33.8, p:35.9, children:[{n:'Brand campaigns', a:15.5, p:16.5}]}], total:{n:'Total', a:95.0, p:88.7},
     cols:[{k:'n', label:'Cost Category'}, {label:'YTD Actual ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.a); }}, {label:'YTD Plan ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.p); }}, {label:'Variance %', cls:'r', fmt:function(r){ return chip(f.varPct(r.a, r.p), {good:'down'}); }}]}),
-    foot:'Red left rule = row breaches its threshold (conditional formatting on the row header). Totals sit under a carbon rule.'});
+    foot:'Dot colour = the row’s status (conditional formatting icon on the row header). The totals row mirrors the header: uppercase label under one hairline.'});
 
   h += QP.sec('Power BI mapping', 'Every element on the seven dashboards is built from native visuals');
   var map = [
@@ -107,7 +109,8 @@
     ['Top 10 rides, data bars in tables', 'Clustered bar chart; table data bars', 'Lowest value highlighted with the at-risk colour.'],
     ['Daily admissions', 'Line chart with 7-day moving average measure', 'Continuous date axis.'],
     ['Site map', 'Image / Shape map or Icon Map visual with project points', 'Point selection cross-filters the project detail card.'],
-    ['Tooltips', 'Report page tooltips', 'Dark tooltip, month + series + variance.']
+    ['KPI hover card', 'Report page tooltip on each card visual', 'Light panel (#F7F8FB, faint border, soft shadow): uppercase title, value, dot rows for reference + variance, other references, status and the definition. No info icon on the card.'],
+    ['Chart tooltips', 'Report page tooltips', 'Dark tooltip, month + series + variance.']
   ];
   h += QP.card({cls:'flush', body:QP.table({id:'map', rows:map, cols:[{label:'Design element', fmt:function(r){ return r[0]; }}, {label:'Power BI build', fmt:function(r){ return r[1]; }}, {label:'Notes', fmt:function(r){ return '<span class="muted" style="white-space:normal">'+r[2]+'</span>'; }}]}),
     foot:'Canvas 1440 px wide; rail 78 px; page gutter 18 px, grid gap 12 px, card inset 20 px, 32 px between groups; card radius 12; KPI card radius 10; metric tile radius 8; control radius 8; period switch 14.'});

@@ -58,7 +58,6 @@ QP.define('business-units', {
     var U = UNITS[s.bu], dp = U.dp == null ? 1 : U.dp, h = '';
     var fm = function(v){ return M(v, dp); };
     var v = f.varPct(U.a, U.p), bad = v < -2;
-    h += QP.eyebrow(s.bu + ' · key figures', 'Cumulative to Apr-26 · ' + f.sar + ' millions');
     h += '<div class="qp-grid g5">' +
       QP.kpi({label:'QFM', value:U.qfm != null ? f.i(U.qfm) : '—', status:U.qfm != null ? 'neu' : 'neu', sub:U.qfm != null ? 'Count for the selected unit' : 'Not reported for this unit', chip:U.qfm == null ? QP.pill('No data','neu') : ''}) +
       QP.kpi({label:'Total Budget', value:fm(U.bud), unit:'M', sub:'Inception-to-date budget', status:'neu'}) +

@@ -3,22 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>/* Clean URLs (/, /user/…, /design-system) are served through vercel.json rewrites and load assets from /Live/. Opened from the folder or any plain static server, pages use relative assets and #/user/… routes. */
+(function(){var p=location.pathname,clean=location.protocol!=='file:'&&(p==='/'||/^\/user(\/|$)/.test(p)||p==='/design-system');window.QP_MODE=clean?'path':'hash';if(clean)document.write('<base href="/Live/">');})();</script>
 <title>Q-Profit</title>
 <meta name="description" content="Q-Profit — Finance Executive Dashboard for Qiddiya Investment Company.">
-<link rel="icon" href="/Live/assets/qiddiya-mark.png">
+<link rel="icon" href="assets/qiddiya-mark.png">
 <link rel="stylesheet" href="https://use.typekit.net/fkj2upu.css">
-<link rel="stylesheet" href="/Live/assets/qp.css">
+<link rel="stylesheet" href="assets/qp.css">
 </head>
 <body>
 <div class="qp-loading" role="status"><i></i>Loading dashboard…</div>
 <noscript><div class="qp-loading">Q-Profit needs JavaScript enabled to show dashboards.</div></noscript>
-<script src="/Live/assets/qp.js"></script>
-<script src="/Live/assets/pages/consolidated.js"></script>
-<script src="/Live/assets/pages/development.js"></script>
-<script src="/Live/assets/pages/business-units.js"></script>
-<script src="/Live/assets/pages/corporate.js"></script>
-<script src="/Live/assets/pages/corporate-division.js"></script>
-<script src="/Live/assets/pages/city-operations.js"></script>
-<script src="/Live/assets/pages/operating-assets.js"></script>
+<script src="assets/qp.js"></script>
+<script src="assets/pages/consolidated.js"></script>
+<script src="assets/pages/development.js"></script>
+<script src="assets/pages/business-units.js"></script>
+<script src="assets/pages/corporate.js"></script>
+<script src="assets/pages/corporate-division.js"></script>
+<script src="assets/pages/city-operations.js"></script>
+<script src="assets/pages/operating-assets.js"></script>
 </body>
 </html>

@@ -64,6 +64,7 @@ QP.define('development', {
   controls:function(s){
     return QP.seg('basis', s.basis, [{v:'m', l:'Apr'}, {v:'ytd', l:'YTD'}]) + QP.dates(s.from, s.to, 'from', 'to') + QP.clearBtn(QP.dirty());
   },
+  legendRight:function(s){ return QP.seg('cmp', s.cmp, [{v:'plan',l:'vs Plan'},{v:'forecast',l:'vs Forecast'}], 'sm'); },
   body:function(s){
     var h = '', ytd = s.basis === 'ytd', cmp = s.cmp;
     if (QP.persona.context) {
@@ -71,13 +72,15 @@ QP.define('development', {
         '<div><span class="k">Compared against</span><span class="v">'+(cmp === 'plan' ? 'Plan' : 'Forecast')+'</span></div><div><span class="k">Currency</span><span class="v">'+f.sar+' millions</span></div><div class="sp"></div>'+
         '<div style="justify-content:center">'+QP.seg('basis', s.basis, [{v:'m', l:'Selected Month'}, {v:'ytd', l:'YTD'}], 'sm')+'</div></div>';
     }
-    h += QP.sec('KPI Cards', 'Actual, plan and forecast for each business unit · '+(ytd ? 'YTD to Apr-26' : 'cumulative to Apr-26'), QP.seg('cmp', cmp, [{v:'plan',l:'vs Plan'},{v:'forecast',l:'vs Forecast'}], 'sm'), 'first');
+    /* cards show name, value and variance; plan, forecast and counts live in the hover card,
+       led by the reference the variance is measured against */
     h += '<div class="qp-grid g8">' + CARDS.map(function(c, i){
-      if (c.hcOnly) return QP.kpi({label:c.n, value:f.i(c.a), sub:'HC <b>'+f.i(c.a)+'</b> · Actual <b>'+f.i(c.a)+'</b>', status:'neu', chip:QP.pill('No plan set', 'neu'), spark:QP.sparkPath(c.tr), cls:'sm'});
+      if (c.hcOnly) return QP.kpi({label:c.n, value:f.i(c.a), detail:'HC <b>'+f.i(c.a)+'</b> · Actual <b>'+f.i(c.a)+'</b>', status:'neu', chip:QP.pill('No plan set', 'neu'), cls:'sm'});
       var base = cmp === 'plan' ? c.p : c.fc, v = f.varPct(c.a, base), tone = QP.tone(v, c.hc ? 'none' : 'up');
       var fm = c.hc ? f.i : function(x){ return M(x); };
+      var plan = 'Plan <b>'+fm(c.p)+'</b>', fcst = 'Forecast <b>'+fm(c.fc)+'</b>';
       return QP.kpi({label:c.n, value:fm(c.a), status:c.hc ? 'amb' : (Math.abs(v) < 2 ? 'amb' : tone), cls:'sm' + (i === 0 ? ' total' : ''),
-        sub:'Plan <b>'+fm(c.p)+'</b> · Forecast <b>'+fm(c.fc)+'</b>', chip:chip(v, {good:c.hc ? 'none' : 'up'}), spark:QP.sparkPath(c.tr, tone)});
+        detail:cmp === 'plan' ? plan + ' · ' + fcst : fcst + ' · ' + plan, chip:chip(v, {good:c.hc ? 'none' : 'up'})});
     }).join('') + '</div>';
 
     /* performance report */

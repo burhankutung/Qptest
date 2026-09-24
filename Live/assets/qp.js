@@ -65,10 +65,17 @@ QP.PERSONAS = {
 };
 QP.USERS = Object.keys(QP.PERSONAS);
 QP.USERS.forEach(function(k){ QP.PERSONAS[k].slug = k; });
-QP.ASSETS = '/Live/assets/';
+/* 'path': served through the host's rewrites (/user/<user>/<dashboard>).
+   'hash': opened from the folder or any plain static server (app.html#/user/…).
+   Each page's head sets QP_MODE and a <base>, so asset paths stay relative. */
+QP.MODE = window.QP_MODE === 'hash' ? 'hash' : 'path';
+QP.ASSETS = 'assets/';
+QP.HOME = QP.MODE === 'path' ? '/' : 'index.html';
 QP.can = function(p){ return QP.persona.pages.indexOf(p) >= 0; };
-QP.url = function(page, user){ return '/user/' + (user || QP.persona.slug) + (page ? '/' + page : ''); };
+QP.route = function(page, user){ return '/user/' + (user || QP.persona.slug) + (page ? '/' + page : ''); };
+QP.url = function(page, user){ return (QP.MODE === 'hash' ? 'app.html#' : '') + QP.route(page, user); };
 QP.href = function(p){ return QP.url(p); };
+QP.current = function(){ return QP.MODE === 'hash' ? decodeURI(location.hash.slice(1)) : location.pathname; };
 
 /* ── formatting ────────────────────────────────────────────────────────── */
 function n(v, dp){
@@ -170,13 +177,14 @@ QP.card = function(o){
   return '<section class="qp-card '+(o.cls||'')+(o.status ? ' st-'+o.status : '')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.style ? ' style="'+o.style+'"' : '')+'>'+hd+(o.body||'')+(o.foot ? '<div class="qp-foot">'+icon('info')+'<span>'+o.foot+'</span></div>' : '')+'</section>';
 };
 QP.kpi = function(o){
-  var info = o.info ? '<span class="info" data-tip="'+esc(o.info)+'" tabindex="0" role="img" aria-label="Definition">'+icon('info')+'</span>' : '';
-  return '<div class="qp-kpi '+(o.status||'neu')+' '+(o.cls||'')+'"'+(o.id ? ' id="'+o.id+'"' : '')+'>'+
-    '<div class="k"><span class="lab">'+o.label+'</span>'+(o.st ? '<span class="st">'+o.st+'</span>' : '')+info+'</div>'+
+  return '<div class="qp-kpi '+(o.status||'neu')+' '+(o.cls||'')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.info ? ' data-def="'+esc(o.info)+'"' : '')+'>'+
+    '<div class="k"><span class="lab">'+o.label+'</span>'+(o.st ? '<span class="st">'+o.st+'</span>' : '')+'</div>'+
+    (o.info ? '<span class="sr">'+esc(o.info)+'</span>' : '')+
     (o.pair ? o.pair : '<div class="v">'+o.value+(o.unit ? '<small>'+o.unit+'</small>' : '')+'</div>')+
     (o.meter || '')+
     ((o.chip || o.foot) ? '<div class="ft">'+(o.chip||'')+(o.foot||'')+'</div>' : '')+
-    (o.sub ? '<div class="t">'+o.sub+'</div>' : '')+
+    /* secondary figures live in the hover card; kept in the DOM for screen readers */
+    ((o.detail || o.sub) ? '<div class="t sr">'+(o.detail || o.sub)+'</div>' : '')+
     (o.spark ? '<svg class="spark" viewBox="0 0 56 20" preserveAspectRatio="none">'+o.spark+'</svg>' : '')+
   '</div>';
 };
@@ -201,38 +209,45 @@ QP.bar = function(pct, color){ return '<span class="qp-bar"><span class="tk"><i 
 QP.table = function(o){
   var cols = o.cols, tid = o.id || 't', hasExp = o.rows.some(function(r){ return r.children && r.children.length; }) || o.expAll;
   var open = QP.state._open || {}, xl = o.expLabel || 'Cost lines';
-  var spacer = '<span class="qp-exp-sp" aria-hidden="true"></span>';
   function cc(c){ return (c.cls||'')+(c.band ? ' band' : '')+(c.key ? ' key' : ''); }
   function unit(l){ return String(l).replace(/\s*\(([^()]*)\)\s*$/, ' <span class="u">($1)</span>'); }
-  var h = '<div class="qp-tbl'+(hasExp ? ' has-exp' : '')+'"'+(o.maxh ? ' style="max-height:'+o.maxh+'px"' : '')+'><table>';
-  h += '<thead>';
-  if (o.groups) {
-    h += '<tr class="grp">' + o.groups.map(function(g){ return '<th scope="colgroup" colspan="'+g.span+'"'+(g.band ? ' class="band"' : '')+'>'+(g.label ? '<span>'+g.label+'</span>' : '')+'</th>'; }).join('') + '</tr>';
-  }
-  h += '<tr>' + cols.map(function(c){ return '<th scope="col" class="'+cc(c)+'"'+(c.w ? ' style="width:'+c.w+'"' : '')+'>'+unit(c.label)+'</th>'; }).join('') + '</tr></thead><tbody>';
-  function cells(r, child, lead){
+  function vals(r, child){ return cols.map(function(c){ var v = c.fmt ? c.fmt(r, child) : r[c.k]; return v == null || v === '—' ? '<span class="qp-na" data-tip="Not applicable to this line">n/a</span>' : v; }); }
+  /* a row's status dot comes from its own status pill, else its first variance */
+  function tone(html, flag){ var m = /qp-pill (pos|neg|amb|neu)/.exec(html) || /qp-chip (pos|neg|amb|neu)/.exec(html); return m ? m[1] : flag ? 'neg' : null; }
+  var rowVals = o.rows.map(function(r){ return vals(r); });
+  var tones = rowVals.map(function(v, i){ return tone(v.join(''), o.rows[i].flag); });
+  var dots = tones.some(Boolean);
+  var xc = hasExp ? '<td class="xc"></td>' : '';
+  function cells(v, t){
     return cols.map(function(c, i){
-      var v = c.fmt ? c.fmt(r, child) : r[c.k];
-      if (v == null || v === '—') v = '<span class="qp-na" data-tip="Not applicable to this line">n/a</span>';
-      if (i === 0 && lead) v = '<span class="nmx">'+lead+'<span>'+v+'</span></span>';
-      return '<td class="'+cc(c)+(i === 0 ? ' nm' : '')+'">'+v+'</td>';
+      var x = v[i];
+      if (i === 0 && t) x = '<span class="nmx"><i class="dot '+t+'" aria-hidden="true"></i><span>'+x+'</span></span>';
+      return '<td class="'+cc(c)+(i === 0 ? ' nm' : '')+'">'+x+'</td>';
     }).join('');
   }
+  var h = '<div class="qp-tbl'+(hasExp ? ' has-exp' : '')+(dots ? ' has-dot' : '')+'"'+(o.maxh ? ' style="max-height:'+o.maxh+'px"' : '')+'><table>';
+  h += '<thead>';
+  if (o.groups) {
+    h += '<tr class="grp">' + o.groups.map(function(g){ return '<th scope="colgroup" colspan="'+g.span+'"'+(g.band ? ' class="band"' : '')+'>'+(g.label ? '<span>'+g.label+'</span>' : '')+'</th>'; }).join('') + (hasExp ? '<th class="xc"></th>' : '') + '</tr>';
+  }
+  h += '<tr>' + cols.map(function(c){ return '<th scope="col" class="'+cc(c)+'"'+(c.w ? ' style="width:'+c.w+'"' : '')+'>'+unit(c.label)+'</th>'; }).join('') +
+    (hasExp ? '<th class="xc"><span class="sr">'+esc(xl)+'</span></th>' : '') + '</tr></thead><tbody>';
   o.rows.forEach(function(r, ri){
     var id = tid + '-' + ri, isOpen = !!open[id];
-    var kids = r.children && r.children.length, lead = hasExp ? spacer : '';
+    var kids = r.children && r.children.length, ctl = '';
     if (kids) {
-      var name = String(cols[0].fmt ? cols[0].fmt(r) : r[cols[0].k]).replace(/<[^>]*>/g, '');
-      var ctl = r.children.map(function(_, ci){ return id + '-c' + ci; }).join(' ');
-      lead = '<button class="qp-exp" data-exp="'+id+'" aria-expanded="'+isOpen+'" aria-controls="'+ctl+'" aria-label="'+esc(xl+': '+name)+'" data-tip="'+esc(xl)+'">'+icon('chevr')+'</button>';
+      var name = String(rowVals[ri][0]).replace(/<[^>]*>/g, '');
+      var ids = r.children.map(function(_, ci){ return id + '-c' + ci; }).join(' ');
+      ctl = '<button class="qp-exp" data-exp="'+id+'" aria-expanded="'+isOpen+'" aria-controls="'+ids+'" aria-label="'+esc(xl+': '+name)+'" data-tip="'+esc(xl)+'">'+icon('chevr')+'</button>';
     }
-    h += '<tr class="'+(r.flag ? 'flag ' : '')+(r.sel ? 'sel ' : '')+(kids ? 'xp ' : '')+(r.cls||'')+'"'+(kids ? ' data-xp="'+id+'"' : '')+(r.tip ? ' data-tip="'+esc(r.tip)+'"' : '')+'>' + cells(r, false, lead) + '</tr>';
+    h += '<tr class="'+(r.sel ? 'sel ' : '')+(kids ? 'xp ' : '')+(r.cls||'')+'"'+(kids ? ' data-xp="'+id+'"' : '')+(r.tip ? ' data-tip="'+esc(r.tip)+'"' : '')+'>' +
+      cells(rowVals[ri], dots ? tones[ri] || 'none' : null) + (hasExp ? '<td class="xc">'+ctl+'</td>' : '') + '</tr>';
     if (kids) r.children.forEach(function(c, ci){
-      h += '<tr id="'+id+'-c'+ci+'" class="child'+(c.flag ? ' flag' : '')+'" data-parent="'+id+'"'+(isOpen ? '' : ' hidden')+'>' + cells(c, true) + '</tr>';
+      h += '<tr id="'+id+'-c'+ci+'" class="child" data-parent="'+id+'"'+(isOpen ? '' : ' hidden')+'>' + cells(vals(c, true), null) + xc + '</tr>';
     });
   });
   h += '</tbody>';
-  if (o.total) h += '<tfoot><tr>' + cells(o.total, false, hasExp ? spacer : '') + '</tr></tfoot>';
+  if (o.total) h += '<tfoot><tr>' + cells(vals(o.total), dots ? 'none' : null) + xc + '</tr></tfoot>';
   return h + '</table></div>';
 };
 
@@ -247,11 +262,52 @@ QP.tip = {
     var top = y - hh - 12; if (top < 8) top = y + 18;
     tipEl.style.left = left + 'px'; tipEl.style.top = top + 'px';
   },
-  hide:function(){ if (tipEl) tipEl.classList.remove('on'); }
+  hide:function(){ if (tipEl) tipEl.classList.remove('on'); hideKTip(); }
 };
 QP.tipRows = function(title, rows){
   return '<div class="h">'+title+'</div>' + rows.map(function(r){ return '<div class="row"><span>'+(r.c ? '<i style="background:'+r.c+'"></i>' : '')+r.l+'</span><b>'+r.v+'</b></div>'; }).join('');
 };
+/* KPI hover card (OE reference): title, value, then dot rows — the reference
+   and variance first, other reference figures, status, and the definition.
+   Built from the card itself, so every QP.kpi gets one with no extra wiring. */
+var ktipEl = null, kcard = null;
+var KSTATUS = {pos:'on track', neg:'underperforming', amb:'at risk'};
+function plain(html){ return String(html).replace(/<\/?b>/g, '').replace(/\s+/g, ' ').trim(); }
+function kpiTip(card){
+  var lab = card.querySelector('.k .lab'), v = card.querySelector('.v'), pair = card.querySelector('.pair');
+  var value = v ? v.innerHTML : pair ? [].map.call(pair.children, function(d){ return d.querySelector('b').textContent + ' <small>' + esc(d.querySelector('span').textContent) + '</small>'; }).join(' · ') : '';
+  var t = card.querySelector('.t'), sub = t ? t.innerHTML.split(/\s·\s/).map(plain).filter(Boolean) : [];
+  var ft = card.querySelector('.ft'), change = [], pills = [];
+  if (ft) [].forEach.call(ft.childNodes, function(n){
+    if (n.nodeType === 1 && n.classList.contains('qp-pill')) pills.push(n.textContent.trim().toLowerCase());
+    else if (n.textContent.trim()) change.push(n.nodeType === 1 && n.classList.contains('qp-chip') ? n.outerHTML : esc(n.textContent.trim()));
+  });
+  var st = card.querySelector('.k .st'); if (st && st.textContent.trim()) pills.unshift(st.textContent.trim().toLowerCase());
+  var status = ['pos','neg','amb'].filter(function(c){ return card.classList.contains(c); })[0];
+  if (status && pills.indexOf(KSTATUS[status]) < 0) pills.push(KSTATUS[status]);
+  var chg = change.reduce(function(acc, part){ return acc ? acc + (/^(vs|over|under|against)\b/i.test(part) ? ' ' : ' · ') + part : part; }, '');
+  var lead = [sub[0], chg].filter(Boolean).join(' · ');
+  var rows = (lead ? [{h:lead, lead:true}] : []).concat(sub.slice(1).map(function(s){ return {h:s}; }), pills.filter(function(p, i){ return pills.indexOf(p) === i; }).map(function(p){ return {h:esc(p)}; }));
+  if (card.dataset.def) rows.push({h:esc(card.dataset.def)});
+  return '<span class="k">'+esc(lab ? lab.textContent.trim() : '')+'</span><span class="v">'+value+'</span>'+
+    (rows.length ? '<span class="rows">'+rows.map(function(r){ return '<span class="r'+(r.lead ? ' lead' : '')+'"><i></i><span>'+r.h+'</span></span>'; }).join('')+'</span>' : '');
+}
+function placeKTip(x, y){
+  var w = ktipEl.offsetWidth, h = ktipEl.offsetHeight;
+  var top = y - h - 17; if (top < 8) top = y + 22;
+  ktipEl.style.left = Math.min(window.innerWidth - w - 8, Math.max(8, x - w / 2)) + 'px';
+  ktipEl.style.top = top + 'px';
+}
+function hideKTip(){ kcard = null; if (ktipEl) ktipEl.classList.remove('on'); }
+document.addEventListener('mouseover', function(ev){
+  var c = ev.target.closest && ev.target.closest('.qp-kpi');
+  if (!c || c === kcard) return;
+  if (!ktipEl || !ktipEl.isConnected) { ktipEl = document.createElement('div'); ktipEl.className = 'qp-ktip'; ktipEl.setAttribute('role', 'tooltip'); document.body.appendChild(ktipEl); }
+  kcard = c; ktipEl.innerHTML = kpiTip(c); placeKTip(ev.clientX, ev.clientY); ktipEl.classList.add('on');
+});
+document.addEventListener('mousemove', function(ev){ if (kcard) placeKTip(ev.clientX, ev.clientY); });
+document.addEventListener('mouseout', function(ev){ if (kcard && !kcard.contains(ev.relatedTarget)) hideKTip(); });
+window.addEventListener('scroll', hideKTip, true);
 QP.toast = function(msg){
   var t = document.querySelector('.qp-toast'); if (!t) { t = document.createElement('div'); t.className = 'qp-toast'; document.body.appendChild(t); }
   t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove('on'); }, 2200);
@@ -455,7 +511,7 @@ function shell(){
     (multi ? '' : '<span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span>')+'<h1>Q-Profit</h1><span class="prod">Finance Executive Dashboard</span></div>'+
     '<div class="qp-who" data-who tabindex="0" role="button" aria-haspopup="true" aria-label="'+esc(p.name)+', '+esc(p.role)+' — dashboards menu"><span class="av">'+p.ini+'</span><span><b>'+p.name+'</b><span>'+p.role+'</span></span>'+icon('chevd','cv')+
       '<div class="qp-pop" role="menu"><div class="hd"><b>'+p.name+'</b><span>'+p.role+'</span></div><div class="acc">Access</div><div class="scope">'+p.scope+'</div>'+access+
-      '<a href="/" class="all" role="menuitem">'+icon('users')+'All users</a></div></div></header>';
+      '<a href="'+QP.HOME+'" class="all" role="menuitem">'+icon('users')+'All users</a></div></div></header>';
   return {rail:rail, top:top};
 }
 function crumb(){
@@ -479,7 +535,7 @@ QP.render = function(){
   var main = document.getElementById('qp-body'), y = window.scrollY;
   QP.charts = []; QP.tip.hide();
   try {
-    main.innerHTML = crumb() + '<div class="qp-ctl">'+QP.def.controls(QP.state)+'</div><div class="qp-legrow">'+QP.legend()+'</div>' + QP.def.body(QP.state) + FOOTER;
+    main.innerHTML = crumb() + '<div class="qp-ctl">'+QP.def.controls(QP.state)+'</div><div class="qp-legrow">'+QP.legend()+(QP.def.legendRight ? '<div class="rt">'+QP.def.legendRight(QP.state)+'</div>' : '')+'</div>' + QP.def.body(QP.state) + FOOTER;
     if (QP.def.mount) QP.def.mount(QP.state);
   } catch (e) {
     if (window.console) console.error(e);
@@ -530,7 +586,8 @@ function bind(){
     var a = t.closest('a[href]');
     if (a && ev.button === 0 && !ev.metaKey && !ev.ctrlKey && !ev.shiftKey && !ev.altKey && !a.target && !a.hasAttribute('download')) {
       var u = new URL(a.href, location.href);
-      if (u.origin === location.origin && /^\/user\//.test(u.pathname)) { ev.preventDefault(); QP.go(u.pathname); return; }
+      if (QP.MODE === 'path' && u.origin === location.origin && /^\/user\//.test(u.pathname)) { ev.preventDefault(); QP.go(u.pathname); return; }
+      if (QP.MODE === 'hash' && u.pathname === location.pathname && /^#\/user\//.test(u.hash)) { ev.preventDefault(); QP.go(u.hash.slice(1)); return; }
     }
     if (t.closest('[data-reload]')) { location.reload(); return; }
     var seg = t.closest('.qp-seg button[data-k]'); if (seg && !seg.disabled) { QP.set(seg.dataset.k, seg.dataset.v); return; }
@@ -580,9 +637,14 @@ function mountShell(){
    returns to the same view. ─────────────────────────────────────────── */
 var FRAME = '<div class="qp-app"><div id="qp-rail-slot" style="display:contents"></div><main class="qp-main"><div id="qp-top-slot"></div><div id="qp-body"></div></main></div>';
 var kept = {};
-QP.go = function(path){
+QP.go = function(target){
   closeMenus();
-  if (path === location.pathname) return;
+  var path = String(target), h = path.indexOf('#');
+  if (h >= 0) path = path.slice(h + 1);
+  if (path === QP.current()) return;
+  /* hash mode may run from file://, where history.pushState can be refused: a plain
+     fragment change works everywhere and the hashchange listener routes it */
+  if (QP.MODE === 'hash') { location.hash = path; return; }
   history.replaceState({y:window.scrollY}, '');
   history.pushState({y:0}, '', path);
   route(0);
@@ -595,7 +657,8 @@ function ensureFrame(){ if (!document.getElementById('qp-body')) document.body.i
 function route(y){
   if (QP.persona && QP.def && QP.state) kept[QP.persona.slug + '/' + QP.pageId] = QP.state;
   QP.tip.hide(); QP.charts = [];
-  var r = QP.parse(location.pathname), per = r && QP.PERSONAS[r.user];
+  if (QP.MODE === 'hash' && !location.hash) { location.replace(QP.HOME); return; }
+  var r = QP.parse(QP.current()), per = r && QP.PERSONAS[r.user];
   if (!per) return unknownUser(r && r.user);
   QP.persona = per;
   var page = r.page || per.pages[0];
@@ -626,13 +689,16 @@ function unknownUser(user){
   document.title = 'Page not found · Q-Profit';
   document.body.innerHTML = '<div class="qp-solo"><header class="qp-top"><div class="qp-brand"><span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span><h1>Q-Profit</h1><span class="prod">Finance Executive Dashboard</span></div></header>'+
     notice('users', 'Page not found', user ? 'There’s no user called “'+esc(user)+'”. Open the directory to find the right workspace.' : 'This address doesn’t match a Q-Profit page.',
-      '<a class="qp-link" href="/">'+icon('users')+'All users</a>', '404') + '<footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span></footer></div>';
+      '<a class="qp-link" href="'+QP.HOME+'">'+icon('users')+'All users</a>', '404') + '<footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span></footer></div>';
   window.scrollTo(0, 0);
 }
 QP.boot = function(){
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   bind();
-  window.addEventListener('popstate', function(ev){ route(ev.state && ev.state.y); });
+  if (QP.MODE === 'hash') window.addEventListener('hashchange', function(){ route(0); });
+  else {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.addEventListener('popstate', function(ev){ route(ev.state && ev.state.y); });
+  }
   route(0);
 };
 /* the app page boots itself; the directory and reference pages load this file for its registry only */

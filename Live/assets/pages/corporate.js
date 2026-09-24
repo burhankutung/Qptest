@@ -53,7 +53,6 @@ QP.define('corporate', {
       var v = f.varPct(a, p), st = v > 10 ? 'neg' : v > 0 ? 'amb' : 'pos';
       return QP.kpi({label:label, value:M(a), unit:'M', sub:'Plan <b>'+M(p)+'</b>', status:st, chip:chip(v, {good:'down'}), id:id});
     }
-    h += QP.sec('KPI Cards', 'Cost categories, actual against plan · '+(ytd ? 'YTD to Mar-26' : 'Mar-26'), '', 'first');
     h += '<div class="qp-grid g4">' + card('Total', tA, tP) +
       CATS.slice(0, 5).map(function(c){ return card(c.kpi, A(c), P(c)); }).join('') +
       QP.kpi({label:'Initiatives', status:'amb', pair:'<div class="pair"><div><b>23</b><span>Live</span></div><div class="neg"><b>4</b><span>Behind schedule</span></div></div>',
