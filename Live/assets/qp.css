@@ -6,7 +6,9 @@
    below. Deliberate, requested exceptions: area-summary headers carry a
    faint white line-art overlay; the KPI hover card uses the OE reference
    tooltip's own panel, border and shadow; table hover / selected rows use
-   light mixes of the canvas and light purple. These stay decorative
+   light mixes of the canvas and light purple; status edges (KPI cards,
+   metric tiles, status cards, legend keys) fade from the state colour at the
+   top into the card. These stay decorative
    and never sit behind text at a strength that changes its contrast.
 
    Approved palette and the role the client assigned to each colour:
@@ -259,7 +261,7 @@ a{color:inherit}
 .qp-legend{display:inline-flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:10px;
   padding:8px 16px;font-size:var(--fs-xs);color:var(--mut)}
 .qp-legend span{display:inline-flex;align-items:center;gap:7px}
-.qp-legend i{width:3px;height:13px;border-radius:2px}
+.qp-legend i{width:3px;height:13px;border-radius:2px;background:linear-gradient(180deg,var(--tc) 0%,color-mix(in srgb,var(--tc) 35%,transparent) 100%)}
 
 /* period / basis context strip */
 .qp-context{display:flex;align-items:stretch;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-top:14px;overflow:hidden}
@@ -303,7 +305,7 @@ a{color:inherit}
 .qp-card.tight{padding:18px}
 .qp-card.flush{padding:0;overflow:clip}
 /* a card that reports one measure carries its status on the left edge */
-.qp-card.st-pos,.qp-card.st-neg,.qp-card.st-amb,.qp-card.st-neu{border-left:3px solid var(--tc)}
+.qp-card.st-pos,.qp-card.st-neg,.qp-card.st-amb,.qp-card.st-neu{border-left:3px solid transparent;background:linear-gradient(180deg,var(--tc,var(--neu)) 0%,color-mix(in srgb,var(--tc,var(--neu)) 45%,transparent) 45%,transparent 100%) 0 0/3px 100% no-repeat border-box,var(--card)}
 .qp-card.st-pos{--tc:var(--pos)}.qp-card.st-neg{--tc:var(--neg)}.qp-card.st-amb{--tc:var(--amb)}.qp-card.st-neu{--tc:var(--neu)}
 .qp-card>.hd{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
 .qp-card>.hd .tt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px}
@@ -327,7 +329,7 @@ a{color:inherit}
 
 /* ── KPI card (OE reference): status on the left edge, label, value with
    its unit, then the variance and the reference figures ───────────────── */
-.qp-kpi{position:relative;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--tc,var(--neu));border-radius:var(--r-tile);
+.qp-kpi{position:relative;background:linear-gradient(180deg,var(--tc,var(--neu)) 0%,color-mix(in srgb,var(--tc,var(--neu)) 45%,transparent) 45%,transparent 100%) 0 0/3px 100% no-repeat border-box,var(--card);border:1px solid var(--line);border-left:3px solid transparent;border-radius:var(--r-tile);
   padding:14px 16px;display:flex;flex-direction:column;min-width:0}
 .qp-kpi.pos{--tc:var(--pos)}.qp-kpi.neg{--tc:var(--neg)}.qp-kpi.amb{--tc:var(--amb)}.qp-kpi.neu{--tc:var(--neu)}
 .qp-kpi .k{display:flex;align-items:flex-start;gap:6px;font-size:var(--fs-xs);font-weight:400;color:var(--mut);line-height:1.35;min-height:16px}
@@ -402,7 +404,7 @@ a{color:inherit}
 
 /* metric tile: label, value, target line; the left edge is the status */
 .qp-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.qp-tile{background:var(--card2);border:1px solid var(--line);border-left:3px solid var(--tc,var(--neu));border-radius:8px;padding:10px 12px;min-width:0;display:flex;flex-direction:column}
+.qp-tile{background:linear-gradient(180deg,var(--tc,var(--neu)) 0%,color-mix(in srgb,var(--tc,var(--neu)) 45%,transparent) 45%,transparent 100%) 0 0/3px 100% no-repeat border-box,var(--card2);border:1px solid var(--line);border-left:3px solid transparent;border-radius:8px;padding:10px 12px;min-width:0;display:flex;flex-direction:column}
 .qp-tile.pos{--tc:var(--pos)}.qp-tile.neg{--tc:var(--neg)}.qp-tile.amb{--tc:var(--amb)}.qp-tile.neu{--tc:var(--neu)}
 .qp-tile.wide{grid-column:1 / -1}
 .qp-tile .k{font-size:var(--fs-xs);color:var(--mut);line-height:1.35;display:flex;align-items:center;gap:6px}

@@ -165,15 +165,17 @@ QP.tile = function(k, v, t, tone, cls){
 QP.statusPill = function(){ var p = QP.persona; var closed = /as at/.test(p.status); return '<span class="qp-status"><i></i><b>Month closed</b>· '+p.status+'</span>'; };
 QP.legend = function(){
   return '<span class="qp-legend" aria-label="Status legend">'+
-    '<span><i style="background:var(--pos)"></i>On track / favourable</span>'+
-    '<span><i style="background:var(--amb)"></i>At risk</span>'+
-    '<span><i style="background:var(--neg)"></i>Underperforming / adverse</span>'+
-    '<span><i style="background:var(--neu)"></i>No data</span></span>';
+    '<span><i style="--tc:var(--pos)"></i>On track / favourable</span>'+
+    '<span><i style="--tc:var(--amb)"></i>At risk</span>'+
+    '<span><i style="--tc:var(--neg)"></i>Underperforming / adverse</span>'+
+    '<span><i style="--tc:var(--neu)"></i>No data</span></span>';
 };
+/* section headings are the headline alone; the caption argument is accepted
+   for call-site compatibility but no longer rendered */
 QP.sec = function(title, cap, rt, cls){
-  return '<div class="qp-sec '+(cls||'')+'"><h2>'+title+'</h2>'+(cap ? '<span class="cap">'+cap+'</span>' : '')+(rt ? '<div class="rt">'+rt+'</div>' : '')+'</div>';
+  return '<div class="qp-sec '+(cls||'')+'"><h2>'+title+'</h2>'+(rt ? '<div class="rt">'+rt+'</div>' : '')+'</div>';
 };
-QP.eyebrow = function(t, cap){ return '<div class="qp-eyebrow">'+t+(cap ? '<span class="cap">'+cap+'</span>' : '')+'</div>'; };
+QP.eyebrow = function(t){ return '<div class="qp-eyebrow">'+t+'</div>'; };
 QP.card = function(o){
   var hd = (o.title || o.rt) ? '<div class="hd"><div class="tt"><h3>'+(o.title||'')+(o.cap ? ' <span class="cap">'+o.cap+'</span>' : '')+'</h3>'+(o.sub ? '<p>'+o.sub+'</p>' : '')+'</div>'+(o.rt ? '<div class="rt">'+o.rt+'</div>' : '')+'</div>' : '';
   return '<section class="qp-card '+(o.cls||'')+(o.status ? ' st-'+o.status : '')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.style ? ' style="'+o.style+'"' : '')+'>'+hd+(o.body||'')+(o.foot ? '<div class="qp-foot">'+icon('info')+'<span>'+o.foot+'</span></div>' : '')+'</section>';
