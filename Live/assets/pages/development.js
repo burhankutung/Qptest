@@ -125,9 +125,9 @@ QP.define('development', {
         body:'<div class="qp-big"><span class="v">'+M(A)+'</span><span class="u">M</span>'+chip(f.varPct(A, P), {suffix:'vs plan'})+'</div>'+
           '<div class="qp-sub2">Plan <b>'+M(P)+'</b> · Forecast <b>'+M(FC)+'</b></div>'+
           '<div class="qp-bullet">'+
-            '<div class="r"><span class="l">Actual</span><span class="tk"><i style="width:'+(A/mx*100)+'%;background:var(--s1)"></i><span class="tick" style="left:'+(P/mx*100)+'%"></span></span><span class="v">'+f.n(A)+'</span></div>'+
-            '<div class="r"><span class="l">Plan</span><span class="tk"><i style="width:'+(P/mx*100)+'%;background:var(--plan)"></i></span><span class="v">'+f.n(P)+'</span></div>'+
-            '<div class="r"><span class="l">Forecast</span><span class="tk"><i style="width:'+(FC/mx*100)+'%;background:var(--s4)"></i></span><span class="v">'+f.n(FC)+'</span></div>'+
+            '<div class="r"'+QP.tipAttr('Actual '+f.SAR+' '+f.n(A)+' M: '+f.SAR+' '+f.n(P - A)+' M ('+f.n(f.varPct(A, P))+'%) behind the YTD plan')+'><span class="l">Actual</span><span class="tk"><i style="width:'+(A/mx*100)+'%;background:var(--s1)"></i><span class="tick" style="left:'+(P/mx*100)+'%"'+QP.tipAttr('Plan marker: '+f.SAR+' '+f.n(P)+' M YTD plan')+'></span></span><span class="v">'+f.n(A)+'</span></div>'+
+            '<div class="r"'+QP.tipAttr('YTD plan '+f.SAR+' '+f.n(P)+' M')+'><span class="l">Plan</span><span class="tk"><i style="width:'+(P/mx*100)+'%;background:var(--plan)"></i></span><span class="v">'+f.n(P)+'</span></div>'+
+            '<div class="r"'+QP.tipAttr('Forecast '+f.SAR+' '+f.n(FC)+' M: '+f.SAR+' '+f.n(FC - A)+' M above actual')+'><span class="l">Forecast</span><span class="tk"><i style="width:'+(FC/mx*100)+'%;background:var(--s4)"></i></span><span class="v">'+f.n(FC)+'</span></div>'+
           '</div>'+QP.legendHtml([{l:'Plan marker', c:'var(--target)', t:'dash'}]),
         foot:'Actual is '+M(P - A)+' M behind plan and '+M(FC - A)+' M behind forecast.'}) +
       QP.card({cls:'f15', title:'Monthly Trend', sub:s.trend === 'perf' ? 'Monthly work performed ('+f.sar+' M)' : 'Development headcount at month end', rt:QP.seg('trend', s.trend, [{v:'perf',l:'Performance'},{v:'hc',l:'Headcount'}], 'sm'),

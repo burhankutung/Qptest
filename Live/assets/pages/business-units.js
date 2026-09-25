@@ -19,10 +19,10 @@ var UNITS = {
   'Hospitality':             {bud:520.0, com:233.8, wp:201.0, a:201.0, p:204.6, fy:212.0}
 };
 var PROJ = [
-  {n:'Six Flags', bu:'Entertainment', v:'Saudi Motorsport', cv:1232, mc:68, cu:40, ll:[24.5896, 46.3335]},
-  {n:'Speed Park', bu:'Entertainment', v:'MC2 Contracting', cv:925, mc:50, cu:20, ll:[24.582429, 46.322565]},
-  {n:'Aquarabia', bu:'Entertainment', v:'MC3 Builders', cv:804, mc:85, cu:20, ll:[24.5871, 46.3234]},
-  {n:'Anime Hub', bu:'Entertainment', v:'Saudi Motorsport', cv:604, mc:90, cu:83, ll:[24.5945, 46.3262], approx:true, detail:{gfa:'500 m²', rides:78, handover:'Jun 2024', mainc:'Qiddiya Co.', op:'Saudi Motorsport', tb:5925, tc:4865, tw:4305, bp:'Business Plan Approved'}},
+  {n:'Six Flags', bu:'Entertainment', v:'Saudi Motorsport', cv:1232, mc:68, cu:40, ll:[24.5896, 46.3335], logo:'logos/sixflags.png'},
+  {n:'Speed Park', bu:'Entertainment', v:'MC2 Contracting', cv:925, mc:50, cu:20, ll:[24.582429, 46.322565], glyph:'flag'},
+  {n:'Aquarabia', bu:'Entertainment', v:'MC3 Builders', cv:804, mc:85, cu:20, ll:[24.5871, 46.3234], logo:'logos/aquarabia.png'},
+  {n:'Anime Hub', bu:'Entertainment', v:'Saudi Motorsport', cv:604, mc:90, cu:83, ll:[24.5945, 46.3262], approx:true, glyph:'sparkle', detail:{gfa:'500 m²', rides:78, handover:'Jun 2024', mainc:'Qiddiya Co.', op:'Saudi Motorsport', tb:5925, tc:4865, tw:4305, bp:'Business Plan Approved'}},
   {n:'Arena bowl', bu:'PMBS Stadium', v:'MC2 Contracting', cv:488.0, mc:54, cu:14, ll:[24.585, 46.342]},
   {n:'Retail spine', bu:'Retail', v:'MC3 Builders', cv:310.0, mc:41, cu:9, ll:[24.5881, 46.3386], approx:true},
   {n:'Concert hall', bu:'QPAC', v:'MC2 Contracting', cv:262.0, mc:47, cu:11, ll:[24.5881, 46.3386], approx:true},
@@ -33,6 +33,16 @@ var PROJ = [
 var SITES = {
   'Six Flags': [[24.59086,46.33816],[24.59061,46.33806],[24.59036,46.33752],[24.5901,46.33714],[24.58979,46.33678],[24.58934,46.33639],[24.58888,46.33608],[24.58855,46.33593],[24.5881,46.33576],[24.58766,46.33569],[24.5872,46.3357],[24.58702,46.33559],[24.58629,46.3342],[24.58621,46.33399],[24.58635,46.33386],[24.58662,46.33376],[24.58699,46.33359],[24.58743,46.33336],[24.58726,46.33288],[24.5871,46.3327],[24.58684,46.33261],[24.58662,46.33257],[24.58638,46.33236],[24.58622,46.33216],[24.58615,46.33186],[24.58615,46.33165],[24.58623,46.33139],[24.58638,46.33108],[24.58661,46.33077],[24.58683,46.33062],[24.58704,46.33052],[24.58752,46.33042],[24.58814,46.3302],[24.58832,46.33009],[24.58817,46.32985],[24.58839,46.32959],[24.58859,46.32976],[24.58874,46.32966],[24.58869,46.32944],[24.58913,46.32948],[24.58928,46.32961],[24.58952,46.32981],[24.5897,46.32989],[24.59034,46.32979],[24.59045,46.32999],[24.59062,46.33077],[24.59071,46.33174],[24.59068,46.3326],[24.59075,46.33313],[24.59094,46.33375],[24.59116,46.33422],[24.59143,46.33462],[24.5917,46.33494],[24.59186,46.33541],[24.59188,46.33575],[24.59179,46.33613],[24.59164,46.33645],[24.59136,46.33684],[24.59115,46.33731],[24.59452,46.34004],[24.59424,46.34111],[24.59086,46.33816]],
   'Aquarabia': [[24.58995,46.32675],[24.5893,46.3257],[24.58885,46.32516],[24.58854,46.32441],[24.58851,46.32314],[24.5886,46.32162],[24.5886,46.31974],[24.58854,46.31924],[24.58871,46.31831],[24.58872,46.31767],[24.58745,46.31772],[24.58694,46.31902],[24.58729,46.31924],[24.58729,46.31952],[24.58705,46.31973],[24.58588,46.32129],[24.5841,46.32332],[24.58438,46.32901],[24.5847,46.32911],[24.58542,46.3287],[24.5863,46.32767],[24.58779,46.3277],[24.58902,46.32798],[24.58995,46.32675]]
+};
+
+/* map badges: official logos live in assets/logos (from each park's own site); projects with
+   no published logo get a themed glyph in the dashboard's icon style, not a brand mark */
+var GLYPHS = {
+  flag:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 21V3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'+
+    '<rect x="5.5" y="4" width="13.5" height="9" fill="none" stroke="currentColor" stroke-width="1.4"/>'+
+    '<path d="M5.5 4h3.4v3H5.5zM12.3 4h3.4v3h-3.4zM8.9 7h3.4v3H8.9zM15.7 7H19v3h-3.3zM5.5 10h3.4v3H5.5zM12.3 10h3.4v3h-3.4z" fill="currentColor"/></svg>',
+  sparkle:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3.5l1.9 5.6 5.6 1.9-5.6 1.9L11 18.5l-1.9-5.6-5.6-1.9 5.6-1.9z" fill="currentColor"/>'+
+    '<path d="M18.5 14l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z" fill="currentColor"/></svg>'
 };
 
 /* Leaflet is loaded on first use, only on this page */
@@ -180,10 +190,12 @@ QP.define('business-units', {
       else if (pts.length > 1) map.fitBounds(pts, {paddingTopLeft:[40, 56], paddingBottomRight:[150, 48], maxZoom:16});
       else map.setView(pts[0] || [24.5881, 46.3386], 15);
       all.forEach(function(p){
-        var on = p.n === pk, sz = on ? 20 : 14;
+        /* a project with a logo or glyph shows it in a white badge; others keep the plain dot */
+        var badge = p.logo || p.glyph, on = p.n === pk, sz = badge ? (on ? 38 : 30) : (on ? 20 : 14);
         if (SITES[p.n]) L.polygon(SITES[p.n], {className:'site' + (on ? ' on' : ''), interactive:false}).addTo(map);
-        var icon = L.divIcon({className:'qp-pin' + (on ? ' on' : ' mut') + (p.approx ? ' approx' : ''), iconSize:[sz, sz], iconAnchor:[sz / 2, sz / 2],
-          html:'<i></i><b>'+(on ? '<em>Selected</em>' : '')+QP.esc(p.n)+' · '+p.mc+'%</b>'});
+        var mark = p.logo ? '<img src="'+QP.ASSETS+p.logo+'" alt="">' : p.glyph ? GLYPHS[p.glyph] : '';
+        var icon = L.divIcon({className:'qp-pin' + (badge ? ' badge' : '') + (on ? ' on' : ' mut') + (p.approx ? ' approx' : ''), iconSize:[sz, sz], iconAnchor:[sz / 2, sz / 2],
+          html:'<i>'+mark+'</i><b>'+(on ? '<em>Selected</em>' : '')+QP.esc(p.n)+' · '+p.mc+'%</b>'});
         var mk = L.marker(p.ll, {icon:icon, title:p.n + (p.approx ? ' (approximate location)' : ''), alt:p.n, riseOnHover:true, zIndexOffset:on ? 1000 : 0})
           .on('click', function(){ if (s.pick !== p.n) { s.pick = p.n; refocus = {v:p.n}; QP.render(); } })
           .on('mouseover', function(){ hl(p.n, true); }).on('mouseout', function(){ hl(p.n, false); })

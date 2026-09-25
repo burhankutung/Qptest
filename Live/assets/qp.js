@@ -179,6 +179,8 @@ QP.card = function(o){
   var hd = (o.title || o.rt) ? '<div class="hd"><div class="tt"><h3>'+(o.title||'')+(o.cap ? ' <span class="cap">'+o.cap+'</span>' : '')+'</h3>'+(o.sub ? '<p>'+o.sub+'</p>' : '')+'</div>'+(o.rt ? '<div class="rt">'+o.rt+'</div>' : '')+'</div>' : '';
   return '<section class="qp-card '+(o.cls||'')+(o.status ? ' st-'+o.status : '')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.style ? ' style="'+o.style+'"' : '')+(o.tip ? ' data-tip="'+esc(o.tip)+'" tabindex="0"' : '')+'>'+hd+(o.body||'')+(o.foot ? '<div class="qp-foot">'+icon('info')+'<span>'+o.foot+'</span></div>' : '')+'</section>';
 };
+/* tooltip attributes for any element: shown on hover, tap or keyboard focus */
+QP.tipAttr = function(t){ return ' data-tip="'+esc(t)+'" tabindex="0"'; };
 /* small i button beside a label: its tooltip (hover, tap or focus) defines the measure */
 QP.infoBtn = function(label, def){ return '<button type="button" class="qp-ib" data-tip="'+esc(def)+'" aria-label="'+esc('About '+String(label).replace(/<[^>]*>/g, '')+': '+def)+'">'+icon('info')+'</button>'; };
 QP.kpi = function(o){

@@ -605,7 +605,12 @@ a{color:inherit}
 .qp-bullet .r .tk{position:relative;height:10px;border-radius:5px;background:var(--line)}
 .qp-bullet .r .tk i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
 .qp-bullet .r .v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
-.qp-bullet .tick{position:absolute;top:-5px;bottom:-5px;border-left:2px dashed var(--target)}
+/* the plan tick draws a 2px dashed line but has a 12px hover area for its tooltip */
+.qp-bullet .tick{position:absolute;top:-5px;bottom:-5px;width:12px;margin-left:-6px;cursor:help;z-index:1}
+.qp-bullet .tick::before{content:"";position:absolute;left:5px;top:0;bottom:0;border-left:2px dashed var(--target)}
+.qp-bullet .r[data-tip]{cursor:help;border-radius:6px;margin:-3px -6px;padding:3px 6px;transition:background .15s}
+.qp-bullet .r[data-tip]:hover{background:var(--card2)}
+.qp-bullet .r[data-tip]:focus-visible{outline:2px solid var(--acc);outline-offset:0}
 
 /* ring gauge (Project progress) */
 .qp-ring{display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0 2px;text-align:center}
@@ -658,6 +663,14 @@ a{color:inherit}
 .qp-pin.hl b{border-color:var(--acc)}
 .qp-pin.on b{left:calc(100% + 9px);background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700;padding:4px 9px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 .qp-pin.on b em{font-style:normal;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-right:7px;padding-right:7px;border-right:1px solid rgba(255,255,255,.45)}
+/* badge pins: the project's logo (or glyph) on a white disc so brand colours stay true on any map */
+.qp-pin.badge i{background:#fff;border:2px solid color-mix(in srgb,var(--area) 30%,#fff);display:grid;place-items:center;padding:4px;
+  color:var(--area);box-shadow:0 1px 5px rgba(0,0,0,.28)}
+.qp-pin.badge i img{width:100%;height:100%;object-fit:contain;display:block}
+.qp-pin.badge i svg{width:100%;height:100%;display:block}
+.qp-pin.badge.hl i{transform:scale(1.1)}
+.qp-pin.badge.on i{background:#fff;border:3px solid var(--acc);color:var(--acc);padding:5px}
+.qp-pin.badge.approx i{border-style:dashed}
 .qp-pin:focus-visible{outline:none}
 .qp-pin:focus-visible i{outline:2px solid var(--acc);outline-offset:3px}
 .qp-map-key{z-index:1000}
@@ -890,3 +903,9 @@ a{color:inherit}
 .qp-comp:hover i{opacity:.45}
 .qp-comp i:hover,.qp-comp i:focus-visible{opacity:1}
 .qp-comp i:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+/* segment labels under a composition bar: same flex weights, so each sits under its segment */
+.qp-comp-lb{display:flex;gap:2px;flex:1 1 100%;min-width:0;margin-top:-2px;font-size:var(--fs-xs);color:var(--mut);line-height:1.3}
+.qp-comp-lb span{display:flex;min-width:0;overflow:hidden}
+.qp-comp-lb em{font-style:normal;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qp-comp-lb b{flex:none;margin:0 6px 0 5px;font-weight:600;color:var(--ink)}
+.qp-comp-lb span:last-child b{margin-right:0}
