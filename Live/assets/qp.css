@@ -161,25 +161,27 @@ a{color:inherit}
 .qp-rail{flex:none;width:var(--rail-w);background:var(--card);border:1px solid var(--line);border-radius:16px;
   display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 0;position:sticky;top:var(--gut);transition:width .2s ease}
 .qp-rail a .lb{display:none}
-.qp-rail-tg{appearance:none;display:grid;place-items:center;width:46px;height:36px;margin-top:4px;border:0;border-top:1px solid var(--line);border-radius:0;
-  background:none;color:var(--mut);cursor:pointer;padding:10px 0 0}
-.qp-rail-tg:hover{color:var(--ink)}
-.qp-rail-tg svg{width:18px;height:18px;transition:transform .2s}
 :root[data-rail="open"] .qp-rail{width:var(--rail-w-open);align-items:stretch;padding:16px 12px}
-:root[data-rail="open"] .qp-rail .lg{width:auto;justify-content:flex-start;padding-left:9px}
-:root[data-rail="open"] .qp-rail a:not(.lg){width:auto;justify-content:flex-start;gap:12px;padding:0 13px}
+:root[data-rail="open"] .qp-rail a{width:auto;justify-content:flex-start;gap:12px;padding:0 13px}
 :root[data-rail="open"] .qp-rail a .lb{display:inline;font-size:var(--fs-md);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 :root[data-rail="open"] .qp-rail a.on .lb{font-weight:600}
-:root[data-rail="open"] .qp-rail-tg{width:auto;justify-content:end;padding-right:13px;display:flex;align-items:center}
-:root[data-rail="open"] .qp-rail-tg svg{transform:rotate(180deg)}
-.qp-rail .lg{width:52px;padding:4px 0 14px;margin-bottom:4px;border-bottom:1px solid var(--line);display:flex;justify-content:center}
-.qp-rail a.lg{height:auto;border-radius:0}
-.qp-rail a.lg:hover{background:none}
+/* rail head: collapsed, the logo mark is the expand button; expanded, the full
+   logo sits beside a collapse button (the two states never show together) */
+.qp-rail .lg{width:52px;padding:4px 0 14px;margin-bottom:4px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:8px}
+.qp-rail .lg-open{appearance:none;border:0;background:none;padding:4px;margin:-4px;border-radius:10px;cursor:pointer;display:block;transition:background .15s}
+.qp-rail .lg-open:hover{background:var(--card2)}
 .qp-rail .lg .mk{display:block;width:44px;height:28px;overflow:hidden}
 .qp-rail .lg .mk img{width:69px;height:auto;max-width:none;display:block;margin:-12.5px 0 0 -12.5px}
-/* expanded rail shows the full Qiddiya logo; the wordmark turns white on the dark theme */
+.qp-rail .lg-full,.qp-rail .lg-close{display:none}
+.qp-rail .lg-close{appearance:none;border:0;background:none;color:var(--mut);cursor:pointer;width:30px;height:28px;border-radius:8px;place-items:center;flex:none;padding:0;transition:background .15s,color .15s}
+.qp-rail .lg-close:hover{background:var(--card2);color:var(--ink)}
+.qp-rail .lg-close svg{width:18px;height:18px;transform:rotate(180deg)}
+:root[data-rail="open"] .qp-rail .lg{width:auto;justify-content:space-between;padding:4px 0 14px 9px}
+:root[data-rail="open"] .qp-rail .lg-open{display:none}
+:root[data-rail="open"] .qp-rail .lg-full{display:block;min-width:0}
+:root[data-rail="open"] .qp-rail .lg-close{display:grid}
+/* the full logo; the wordmark turns white on the dark theme */
 .qp-rail .lg .full{display:none;height:28px;width:auto;max-width:100%}
-:root[data-rail="open"] .qp-rail .lg .mk{display:none}
 :root[data-rail="open"] .qp-rail .lg .full.lt{display:block}
 :root[data-rail="open"][data-theme="dark"] .qp-rail .lg .full.lt{display:none}
 :root[data-rail="open"][data-theme="dark"] .qp-rail .lg .full.dk{display:block}
@@ -828,7 +830,6 @@ a{color:inherit}
     flex-direction:row;justify-content:space-evenly;align-items:center;padding:6px;
     box-shadow:0 8px 24px rgba(26,26,26,.12)}
   .qp-rail .lg{display:none}
-  .qp-rail-tg{display:none}
   :root[data-rail="open"] .qp-rail{width:auto;padding:6px;align-items:center}
   :root[data-rail="open"] .qp-rail a:not(.lg){justify-content:center;padding:0}
   :root[data-rail="open"] .qp-rail a .lb{display:none}
@@ -878,3 +879,14 @@ a{color:inherit}
 .qp-card.qp-hastip{cursor:help;transition:border-color .15s}
 .qp-card.qp-hastip:hover{border-color:color-mix(in srgb,var(--acc) 35%,var(--line))}
 .qp-card.qp-hastip:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* i button beside a label (QP.infoBtn); the definition shows as a tooltip */
+.qp-ib{appearance:none;border:0;background:none;padding:0;margin-left:5px;width:16px;height:16px;display:inline-grid;place-items:center;
+  vertical-align:-3px;color:var(--mut);cursor:help;border-radius:50%;transition:color .15s}
+.qp-ib svg{width:14px;height:14px}
+.qp-ib:hover,.qp-ib:focus-visible{color:var(--acc-ink)}
+/* composition bar segments explain themselves on hover/focus */
+.qp-comp i{cursor:help;transition:opacity .15s}
+.qp-comp:hover i{opacity:.45}
+.qp-comp i:hover,.qp-comp i:focus-visible{opacity:1}
+.qp-comp i:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}

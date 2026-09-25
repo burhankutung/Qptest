@@ -179,6 +179,8 @@ QP.card = function(o){
   var hd = (o.title || o.rt) ? '<div class="hd"><div class="tt"><h3>'+(o.title||'')+(o.cap ? ' <span class="cap">'+o.cap+'</span>' : '')+'</h3>'+(o.sub ? '<p>'+o.sub+'</p>' : '')+'</div>'+(o.rt ? '<div class="rt">'+o.rt+'</div>' : '')+'</div>' : '';
   return '<section class="qp-card '+(o.cls||'')+(o.status ? ' st-'+o.status : '')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.style ? ' style="'+o.style+'"' : '')+(o.tip ? ' data-tip="'+esc(o.tip)+'" tabindex="0"' : '')+'>'+hd+(o.body||'')+(o.foot ? '<div class="qp-foot">'+icon('info')+'<span>'+o.foot+'</span></div>' : '')+'</section>';
 };
+/* small i button beside a label: its tooltip (hover, tap or focus) defines the measure */
+QP.infoBtn = function(label, def){ return '<button type="button" class="qp-ib" data-tip="'+esc(def)+'" aria-label="'+esc('About '+String(label).replace(/<[^>]*>/g, '')+': '+def)+'">'+icon('info')+'</button>'; };
 QP.kpi = function(o){
   return '<div class="qp-kpi '+(o.status||'neu')+' '+(o.cls||'')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.info ? ' data-def="'+esc(o.info)+'"' : '')+'>'+
     '<div class="k"><span class="lab">'+o.label+'</span>'+(o.st ? '<span class="st">'+o.st+'</span>' : '')+'</div>'+
@@ -322,16 +324,24 @@ if (pref('qp-rail') === 'open') ROOT.setAttribute('data-rail', 'open');
 function isDark(){ return ROOT.getAttribute('data-theme') === 'dark'; }
 function railOpen(){ return ROOT.getAttribute('data-rail') === 'open'; }
 function themeAttrs(){ var d = isDark(); return ' aria-pressed="'+d+'" aria-label="Switch to '+(d ? 'light' : 'dark')+' theme" data-tip="'+(d ? 'Light' : 'Dark')+' theme"'; }
-function railAttrs(){ var o = railOpen(); return ' aria-expanded="'+o+'" aria-label="'+(o ? 'Collapse' : 'Expand')+' menu" data-tip="'+(o ? 'Collapse' : 'Expand')+' menu"'; }
 QP.themeButton = function(){ return '<button type="button" class="qp-theme" data-theme-toggle'+themeAttrs()+'>'+icon('moon', 'moon')+icon('sun', 'sun')+'</button>'; };
-QP.railButton = function(){ return '<button type="button" class="qp-rail-tg" data-rail-toggle'+railAttrs()+'>'+icon('expand')+'</button>'; };
+/* rail head: collapsed, the logo mark is the expand button; expanded, the full logo sits
+   beside a collapse button. Both are rendered and CSS shows the one for the current state,
+   so the hidden control is also out of the tab order. */
+QP.railHead = function(){
+  return '<div class="lg"><button type="button" class="lg-open" data-rail-toggle aria-expanded="false" aria-label="Expand menu" data-tip="Expand menu">'+
+      '<span class="mk"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt=""></span></button>'+
+    '<span class="lg-full" role="img" aria-label="Qiddiya"><img class="full lt" src="'+QP.ASSETS+'qiddiya-logo.png" alt=""><img class="full dk" src="'+QP.ASSETS+'qiddiya-logo-dark.png" alt=""></span>'+
+    '<button type="button" class="lg-close" data-rail-toggle aria-expanded="true" aria-label="Collapse menu" data-tip="Collapse menu">'+icon('expand')+'</button></div>';
+};
 function refit(){ (QP.charts || []).forEach(function(c){ c.fn(c.el, c.cfg); }); fitTables(); }
 document.addEventListener('click', function(ev){
   var t = ev.target.closest && ev.target.closest('[data-theme-toggle],[data-rail-toggle]');
   if (!t) return;
   QP.tip.hide();
   var sel = t.hasAttribute('data-theme-toggle') ? '[data-theme-toggle]' : '[data-rail-toggle]', hadFocus = document.activeElement === t;
-  setTimeout(function(){ var nb = hadFocus && document.querySelector(sel); if (nb) nb.focus(); });
+  /* keep focus on the control that is visible after the switch */
+  setTimeout(function(){ var nb = hadFocus && [].filter.call(document.querySelectorAll(sel), function(b){ return b.offsetParent; })[0]; if (nb) nb.focus(); });
   if (t.hasAttribute('data-theme-toggle')) {
     var dark = !isDark();
     ROOT.setAttribute('data-theme', dark ? 'dark' : 'light'); pref('qp-theme', dark ? 'dark' : 'light');
@@ -339,7 +349,6 @@ document.addEventListener('click', function(ev){
   } else {
     if (railOpen()) ROOT.removeAttribute('data-rail'); else ROOT.setAttribute('data-rail', 'open');
     pref('qp-rail', railOpen() ? 'open' : 'closed');
-    document.querySelectorAll('[data-rail-toggle]').forEach(function(b){ b.outerHTML = QP.railButton(); });
     setTimeout(refit, 230);
   }
 });
@@ -539,10 +548,9 @@ QP.legendHtml = function(items, key){
 function shell(){
   var p = QP.persona, pageId = QP.pageId, pg = QP.PAGES[pageId];
   var multi = p.pages.length > 1;
-  var rail = multi ? '<nav class="qp-rail" aria-label="Dashboards"><a class="lg" href="'+QP.url()+'" aria-label="'+esc(p.name)+' — home"><span class="mk"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span>'+
-    '<img class="full lt" src="'+QP.ASSETS+'qiddiya-logo.png" alt="Qiddiya"><img class="full dk" src="'+QP.ASSETS+'qiddiya-logo-dark.png" alt="Qiddiya"></a>' +
+  var rail = multi ? '<nav class="qp-rail" aria-label="Dashboards">' + QP.railHead() +
     QP.ORDER.filter(QP.can).map(function(id){ return '<a href="'+QP.href(id)+'" class="'+(id === pageId ? 'on' : '')+'" data-tip="'+QP.PAGES[id].label+'" aria-label="'+QP.PAGES[id].label+'"'+(id === pageId ? ' aria-current="page"' : '')+'>'+icon(id)+'<span class="lb">'+QP.PAGES[id].label+'</span></a>'; }).join('') +
-    QP.railButton() + '</nav>' : '';
+    '</nav>' : '';
   var access = p.pages.map(function(id){ return '<a href="'+QP.href(id)+'" role="menuitem"'+(id === pageId ? ' aria-current="page"' : '')+'>'+icon(id)+QP.PAGES[id].label+'</a>'; }).join('');
   var top = '<header class="qp-top"><div class="qp-brand">'+
     (multi ? '' : '<span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span>')+'<h1>Q-Profit</h1></div>'+
@@ -653,7 +661,7 @@ function bind(){
     if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.closest('[data-act]') && QP.def && QP.def.act) { ev.preventDefault(); var ae = ev.target.closest('[data-act]'); QP.def.act(ae.dataset.act, ae, QP.state); }
   });
   /* data-tip tooltips */
-  document.addEventListener('mouseover', function(ev){ var el = ev.target.closest('[data-tip]'); if (el && el.closest('.qp-rail') && document.documentElement.getAttribute('data-rail') === 'open') return; if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left + r.width / 2 - 14, r.top); } });
+  document.addEventListener('mouseover', function(ev){ var el = ev.target.closest('[data-tip]'); if (el && el.closest('.qp-rail') && !el.hasAttribute('data-rail-toggle') && document.documentElement.getAttribute('data-rail') === 'open') return; if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left + r.width / 2 - 14, r.top); } });
   document.addEventListener('mouseout', function(ev){ var el = ev.target.closest('[data-tip]'); if (el && !el.contains(ev.relatedTarget)) QP.tip.hide(); });
   document.addEventListener('focusin', function(ev){ var el = ev.target.closest('[data-tip]'); if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left, r.top); } });
   document.addEventListener('focusout', QP.tip.hide);
