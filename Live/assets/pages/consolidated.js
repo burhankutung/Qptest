@@ -58,10 +58,12 @@ var PROJECTS = [
 var WORKFORCE = [
   {name:'Qiddiya City FTEs', value:1776, color:'var(--s1)'},
   {name:'Delivery Partners', value:1776, color:'var(--s2)'},
-  {name:'Contingent Workforce', value:925, color:'var(--s3)'},
-  {name:'Operating Assets', value:476, color:'var(--s4)'},
+  {name:'Contingent Workforce', value:925, color:'var(--s4)'},
+  {name:'Operating Assets', value:476, color:'var(--area-oa)'},
   {name:'Pre-Opening', value:331, color:'var(--s6)'}
 ];
+/* trend views by area: actual bars use that area's colour (Overall stays company blue) */
+var TREND_C = {overall:'var(--s1)', corporate:'var(--area-corp)', development:'var(--area-dev)', city:'var(--area-city)'};
 var HC = {corp:[790,804,818,831,845,856], dev:[736,751,769,784,799,812], city:[150,154,159,163,168,174], plan:[1700,1740,1785,1825,1862,1901]};
 var AP = {
   amount:{nd:[31.2,32.6,33.9,34.8,36.1,37.3], le:[30.4,31.8,33.0,34.9,36.2,37.6], gt:[5.9,5.6,5.4,5.2,5.0,4.8]},
@@ -78,7 +80,6 @@ function sum(a){ return a.reduce(function(x,y){ return x+y; },0); }
 function cum(a){ var s = 0; return a.map(function(v){ s += v; return QP.round(s, 1); }); }
 
 QP.define('consolidated', {
-  filterKeys:['basis','year','month'],
   defaults:function(){ return {basis:'m', year:'2026', month:'5', trend:'overall', devB:'plan', corpB:'plan', project:'All', bu:'All', ap:'amount'}; },
   scope:function(){ return 'Qiddiya Investment Company'; },
   controls:function(s){
@@ -86,8 +87,7 @@ QP.define('consolidated', {
     var segL = QP.persona.slug === 'hala' ? 'Month' : QP.MON[mi.m - 1];
     return QP.seg('basis', s.basis, [{v:'m', l:segL}, {v:'ytd', l:'YTD'}]) +
       QP.dd('year', 'Year', s.year, ['2026']) +
-      QP.dd('month', 'Month', s.month, MIDX.map(function(x, i){ return {v:String(i), l:QP.mlabel(x.y, x.m)}; })) +
-      QP.clearBtn(QP.dirty());
+      QP.dd('month', 'Month', s.month, MIDX.map(function(x, i){ return {v:String(i), l:QP.mlabel(x.y, x.m)}; }));
   },
   body:function(s){
     var mi = +s.month, mo = MIDX[mi], ml = QP.mlabel(mo.y, mo.m), ytd = s.basis === 'ytd';
@@ -104,10 +104,10 @@ QP.define('consolidated', {
     }).join('') + '</div>';
 
     /* area summaries */
-    h += QP.eyebrow('Area summaries', 'Open an area for its full dashboard');
+    h += QP.eyebrow('Area Summaries', 'Open an area for its full dashboard');
     function view(id){ return QP.can(id) ? '<a class="qp-link ghost" href="'+QP.href(id)+'">View details'+QP.icon('arrowr')+'</a>' : '<span class="qp-link ghost" aria-disabled="true" data-tip="Outside your access">'+QP.icon('lock')+'View details</span>'; }
     function area(id, name, tag, col, lead, tiles, note){
-      return '<article class="qp-area" style="--ac:'+col+'"><div class="hdr"><div class="tt"><b>'+name+'</b><span>'+tag+'</span></div>'+view(id)+'</div>'+
+      return '<article class="qp-area a-'+id+'" style="--ac:'+col+'"><div class="hdr"><div class="tt"><b>'+name+'</b><span>'+tag+'</span></div>'+view(id)+'</div>'+
         '<div class="bd">'+lead+'<div class="qp-tiles">'+tiles+'</div><div class="ft">'+note+'</div></div></article>';
     }
     function lead(k, v, u, cmp){ return '<div class="lead"><div class="k">'+k+'</div><div class="v">'+v+(u ? '<small>'+u+'</small>' : '')+'</div>'+(cmp ? '<div class="cmp">'+cmp+'</div>' : '')+'</div>'; }
@@ -118,21 +118,21 @@ QP.define('consolidated', {
     var COMMIT = [{n:'Entertainment', v:1850.0, c:'var(--s1)'}, {n:'Master Development Unit', v:4620.0, c:'var(--s2)'}, {n:'Others', v:1442.4, c:'var(--s3)'}], cTot = 7912.4;
     var mK = function(v){ return M(v, 0) + ' K'; };
     h += '<div class="qp-row">' +
-      area('development','Development','Business units · capital projects','var(--c-qblue)', lead('Work Performed', M(2080.0), 'M'),
+      area('development','Development','Business units · capital projects','var(--area-dev-bg)', lead('Work Performed', M(2080.0), 'M'),
         QP.tile('Commitments · Total', M(cTot), '<span class="qp-comp" role="img" aria-label="Commitments by unit" style="flex:1 1 100%;display:flex">'+COMMIT.map(function(c){ return '<i style="flex:'+c.v+';background:'+c.c+'"></i>'; }).join('')+'</span>', 'neu', 'wide') +
         COMMIT.map(function(c){ return QP.tile('<i style="background:'+c.c+'"></i>Commitments · '+c.n, M(c.v), Math.round(c.v / cTot * 100)+'% of commitments', 'neu'); }).join('') +
         QP.tile('MoF', M(1640.0), 'Ministry of Finance funding', 'neu'), 'YTD · '+f.sar+' millions') +
-      area('operating-assets','Operating Assets','Six Flags · Playmaker Studio · Aquarabia','var(--c-aqua600)', lead('Revenue', M(51.9), 'M', vs(51.9, 51.2, 'budget', M)),
+      area('operating-assets','Operating Assets','Six Flags · Playmaker Studio · Aquarabia','var(--area-oa-bg)', lead('Revenue', M(51.9), 'M', vs(51.9, 51.2, 'budget', M)),
         tref('Visitation', f.i(214880), 214880, 207810, 'Budget', f.i) +
         QP.tile('Admission Yield %', M(168.40, 2), 'Admission revenue per guest', 'neu') +
         tref('Total per Cap (Excl. Partnership)', M(242.10, 2), 242.10, 238.50, 'Budget', function(v){ return M(v, 2); }) +
         QP.tile('Headcount', f.i(1284), '', 'neu') +
         tref('EBITDA', M(14.2)+'<small>M</small>', 14.2, 14.1, 'Budget', function(v){ return M(v)+' M'; }, {cls:'wide'}), 'YTD against budget') +
       '</div><div class="qp-row">' +
-      area('corporate','Corporate','Central office · cost functions','var(--c-q300)', lead('Work Performed', M(393.1), 'M', vs(393.1, 381.9, 'plan', M, 'down')),
+      area('corporate','Corporate','Central office · cost functions','var(--area-corp-bg)', lead('Work Performed', M(393.1), 'M', vs(393.1, 381.9, 'plan', M, 'down')),
         tref('Headcount', f.i(856), 856, 892, 'Plan', f.i, {good:'none', tone:'amb'}) +
         QP.tile('Initiatives', '23<small>live</small>', '4 behind schedule', 'amb'), 'YTD against plan · '+f.sar+' millions') +
-      area('city-operations','City Operations','Shared services · Worker’s Village','var(--c-q400)', lead('Work Performed', M(31410, 0), 'K', vs(31410, 30760, 'plan', mK)),
+      area('city-operations','City Operations','Shared services · Worker’s Village','var(--area-city-bg)', lead('Work Performed', M(31410, 0), 'K', vs(31410, 30760, 'plan', mK)),
         QP.tile('Worker’s Village Occupancy', '92%', '', 'neu') +
         QP.tile('Worker’s Village Revenue', M(4180, 0)+'<small>K</small>', '', 'neu') +
         QP.tile('Worker’s Village EBITDA', M(1120, 0)+'<small>K</small>', '', 'neu', 'wide'), 'YTD · '+f.sar+' thousands') +
@@ -149,7 +149,7 @@ QP.define('consolidated', {
     var off = s.trendOff || {};
     var tv = f.varPct(ytd ? ya : T.actual[idx], ytd ? yp : T.plan[idx]), tg = s.trend === 'corporate' ? 'down' : 'up';
     h += QP.card({status:QP.tone(tv, tg), body:'<div class="qp-meta">'+meta+'<span style="margin-left:auto">'+chip(tv, {good:tg, suffix:'vs plan'})+'</span></div><div class="qp-chart" id="c-trend"></div>'+
-      QP.legendHtml([{l:'Actual / Predictor', c:'var(--s1)', off:off[0]},{l:'Plan', c:'var(--plan)', off:off[1]},{l:'YTD Actual / Predictor', c:'var(--s7)', t:'ln', off:off[2]},{l:'YTD Plan', c:'var(--target)', t:'dash', off:off[3]}], 'trendOff'),
+      QP.legendHtml([{l:'Actual / Predictor', c:TREND_C[s.trend], off:off[0]},{l:'Plan', c:'var(--plan)', off:off[1]},{l:'YTD Actual / Predictor', c:'var(--s7)', t:'ln', off:off[2]},{l:'YTD Plan', c:'var(--target)', t:'dash', off:off[3]}], 'trendOff'),
       foot:'Columns are monthly values on the left axis; lines are cumulative YTD on the right axis. Select a legend item to hide a series.'});
 
     /* development BUs + corporate cost items */
@@ -208,13 +208,13 @@ QP.define('consolidated', {
       var tone = function(v, ref){ return v >= ref ? 'var(--s1)' : 'var(--amb)'; };
       var ringCtx = function(v){ return 'vs time consumed <b>'+pm.time+'%</b>' + chip(v - pm.time, {dp:0, unit:' pt', signed:true, good:'up'}); };
       h += '<div class="qp-grid g3">' +
-        QP.card({cls:'tight', body:QP.ring(pm.time, 'var(--s2)', 'Time Consumed', null, '<span class="muted">Elapsed share of the project schedule</span>')}) +
-        QP.card({cls:'tight', body:QP.ring(pm.mc, pm.mc >= pm.time ? 'var(--s1)' : 'var(--amb)', 'Physical Progress', null, ringCtx(pm.mc))}) +
-        QP.card({cls:'tight', body:QP.ring(pm.acct, 'var(--s3)', 'Accounting Progress', null, ringCtx(pm.acct))}) + '</div>';
+        /* each ring explains its own measure on hover or focus */
+        QP.card({cls:'tight qp-hastip', tip:'Time consumed is calculated based on the project completion date.', body:QP.ring(pm.time, 'var(--s2)', 'Time Consumed', null, '<span class="muted">Elapsed share of the project schedule</span>')}) +
+        QP.card({cls:'tight qp-hastip', tip:'Physical progress is measured completion.'+(pm.mc < pm.time ? ' It trails time consumed, so it is shown in amber.' : ''), body:QP.ring(pm.mc, pm.mc >= pm.time ? 'var(--s1)' : 'var(--amb)', 'Physical Progress', null, ringCtx(pm.mc))}) +
+        QP.card({cls:'tight qp-hastip', tip:'Accounting progress is invoiced-to-date.', body:QP.ring(pm.acct, 'var(--s3)', 'Accounting Progress', null, ringCtx(pm.acct))}) + '</div>';
     } else {
       h += QP.card({body:'<div class="qp-empty">'+QP.icon('nomatch')+'No project matches this Project and Business Unit combination.</div>'});
     }
-    h += '<div class="qp-foot" style="margin:10px 4px 0">'+QP.icon('info')+'<span>Time consumed is calculated based on project completion date. Physical progress is measured completion; accounting progress is invoiced-to-date.'+(pm && pm.mc < pm.time ? ' Physical progress trails time consumed — shown in amber.' : '')+'</span></div>';
 
     /* workforce + headcount trend */
     var total = sum(WORKFORCE.map(function(w){ return w.value; }));
@@ -223,7 +223,7 @@ QP.define('consolidated', {
       QP.card({cls:'f1', title:'Total Workforce Summary', sub:'All people working on Qiddiya City, by type', body:'<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:22px"><div class="qp-chart" id="c-wf" style="width:200px;flex:none"></div><div class="qp-dl" style="flex:1 1 220px">'+
         WORKFORCE.map(function(w){ return '<div class="r"><i style="background:'+w.color+'"></i><span class="l">'+w.name+'</span><b>'+f.i(w.value)+'</b><em>'+Math.round(w.value / total * 100)+'%</em></div>'; }).join('')+'</div></div>'}) +
       QP.card({cls:'f15', title:'Qiddiya City Headcount Trend', sub:'Headcount, by business area', rt:'<span class="qp-badge">'+f.i(1842)+' at '+ml+'</span>', body:'<div class="qp-chart" id="c-hc"></div>'+
-        QP.legendHtml([{l:'Actual · Corporate', c:'var(--s1)'},{l:'Actual · Development', c:'var(--s2)'},{l:'Actual · City Operations', c:'var(--s3)'},{l:'Plan · Total', c:'var(--target)', t:'dash'}])}) +
+        QP.legendHtml([{l:'Actual · Development', c:'var(--area-dev)'},{l:'Actual · Corporate', c:'var(--area-corp)'},{l:'Actual · City Operations', c:'var(--area-city)'},{l:'Plan · Total', c:'var(--target)', t:'dash'}])}) +
       '</div>';
 
     /* accounts payable */
@@ -244,14 +244,14 @@ QP.define('consolidated', {
     var fm = function(v){ return f.m(v, k).replace(/<[^>]+>/g,'') + ' ' + T.unit; };
     var cats = MONTHS.slice(0, mi + 1);
     QP.draw('c-trend', 'combo', {h:250, cats:cats, fmt:fm, y2:true, hl:mi,
-      bars:[{name:'Actual / Predictor', color:'var(--s1)', values:T.actual.slice(0, mi + 1), off:off[0]}, {name:'Plan', color:'var(--plan)', values:T.plan.slice(0, mi + 1), off:off[1]}],
+      bars:[{name:'Actual / Predictor', color:TREND_C[s.trend], values:T.actual.slice(0, mi + 1), off:off[0]}, {name:'Plan', color:'var(--plan)', values:T.plan.slice(0, mi + 1), off:off[1]}],
       lines:[{name:'YTD Actual / Predictor', color:'var(--s7)', values:cum(T.actual).slice(0, mi + 1), axis:2, off:off[2], endLabel:function(v){ return f.n(v, k) + ' ' + T.unit; }},
              {name:'YTD Plan', color:'var(--target)', values:cum(T.plan).slice(0, mi + 1), axis:2, dash:'6 5', markers:false, off:off[3]}],
       tipTitle:function(i){ return MONTHS[i] + (i < 3 ? ' 2025' : ' 2026'); },
       extraTip:function(i){ var v = f.varPct(T.actual[i], T.plan[i]); return [{l:'Variance', v:(v > 0 ? '+' : '') + v.toFixed(1) + '%'}]; }});
     QP.draw('c-wf', 'donut', {items:WORKFORCE, size:196, center:f.i(5284), centerLabel:'Total workforce'});
     QP.draw('c-hc', 'combo', {h:236, cats:MONTHS, fmt:function(v){ return f.i(v); }, hl:5, maxBar:18, gap:.72,
-      stack:true, labels:'all', bars:[{name:'Actual · Corporate', color:'var(--s1)', values:HC.corp}, {name:'Actual · Development', color:'var(--s2)', values:HC.dev}, {name:'Actual · City Operations', color:'var(--s3)', values:HC.city}],
+      stack:true, labels:'all', bars:[{name:'Actual · Development', color:'var(--area-dev)', values:HC.dev}, {name:'Actual · Corporate', color:'var(--area-corp)', values:HC.corp}, {name:'Actual · City Operations', color:'var(--area-city)', values:HC.city}],
       lines:[{name:'Plan · Total', color:'var(--target)', values:HC.plan, dash:'6 5', markers:false}],
       extraTip:function(i){ return [{l:'Actual · Total', v:f.i(HC.corp[i] + HC.dev[i] + HC.city[i])}]; }});
     var A = AP[s.ap], amt = s.ap === 'amount';

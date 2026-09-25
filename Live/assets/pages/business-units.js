@@ -19,16 +19,37 @@ var UNITS = {
   'Hospitality':             {bud:520.0, com:233.8, wp:201.0, a:201.0, p:204.6, fy:212.0}
 };
 var PROJ = [
-  {n:'Six Flags', bu:'Entertainment', v:'Saudi Motorsport', cv:1232, mc:68, cu:40, x:.24, y:.40},
-  {n:'Speed Park', bu:'Entertainment', v:'MC2 Contracting', cv:925, mc:50, cu:20, x:.47, y:.66},
-  {n:'Aquarabia', bu:'Entertainment', v:'MC3 Builders', cv:804, mc:85, cu:20, x:.70, y:.34},
-  {n:'Anime Hub', bu:'Entertainment', v:'Saudi Motorsport', cv:604, mc:90, cu:83, x:.55, y:.28, detail:{gfa:'500 m²', rides:78, handover:'Jun 2024', mainc:'Qiddiya Co.', op:'Saudi Motorsport', tb:5925, tc:4865, tw:4305, bp:'Business Plan Approved'}},
-  {n:'Arena bowl', bu:'PMBS Stadium', v:'MC2 Contracting', cv:488.0, mc:54, cu:14, x:.40, y:.45},
-  {n:'Retail spine', bu:'Retail', v:'MC3 Builders', cv:310.0, mc:41, cu:9, x:.40, y:.45},
-  {n:'Concert hall', bu:'QPAC', v:'MC2 Contracting', cv:262.0, mc:47, cu:11, x:.40, y:.45},
-  {n:'Residential phase one', bu:'Residential', v:'MC3 Builders', cv:375.0, mc:33, cu:6, x:.40, y:.45},
-  {n:'Transit spine', bu:'Transport', v:'Saudi Motorsport', cv:288.0, mc:29, cu:4, x:.40, y:.45}
+  {n:'Six Flags', bu:'Entertainment', v:'Saudi Motorsport', cv:1232, mc:68, cu:40, ll:[24.5896, 46.3335]},
+  {n:'Speed Park', bu:'Entertainment', v:'MC2 Contracting', cv:925, mc:50, cu:20, ll:[24.582429, 46.322565]},
+  {n:'Aquarabia', bu:'Entertainment', v:'MC3 Builders', cv:804, mc:85, cu:20, ll:[24.5871, 46.3234]},
+  {n:'Anime Hub', bu:'Entertainment', v:'Saudi Motorsport', cv:604, mc:90, cu:83, ll:[24.5945, 46.3262], approx:true, detail:{gfa:'500 m²', rides:78, handover:'Jun 2024', mainc:'Qiddiya Co.', op:'Saudi Motorsport', tb:5925, tc:4865, tw:4305, bp:'Business Plan Approved'}},
+  {n:'Arena bowl', bu:'PMBS Stadium', v:'MC2 Contracting', cv:488.0, mc:54, cu:14, ll:[24.585, 46.342]},
+  {n:'Retail spine', bu:'Retail', v:'MC3 Builders', cv:310.0, mc:41, cu:9, ll:[24.5881, 46.3386], approx:true},
+  {n:'Concert hall', bu:'QPAC', v:'MC2 Contracting', cv:262.0, mc:47, cu:11, ll:[24.5881, 46.3386], approx:true},
+  {n:'Residential phase one', bu:'Residential', v:'MC3 Builders', cv:375.0, mc:33, cu:6, ll:[24.5881, 46.3386], approx:true},
+  {n:'Transit spine', bu:'Transport', v:'Saudi Motorsport', cv:288.0, mc:29, cu:4, ll:[24.5881, 46.3386], approx:true}
 ];
+/* site outlines traced from OpenStreetMap (© OpenStreetMap contributors, ODbL) */
+var SITES = {
+  'Six Flags': [[24.59086,46.33816],[24.59061,46.33806],[24.59036,46.33752],[24.5901,46.33714],[24.58979,46.33678],[24.58934,46.33639],[24.58888,46.33608],[24.58855,46.33593],[24.5881,46.33576],[24.58766,46.33569],[24.5872,46.3357],[24.58702,46.33559],[24.58629,46.3342],[24.58621,46.33399],[24.58635,46.33386],[24.58662,46.33376],[24.58699,46.33359],[24.58743,46.33336],[24.58726,46.33288],[24.5871,46.3327],[24.58684,46.33261],[24.58662,46.33257],[24.58638,46.33236],[24.58622,46.33216],[24.58615,46.33186],[24.58615,46.33165],[24.58623,46.33139],[24.58638,46.33108],[24.58661,46.33077],[24.58683,46.33062],[24.58704,46.33052],[24.58752,46.33042],[24.58814,46.3302],[24.58832,46.33009],[24.58817,46.32985],[24.58839,46.32959],[24.58859,46.32976],[24.58874,46.32966],[24.58869,46.32944],[24.58913,46.32948],[24.58928,46.32961],[24.58952,46.32981],[24.5897,46.32989],[24.59034,46.32979],[24.59045,46.32999],[24.59062,46.33077],[24.59071,46.33174],[24.59068,46.3326],[24.59075,46.33313],[24.59094,46.33375],[24.59116,46.33422],[24.59143,46.33462],[24.5917,46.33494],[24.59186,46.33541],[24.59188,46.33575],[24.59179,46.33613],[24.59164,46.33645],[24.59136,46.33684],[24.59115,46.33731],[24.59452,46.34004],[24.59424,46.34111],[24.59086,46.33816]],
+  'Aquarabia': [[24.58995,46.32675],[24.5893,46.3257],[24.58885,46.32516],[24.58854,46.32441],[24.58851,46.32314],[24.5886,46.32162],[24.5886,46.31974],[24.58854,46.31924],[24.58871,46.31831],[24.58872,46.31767],[24.58745,46.31772],[24.58694,46.31902],[24.58729,46.31924],[24.58729,46.31952],[24.58705,46.31973],[24.58588,46.32129],[24.5841,46.32332],[24.58438,46.32901],[24.5847,46.32911],[24.58542,46.3287],[24.5863,46.32767],[24.58779,46.3277],[24.58902,46.32798],[24.58995,46.32675]]
+};
+
+/* Leaflet is loaded on first use, only on this page */
+var LEAFLET = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/', lfWait = null, mapView = {}, refocus = null;
+function leaflet(cb){
+  if (window.L) return cb();
+  if (!lfWait) {
+    lfWait = [];
+    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = LEAFLET + 'leaflet.min.css'; document.head.appendChild(css);
+    var js = document.createElement('script'); js.src = LEAFLET + 'leaflet.min.js';
+    js.onload = function(){ var q = lfWait; lfWait = null; q.forEach(function(f){ f(); }); };
+    js.onerror = function(){ var q = lfWait; lfWait = null; q.forEach(function(f){ f(true); }); };
+    document.head.appendChild(js);
+  }
+  lfWait.push(cb);
+}
+
 var CBS = [{n:'Design', b:6600, a:6600}, {n:'Sales Center', b:6240, a:6240}, {n:'Contingency', b:1600, a:1600}, {n:'Inflation', b:6240, a:6240}, {n:'Staff Cost', b:6240, a:6240}];
 var CBSW = [.245,.232,.059,.232,.232];
 var APV = [{n:'Saudi Motorsport', b:[40,10,2]}, {n:'MC2 Contracting', b:[30,5,0]}];
@@ -36,7 +57,6 @@ var APV = [{n:'Saudi Motorsport', b:[40,10,2]}, {n:'MC2 Contracting', b:[30,5,0]
 function unitProjects(bu){ return PROJ.filter(function(p){ return p.bu === bu; }); }
 
 QP.define('business-units', {
-  filterKeys:['basis','from','to','bu','district','project'],
   defaults:function(){ var l = QP.persona.lock; return {basis:'m', from:'2026-04-01', to:'2026-04-30', bu:l && l.bu || 'Entertainment', district:'All', project:'All', pick:'Anime Hub'}; },
   onSet:function(s, k, v){
     if (k === 'basis') { var r = QP.periodRange(2026, 4, v === 'ytd' ? 'ytd' : 'm'); s.from = r.from; s.to = r.to; }
@@ -51,8 +71,7 @@ QP.define('business-units', {
     return QP.seg('basis', s.basis, [{v:'m', l:'Apr'}, {v:'ytd', l:'YTD'}]) + QP.dates(s.from, s.to, 'from', 'to') +
       QP.dd('bu', 'Business Unit', s.bu, buOpts, {locked: lock ? 'Your access is limited to the Entertainment business unit' : null}) +
       QP.dd('district', 'District', s.district, [{v:'All', l:'All'}].concat(s.bu === 'Entertainment' ? ['Anime World'] : [])) +
-      QP.dd('project', 'Project', s.project, [{v:'All', l:'All'}].concat(ps.map(function(p){ return p.n; }))) +
-      QP.clearBtn(QP.dirty());
+      QP.dd('project', 'Project', s.project, [{v:'All', l:'All'}].concat(ps.map(function(p){ return p.n; })));
   },
   body:function(s){
     var U = UNITS[s.bu], dp = U.dp == null ? 1 : U.dp, h = '';
@@ -82,10 +101,13 @@ QP.define('business-units', {
       {label:'Variance', cls:'r', band:true, fmt:function(r){ return chip(f.varPct(r.a, r.p)); }}
     ]}), foot:'Grain: business unit, monthly. Cumulative since project inception. Open a row for the cost breakdown structure beneath the unit.'});
 
-    /* MC progress */
-    var ps = unitProjects(s.bu).filter(function(p){ return s.bu !== 'Entertainment' || p.n !== 'Anime Hub'; });
+    /* one selected project links the MC Progress table, the site map and the details panel */
+    var all = unitProjects(s.bu), pk = all.filter(function(p){ return p.n === s.pick; })[0] || all[0];
+
+    /* MC progress: every project stays listed; the selected one is highlighted */
+    var ps = all;
     h += QP.sec('MC Progress', 'Physical completion by project');
-    h += QP.card({cls:'flush', body:ps.length ? QP.table({id:'bmc', rows:ps.map(function(p){ return {p:p, sel:s.project === p.n || (s.project === 'All' && s.pick === p.n)}; }), cols:[
+    h += QP.card({cls:'flush', body:ps.length ? QP.table({id:'bmc', rows:ps.map(function(p){ return {p:p, sel:p === pk, act:['pick', p.n]}; }), cols:[
       {label:'Project', fmt:function(r){ return r.p.n; }}, {label:'Business Unit', fmt:function(r){ return r.p.bu; }}, {label:'Vendor', fmt:function(r){ return r.p.v; }},
       {label:'Contract Value ('+f.sar+')', cls:'r', fmt:function(r){ return f.n(r.p.cv, dp); }},
       {label:'MC Completion', cls:'r', fmt:function(r){ return QP.bar(r.p.mc, 'var(--s1)'); }},
@@ -93,7 +115,6 @@ QP.define('business-units', {
     ]}) : '<div class="qp-empty">'+QP.icon('info')+'No contracts recorded for this unit.</div>', foot:'Grain: project, monthly. MC completion is physical percentage complete. Contingency at or above 40% is marked amber.'});
 
     /* project performance overview */
-    var all = unitProjects(s.bu), pk = all.filter(function(p){ return p.n === s.pick; })[0] || all[0];
     if (pk) {
       var d = pk.detail;
       var kv = d ? [['GFA (SQM)', d.gfa], ['# of Rides', f.i(d.rides)], ['MC Completion', pk.mc + '%'], ['MC Handover', d.handover], ['Contingency Utilized', pk.cu + '%'], ['Main Contractor', d.mainc], ['Operator', d.op, 'wide']]
@@ -101,9 +122,9 @@ QP.define('business-units', {
       var trio = d ? [['Total Budget', d.tb], ['Total Commitments', d.tc], ['Total Work Performed', d.tw]] : null;
       h += QP.sec('Project Performance Overview', 'Select a project on the site map', d ? '<span class="qp-badge pos">'+d.bp+'</span>' : '');
       h += '<div class="qp-row">' +
-        QP.card({cls:'f15', body:'<div class="qp-map" id="bu-map"><span class="cap">Site map — '+(s.bu === 'Entertainment' ? 'Anime World district' : s.bu)+'</span></div>'+
+        QP.card({cls:'f15', body:'<p class="qp-hint">'+QP.icon('info')+'Select a project on the map or table to view details</p><div class="qp-map" id="bu-map"><span class="cap">Site Map — '+(s.bu === 'Entertainment' ? 'Anime World District' : s.bu)+'</span></div>'+
           (trio ? '<div class="qp-trio" style="margin-top:14px">'+trio.map(function(t){ return '<div><span class="k">'+t[0]+'</span><span class="v">'+M(t[1], 0)+'</span></div>'; }).join('')+'</div>' : '')}) +
-        QP.card({cls:'f1', title:pk.n, sub:pk.bu + ' · ' + pk.v, rt:QP.pill(pk.mc >= 80 ? 'Near handover' : pk.mc >= 50 ? 'In construction' : 'Early works', pk.mc >= 80 ? 'pos' : 'neu'),
+        QP.card({cls:'f1 qp-selected', title:'<span class="k">Selected Project</span>'+pk.n, sub:pk.bu + ' · ' + pk.v, rt:QP.pill(pk.mc >= 80 ? 'Near handover' : pk.mc >= 50 ? 'In construction' : 'Early works', pk.mc >= 80 ? 'pos' : 'neu'),
           body:'<div class="qp-kv">'+kv.map(function(x){ return '<div class="'+(x[2]||'')+'"><span class="k">'+x[0]+'</span><span class="v">'+x[1]+'</span></div>'; }).join('')+'</div>'+
             '<div class="qp-bullet"><div class="r"><span class="l">MC complete</span><span class="tk"><i style="width:'+pk.mc+'%;background:var(--s1)"></i></span><span class="v">'+pk.mc+'%</span></div>'+
             '<div class="r"><span class="l">Contingency</span><span class="tk"><i style="width:'+pk.cu+'%;background:'+(pk.cu >= 40 ? 'var(--amb)' : 'var(--s3)')+'"></i></span><span class="v">'+pk.cu+'%</span></div></div>'}) +
@@ -129,26 +150,52 @@ QP.define('business-units', {
   },
   mount:function(s){
     var el = document.getElementById('bu-map'); if (!el) return;
-    var all = unitProjects(s.bu), W = el.clientWidth || 700, H = 300;
-    if (all.length === 1) { all[0].x = .5; all[0].y = .5; }
-    var svg = '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" role="img" aria-label="Site map">'+
-      '<defs><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="var(--line)" stroke-width="2"/></pattern></defs>'+
-      '<rect width="'+W+'" height="'+H+'" fill="var(--card2)"/>'+
-      '<path d="M0 '+(H*.78)+' C '+(W*.25)+' '+(H*.70)+', '+(W*.45)+' '+(H*.92)+', '+W+' '+(H*.80)+' L '+W+' '+H+' L 0 '+H+' Z" fill="var(--c-aqua300)"/>'+
-      '<path d="M'+(W*.05)+' '+(H*.55)+' C '+(W*.3)+' '+(H*.5)+', '+(W*.6)+' '+(H*.58)+', '+(W*.96)+' '+(H*.5)+'" fill="none" stroke="var(--line2)" stroke-width="10" stroke-linecap="round"/>'+
-      '<path d="M'+(W*.5)+' '+(H*.08)+' C '+(W*.48)+' '+(H*.4)+', '+(W*.52)+' '+(H*.7)+', '+(W*.46)+' '+(H*.95)+'" fill="none" stroke="var(--line2)" stroke-width="8" stroke-linecap="round"/>'+
-      '<rect x="'+(W*.08)+'" y="'+(H*.12)+'" width="'+(W*.3)+'" height="'+(H*.3)+'" rx="14" fill="url(#hatch)" stroke="var(--line)"/>'+
-      '<rect x="'+(W*.58)+'" y="'+(H*.1)+'" width="'+(W*.34)+'" height="'+(H*.32)+'" rx="14" fill="var(--card)" stroke="var(--line)"/>'+
-      '<rect x="'+(W*.3)+'" y="'+(H*.6)+'" width="'+(W*.34)+'" height="'+(H*.2)+'" rx="14" fill="var(--card)" stroke="var(--line)"/>';
-    all.forEach(function(p){
-      var on = p.n === s.pick, x = p.x * W, y = p.y * H;
-      svg += '<g class="pin" data-act="pick" data-v="'+QP.esc(p.n)+'" tabindex="0" role="button" aria-label="'+QP.esc(p.n)+'">'+
-        '<circle class="o" cx="'+x+'" cy="'+y+'" r="'+(on ? 13 : 10)+'" fill="'+(on ? 'var(--acc-bg)' : 'var(--line)')+'"/>'+
-        '<circle cx="'+x+'" cy="'+y+'" r="6" fill="'+(on ? 'var(--acc)' : 'var(--s1)')+'" stroke="var(--card)" stroke-width="2"/>'+
-        '<text x="'+(x + 14)+'" y="'+(y + 4)+'" font-size="12" font-weight="'+(on ? 700 : 600)+'" fill="var(--ink)" paint-order="stroke" stroke="var(--card2)" stroke-width="4">'+p.n+' · '+p.mc+'%</text></g>';
+    var all = unitProjects(s.bu), bu = s.bu, pk = (all.filter(function(p){ return p.n === s.pick; })[0] || all[0] || {}).n;
+    var rows = {}, pins = {};
+    [].forEach.call(document.querySelectorAll('tr.pick[data-act="pick"]'), function(tr){ rows[tr.getAttribute('data-v')] = tr; });
+    /* hover or focus = temporary highlight in both places; click = persistent selection */
+    function hl(n, on){ if (rows[n]) rows[n].classList.toggle('hl', on); if (pins[n]) pins[n].classList.toggle('hl', on); }
+    Object.keys(rows).forEach(function(n){
+      var tr = rows[n];
+      tr.addEventListener('mouseenter', function(){ hl(n, true); }); tr.addEventListener('mouseleave', function(){ hl(n, false); });
+      tr.addEventListener('focus', function(){ hl(n, true); }); tr.addEventListener('blur', function(){ hl(n, false); });
     });
-    el.insertAdjacentHTML('beforeend', svg + '</svg>');
+    var back = refocus; refocus = null;
+    if (back && back.row && rows[back.v]) rows[back.v].focus({preventScroll:true});
+    leaflet(function(failed){
+      if (!el.isConnected) return;
+      if (failed) { el.insertAdjacentHTML('beforeend', '<div class="qp-map-off">'+QP.icon('nomatch')+'Map unavailable offline</div>'); return; }
+      var box = document.createElement('div'); box.className = 'qp-map-canvas'; el.appendChild(box);
+      var map = L.map(box, {scrollWheelZoom:false, zoomControl:false, attributionControl:true});
+      L.control.zoom({position:'topright'}).addTo(map);
+      map.attributionControl.setPrefix(false);
+      /* openstreetmap.org tiles require a Referer, which a page opened from the folder (file://) cannot send;
+         there the same OpenStreetMap style comes from the OSM community server openstreetmap.de */
+      var osm = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
+      L.tileLayer(location.protocol === 'file:' ? 'https://tile.openstreetmap.de/{z}/{x}/{y}.png' : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {maxZoom:18, referrerPolicy:'strict-origin-when-cross-origin', attribution:osm}).addTo(map);
+      /* the view is set first: markers only get their DOM element once the map has one */
+      var pts = all.map(function(p){ return p.ll; }), v = mapView[bu];
+      if (v) map.setView(v.c, v.z, {animate:false});
+      else if (pts.length > 1) map.fitBounds(pts, {paddingTopLeft:[40, 56], paddingBottomRight:[150, 48], maxZoom:16});
+      else map.setView(pts[0] || [24.5881, 46.3386], 15);
+      all.forEach(function(p){
+        var on = p.n === pk, sz = on ? 20 : 14;
+        if (SITES[p.n]) L.polygon(SITES[p.n], {className:'site' + (on ? ' on' : ''), interactive:false}).addTo(map);
+        var icon = L.divIcon({className:'qp-pin' + (on ? ' on' : ' mut') + (p.approx ? ' approx' : ''), iconSize:[sz, sz], iconAnchor:[sz / 2, sz / 2],
+          html:'<i></i><b>'+(on ? '<em>Selected</em>' : '')+QP.esc(p.n)+' · '+p.mc+'%</b>'});
+        var mk = L.marker(p.ll, {icon:icon, title:p.n + (p.approx ? ' (approximate location)' : ''), alt:p.n, riseOnHover:true, zIndexOffset:on ? 1000 : 0})
+          .on('click', function(){ if (s.pick !== p.n) { s.pick = p.n; refocus = {v:p.n}; QP.render(); } })
+          .on('mouseover', function(){ hl(p.n, true); }).on('mouseout', function(){ hl(p.n, false); })
+          .addTo(map);
+        pins[p.n] = mk.getElement();
+        pins[p.n].addEventListener('focus', function(){ hl(p.n, true); }); pins[p.n].addEventListener('blur', function(){ hl(p.n, false); });
+      });
+      map.on('moveend', function(){ mapView[bu] = {c:map.getCenter(), z:map.getZoom()}; });
+      if (back && !back.row && pins[back.v]) pins[back.v].focus({preventScroll:true});
+      if (all.some(function(p){ return p.approx; })) el.insertAdjacentHTML('beforeend', '<span class="qp-map-key"><i></i>Approximate location</span>');
+    });
   },
-  act:function(a, el, s){ if (a === 'pick') { s.pick = el.getAttribute('data-v'); QP.render(); } }
+  act:function(a, el, s){ if (a === 'pick') { var v = el.getAttribute('data-v'); if (s.pick !== v) { s.pick = v; refocus = {v:v, row:el.tagName === 'TR'}; QP.render(); } } }
 });
 })();

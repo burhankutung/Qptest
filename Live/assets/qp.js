@@ -40,15 +40,15 @@ function icon(n, cls){ return '<svg viewBox="0 0 24 24" fill="none" stroke="curr
 QP.icon = icon;
 
 /* ── registry: dashboards and users ─────────────────────────────────── */
-/* A dashboard's key is its URL segment: /user/<user>/<key> */
+/* A dashboard's key is its URL segment: /user/<user>/<key>; area picks its identity colour (the Area Summaries headers) */
 QP.PAGES = {
-  'consolidated':      {label:'Consolidated',        desc:'The company position across every area — company KPIs, area summaries and the tables that carry this month’s movement.'},
-  'development':       {label:'Development',         desc:'Development spend across all business units — actual, plan and forecast, with the cost lines beneath each unit.'},
-  'business-units':    {label:'Business Units',      desc:'Budget, commitments, work performed and variance for one business unit, down to its projects and cost lines.'},
-  'corporate':         {label:'Corporate',           desc:'Central-office cost by category against plan, with initiatives, headcount and payables by function.'},
-  'corporate-division':{label:'Corporate Divisions', desc:'One central-office division’s cost — actual, plan and forecast by cost line — out to FY plan and FY forecast.'},
-  'city-operations':   {label:'City Operations',     desc:'City-wide shared services by asset. Amounts are stated in thousands, not millions.'},
-  'operating-assets':  {label:'Operating Assets',    desc:'Visitation, admission yield, per cap, annual pass and channel performance for each operating asset, through to EBITDA.'}
+  'consolidated':      {label:'Consolidated',        area:null},
+  'development':       {label:'Development',         area:'dev'},
+  'business-units':    {label:'Business Units',      area:'dev'},
+  'corporate':         {label:'Corporate',           area:'corp'},
+  'corporate-division':{label:'Corporate Divisions', area:'corp'},
+  'city-operations':   {label:'City Operations',     area:'city'},
+  'operating-assets':  {label:'Operating Assets',    area:'oa'}
 };
 QP.ORDER = ['consolidated','development','business-units','corporate','corporate-division','city-operations','operating-assets'];
 var ALL = QP.ORDER.slice();
@@ -157,7 +157,6 @@ QP.dates = function(from, to, kf, kt){
   }
   return '<span class="qp-field">From '+one(kf, from)+'</span><span class="qp-field">to '+one(kt, to)+'</span>';
 };
-QP.clearBtn = function(dirty){ return '<button class="qp-clear" data-clear'+(dirty ? '' : ' disabled')+'>'+icon('reset')+'Clear filters</button>'; };
 /* metric tile for area cards: tone is the status edge; t is the target line */
 QP.tile = function(k, v, t, tone, cls){
   return '<div class="qp-tile '+(tone||'neu')+(cls ? ' '+cls : '')+'"><span class="k">'+k+'</span><span class="v">'+v+'</span>'+(t ? '<span class="t">'+t+'</span>' : '')+'</div>';
@@ -178,7 +177,7 @@ QP.sec = function(title, cap, rt, cls){
 QP.eyebrow = function(t){ return '<div class="qp-eyebrow">'+t+'</div>'; };
 QP.card = function(o){
   var hd = (o.title || o.rt) ? '<div class="hd"><div class="tt"><h3>'+(o.title||'')+(o.cap ? ' <span class="cap">'+o.cap+'</span>' : '')+'</h3>'+(o.sub ? '<p>'+o.sub+'</p>' : '')+'</div>'+(o.rt ? '<div class="rt">'+o.rt+'</div>' : '')+'</div>' : '';
-  return '<section class="qp-card '+(o.cls||'')+(o.status ? ' st-'+o.status : '')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.style ? ' style="'+o.style+'"' : '')+'>'+hd+(o.body||'')+(o.foot ? '<div class="qp-foot">'+icon('info')+'<span>'+o.foot+'</span></div>' : '')+'</section>';
+  return '<section class="qp-card '+(o.cls||'')+(o.status ? ' st-'+o.status : '')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.style ? ' style="'+o.style+'"' : '')+(o.tip ? ' data-tip="'+esc(o.tip)+'" tabindex="0"' : '')+'>'+hd+(o.body||'')+(o.foot ? '<div class="qp-foot">'+icon('info')+'<span>'+o.foot+'</span></div>' : '')+'</section>';
 };
 QP.kpi = function(o){
   return '<div class="qp-kpi '+(o.status||'neu')+' '+(o.cls||'')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.info ? ' data-def="'+esc(o.info)+'"' : '')+'>'+
@@ -244,7 +243,9 @@ QP.table = function(o){
       var ids = r.children.map(function(_, ci){ return id + '-c' + ci; }).join(' ');
       ctl = '<button class="qp-exp" data-exp="'+id+'" aria-expanded="'+isOpen+'" aria-controls="'+ids+'" aria-label="'+esc(xl+': '+name)+'" data-tip="'+esc(xl)+'">'+icon('chevr')+'</button>';
     }
-    h += '<tr class="'+(r.sel ? 'sel ' : '')+(kids ? 'xp ' : '')+(r.cls||'')+'"'+(kids ? ' data-xp="'+id+'"' : '')+(r.tip ? ' data-tip="'+esc(r.tip)+'"' : '')+'>' +
+    /* r.act = [action, value]: the whole row selects, by click or Enter/Space */
+    var act = r.act ? ' data-act="'+r.act[0]+'" data-v="'+esc(r.act[1])+'" tabindex="0"'+(r.sel ? ' aria-current="true"' : '') : '';
+    h += '<tr class="'+(r.sel ? 'sel ' : '')+(r.act ? 'pick ' : '')+(kids ? 'xp ' : '')+(r.cls||'')+'"'+(kids ? ' data-xp="'+id+'"' : '')+(r.tip ? ' data-tip="'+esc(r.tip)+'"' : '')+act+'>' +
       cells(rowVals[ri], dots ? tones[ri] || 'none' : null) + (hasExp ? '<td class="xc">'+ctl+'</td>' : '') + '</tr>';
     if (kids) r.children.forEach(function(c, ci){
       h += '<tr id="'+id+'-c'+ci+'" class="child" data-parent="'+id+'"'+(isOpen ? '' : ' hidden')+'>' + cells(vals(c, true), null) + xc + '</tr>';
@@ -538,7 +539,8 @@ QP.legendHtml = function(items, key){
 function shell(){
   var p = QP.persona, pageId = QP.pageId, pg = QP.PAGES[pageId];
   var multi = p.pages.length > 1;
-  var rail = multi ? '<nav class="qp-rail" aria-label="Dashboards"><a class="lg" href="'+QP.url()+'" aria-label="'+esc(p.name)+' — home"><span><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span></a>' +
+  var rail = multi ? '<nav class="qp-rail" aria-label="Dashboards"><a class="lg" href="'+QP.url()+'" aria-label="'+esc(p.name)+' — home"><span class="mk"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span>'+
+    '<img class="full lt" src="'+QP.ASSETS+'qiddiya-logo.png" alt="Qiddiya"><img class="full dk" src="'+QP.ASSETS+'qiddiya-logo-dark.png" alt="Qiddiya"></a>' +
     QP.ORDER.filter(QP.can).map(function(id){ return '<a href="'+QP.href(id)+'" class="'+(id === pageId ? 'on' : '')+'" data-tip="'+QP.PAGES[id].label+'" aria-label="'+QP.PAGES[id].label+'"'+(id === pageId ? ' aria-current="page"' : '')+'>'+icon(id)+'<span class="lb">'+QP.PAGES[id].label+'</span></a>'; }).join('') +
     QP.railButton() + '</nav>' : '';
   var access = p.pages.map(function(id){ return '<a href="'+QP.href(id)+'" role="menuitem"'+(id === pageId ? ' aria-current="page"' : '')+'>'+icon(id)+QP.PAGES[id].label+'</a>'; }).join('');
@@ -553,7 +555,7 @@ function shell(){
 function crumb(){
   var pg = QP.PAGES[QP.pageId], def = QP.def, s = QP.state;
   var scope = def.scope ? def.scope(s) : '';
-  return '<div class="qp-crumb"><b>'+pg.label+'</b>'+(scope ? '<span class="sep">/</span><span class="cur">'+scope+'</span>' : '')+'<span style="flex:1"></span>'+QP.statusPill()+'</div><div class="qp-orient"><p class="qp-desc">'+(def.desc ? def.desc(s) : pg.desc)+'</p></div>';
+  return '<div class="qp-crumb"><b>'+pg.label+'</b>'+(scope ? '<span class="sep">/</span><span class="cur">'+scope+'</span>' : '')+'<span style="flex:1"></span>'+QP.statusPill()+'</div>';
 }
 
 QP.define = function(id, def){ QP.DEFS = QP.DEFS || {}; QP.DEFS[id] = def; };
@@ -563,19 +565,18 @@ QP.set = function(k, v, silent){
   if (QP.def.onSet) QP.def.onSet(QP.state, k, v);
   if (!silent) QP.render();
 };
-QP.dirty = function(){ var d = QP.def.defaults(), s = QP.state; return (QP.def.filterKeys || []).some(function(k){ return String(d[k]) !== String(s[k]); }); };
 
 var FOOTER = '<footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span><span class="sp"></span><span>Amounts in '+F.sar+' millions unless stated · Source: SAP actuals, plan &amp; forecast workbooks</span></footer>';
 QP.render = function(){
   var main = document.getElementById('qp-body'), y = window.scrollY;
   QP.charts = []; QP.tip.hide();
   try {
-    main.innerHTML = crumb() + '<div class="qp-ctl">'+QP.def.controls(QP.state)+'</div><div class="qp-legrow">'+QP.legend()+(QP.def.legendRight ? '<div class="rt">'+QP.def.legendRight(QP.state)+'</div>' : '')+'</div>' + QP.def.body(QP.state) + FOOTER;
+    main.innerHTML = crumb() + '<div class="qp-ctl">'+QP.def.controls(QP.state)+(QP.def.controlsRight ? '<div class="rt">'+QP.def.controlsRight(QP.state)+'</div>' : '')+'</div>' + QP.def.body(QP.state) + FOOTER;
     if (QP.def.mount) QP.def.mount(QP.state);
   } catch (e) {
     if (window.console) console.error(e);
     QP.charts = [];
-    main.innerHTML = notice('info', 'This dashboard couldn’t be displayed', 'Something went wrong while preparing '+QP.PAGES[QP.pageId].label+'. Reloading usually fixes it; your other dashboards are unaffected.',
+    main.innerHTML = notice('info', 'This Dashboard Couldn’t Be Displayed', 'Something went wrong while preparing '+QP.PAGES[QP.pageId].label+'. Reloading usually fixes it; your other dashboards are unaffected.',
       '<button type="button" class="qp-link" data-reload>'+icon('reset')+'Reload</button>' + otherPages(QP.pageId)) + FOOTER;
     return;
   }
@@ -634,7 +635,6 @@ function bind(){
     var ex = t.closest('[data-exp]') || (xr && !t.closest('a,button,input') && !String(window.getSelection()) ? xr.querySelector('[data-exp]') : null);
     if (ex) { var id = ex.dataset.exp, o = !(ex.getAttribute('aria-expanded') === 'true'); QP.state._open = QP.state._open || {}; QP.state._open[id] = o; ex.setAttribute('aria-expanded', o);
       document.querySelectorAll('tr[data-parent="'+id+'"]').forEach(function(r){ r.hidden = !o; }); fitTables(); return; }
-    if (t.closest('[data-clear]')) { var keep = QP.state._open; QP.state = QP.def.defaults(); QP.state._open = Object.assign({}, QP.def._open || {}); QP.render(); QP.toast('Filters reset to the default view'); return; }
     var dt = t.closest('[data-date]'); if (dt) { var pk = dt.parentNode.querySelector('[data-picker]'); try { pk.showPicker(); } catch(e){ pk.click(); } return; }
     var sr = t.closest('[data-series]'); if (sr) { var p = sr.dataset.series.split(':'); QP.state[p[0]] = QP.state[p[0]] || {}; QP.state[p[0]][p[1]] = !QP.state[p[0]][p[1]]; QP.render(); return; }
     var who = t.closest('[data-who]'); if (who && !t.closest('.qp-pop a')) { var wo = !who.classList.contains('open'); closeMenus(who); who.classList.toggle('open', wo); return; }
@@ -701,6 +701,7 @@ function route(y){
   if (!QP.PAGES[page] || !QP.DEFS[page]) return outside(page, 'missing');
   if (per.pages.indexOf(page) < 0) return outside(page, 'access');
   QP.pageId = page; QP.def = QP.DEFS[page];
+  if (QP.PAGES[page].area) ROOT.setAttribute('data-area', QP.PAGES[page].area); else ROOT.removeAttribute('data-area');
   QP.state = kept[per.slug + '/' + page] || Object.assign(QP.def.defaults(), {_open:Object.assign({}, QP.def._open || {})});
   document.title = QP.PAGES[page].label + ' · ' + per.name + ' · Q-Profit';
   mountShell(); QP.render();
@@ -708,22 +709,22 @@ function route(y){
 }
 /* a known user, but a dashboard that doesn't exist or isn't in their workspace */
 function outside(page, why){
-  QP.pageId = null; QP.def = null; QP.state = null;
+  QP.pageId = null; QP.def = null; QP.state = null; ROOT.removeAttribute('data-area');
   mountShell();
   var p = QP.persona, known = QP.PAGES[page];
-  document.title = (why === 'access' ? known.label + ' · not in workspace' : 'Page not found') + ' · Q-Profit';
+  document.title = (why === 'access' ? known.label + ' · not in workspace' : 'Page Not Found') + ' · Q-Profit';
   var links = '<a class="qp-link" href="'+QP.url()+'">'+icon('consolidated')+'Go to '+esc(p.name)+'’s home</a>' + otherPages(p.pages[0]);
   document.getElementById('qp-body').innerHTML = why === 'access'
-    ? notice('lock', known.label+' isn’t part of '+esc(p.name)+'’s workspace', esc(p.name)+'’s access: '+esc(p.scope)+'. '+(p.pages.length > 1 ? 'Open one of their dashboards instead.' : 'Open their dashboard instead.'), links, '403')
-    : notice('info', 'Page not found', 'There’s no dashboard called “'+esc(page)+'”. Check the link, or open one of '+esc(p.name)+'’s dashboards.', links, '404');
+    ? notice('lock', known.label+' Isn’t Part of '+esc(p.name)+'’s Workspace', esc(p.name)+'’s access: '+esc(p.scope)+'. '+(p.pages.length > 1 ? 'Open one of their dashboards instead.' : 'Open their dashboard instead.'), links, '403')
+    : notice('info', 'Page Not Found', 'There’s no dashboard called “'+esc(page)+'”. Check the link, or open one of '+esc(p.name)+'’s dashboards.', links, '404');
   document.getElementById('qp-body').insertAdjacentHTML('beforeend', FOOTER);
   window.scrollTo(0, 0);
 }
 function unknownUser(user){
-  QP.persona = null; QP.pageId = null; QP.def = null; QP.state = null;
-  document.title = 'Page not found · Q-Profit';
+  QP.persona = null; QP.pageId = null; QP.def = null; QP.state = null; ROOT.removeAttribute('data-area');
+  document.title = 'Page Not Found · Q-Profit';
   document.body.innerHTML = '<div class="qp-solo"><header class="qp-top"><div class="qp-brand"><span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span><h1>Q-Profit</h1></div>'+QP.themeButton()+'</header>'+
-    notice('users', 'Page not found', user ? 'There’s no user called “'+esc(user)+'”. Open the directory to find the right workspace.' : 'This address doesn’t match a Q-Profit page.',
+    notice('users', 'Page Not Found', user ? 'There’s no user called “'+esc(user)+'”. Open the directory to find the right workspace.' : 'This address doesn’t match a Q-Profit page.',
       '<a class="qp-link" href="'+QP.HOME+'">'+icon('users')+'All users</a>', '404') + '<footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span></footer></div>';
   window.scrollTo(0, 0);
 }

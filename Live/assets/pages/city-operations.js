@@ -25,13 +25,11 @@ var PL = [
 ];
 
 QP.define('city-operations', {
-  filterKeys:['basis','year','month'],
   defaults:function(){ return {asset:'wv', basis:'m', year:'2026', month:'1'}; },
   scope:function(){ return 'Worker’s Village'; },
   controls:function(s){
     return QP.seg('asset', s.asset, [{v:'wv', l:'Worker Village'}], 'tabs') + QP.seg('basis', s.basis, [{v:'m', l:'Jan'}, {v:'ytd', l:'YTD'}]) +
-      QP.dd('year', 'Year', s.year, ['2026']) + QP.dd('month', 'Month', s.month, [{v:'1', l:'January'}]) +
-      QP.clearBtn(QP.dirty());
+      QP.dd('year', 'Year', s.year, ['2026']) + QP.dd('month', 'Month', s.month, [{v:'1', l:'January'}]);
   },
   body:function(s){
     var h = '', ytd = s.basis === 'ytd';

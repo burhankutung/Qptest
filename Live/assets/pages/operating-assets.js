@@ -68,15 +68,13 @@ function daily(a, upto){
 }
 
 QP.define('operating-assets', {
-  filterKeys:['asset','basis','month'],
   defaults:function(){ return {asset:'sf', basis:'ytd', month:'5', ch:'pc'}; },
   scope:function(s){ return ASSETS[s.asset].name; },
   controls:function(s){
     var ml = QP.MON[+s.month - 1];
     return QP.seg('asset', s.asset, [{v:'sf', l:'Six Flags'}, {v:'pm', l:'Playmaker Studio'}, {v:'aq', l:'Aquarabia'}], 'tabs') +
       QP.seg('basis', s.basis, [{v:'m', l:ml}, {v:'ytd', l:'YTD'}]) +
-      QP.dd('month', 'Month', s.month, MONTHS.map(function(m, i){ return {v:String(i + 1), l:m + '-26'}; })) +
-      QP.clearBtn(QP.dirty());
+      QP.dd('month', 'Month', s.month, MONTHS.map(function(m, i){ return {v:String(i + 1), l:m + '-26'}; }));
   },
   body:function(s){
     var a = ASSETS[s.asset], m = +s.month, ytd = s.basis === 'ytd', ml = QP.MON[m - 1] + '-26';
@@ -97,7 +95,7 @@ QP.define('operating-assets', {
       QP.eyebrow('Annual Pass KPIs', perL) + '<div class="qp-grid g3">' +
         t('Annual Pass Sales (No.)', f.i(a.ap.sales[0] * mult), a.ap.sales[1]) + t('Annual Pass Visits (No.)', f.i(a.ap.visits[0] * mult), a.ap.visits[1]) +
         t('Annual Pass Visits % of Total', f.pct(a.ap.share[0]), a.ap.share[1], {unit:' pt', vs:'vs budget share'}) + '</div>';
-    h += QP.card({cls:'kpiwrap', body:body, foot:'Grain: metric, monthly. Deltas compare '+(ytd ? 'YTD actual against YTD budget' : ml + ' actual against ' + ml + ' budget')+'. Per cap and yield are ratios and do not change with the period basis.', style:'margin-top:24px'});
+    h += QP.card({cls:'kpiwrap', body:body, foot:'Grain: metric, monthly. Deltas compare '+(ytd ? 'YTD actual against YTD budget' : ml + ' actual against ' + ml + ' budget')+'. Per cap and yield are ratios and do not change with the period basis.'});
 
     /* visitor metrics + rides */
     h += '<div class="qp-row" style="margin-top:16px">' +

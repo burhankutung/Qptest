@@ -37,13 +37,12 @@ var APF = [
 var APM = {nd:[17.2,18.0,18.9,19.6,20.4,21.0], le:[21.4,22.3,23.1,23.8,24.5,24.9], gt:[1.9,1.8,1.6,1.5,1.4,1.4]};
 
 QP.define('corporate', {
-  filterKeys:['basis','from','to'],
   defaults:function(){ return {basis:'ytd', from:'2026-01-01', to:'2026-03-31', rep:'ytd', trend:'perf'}; },
   onSet:function(s, k, v){ if (k === 'basis') { var r = QP.periodRange(2026, 3, v === 'ytd' ? 'ytd' : 'm'); s.from = r.from; s.to = r.to; s.rep = v === 'ytd' ? 'ytd' : 'm'; } },
   scope:function(){ return 'Central office'; },
   controls:function(s){
     var tabs = QP.can('corporate-division') ? QP.seg('tab', 'corporate', [{v:'corporate', l:'Corporate'}, {v:'corporate-division', l:'Corporate Division'}], 'tabs') : '';
-    return tabs + QP.seg('basis', s.basis, [{v:'m', l:'Mar'}, {v:'ytd', l:'YTD'}]) + QP.dates(s.from, s.to, 'from', 'to') + QP.clearBtn(QP.dirty());
+    return tabs + QP.seg('basis', s.basis, [{v:'m', l:'Mar'}, {v:'ytd', l:'YTD'}]) + QP.dates(s.from, s.to, 'from', 'to');
   },
   body:function(s){
     var ytd = s.basis === 'ytd', h = '';
@@ -102,12 +101,12 @@ QP.define('corporate', {
     h += '<div class="qp-row">' +
       QP.card({cls:'f1', title:'Performance', sub:'YTD corporate cost against plan and forecast',
         body:'<div class="qp-big"><span class="v">'+M(393.1)+'</span><span class="u">M</span>'+chip(f.varPct(393.1, 381.9), {good:'down', suffix:'vs plan'})+'</div><div class="qp-sub2">Plan <b>'+M(381.9)+'</b> · Forecast <b>'+M(402.0)+'</b></div>'+
-          '<div class="qp-bullet"><div class="r"><span class="l">Actual</span><span class="tk"><i style="width:'+(393.1/420*100)+'%;background:var(--s1)"></i><span class="tick" style="left:'+(381.9/420*100)+'%"></span></span><span class="v">393.1</span></div>'+
+          '<div class="qp-bullet"><div class="r"><span class="l">Actual</span><span class="tk"><i style="width:'+(393.1/420*100)+'%;background:var(--area)"></i><span class="tick" style="left:'+(381.9/420*100)+'%"></span></span><span class="v">393.1</span></div>'+
           '<div class="r"><span class="l">Plan</span><span class="tk"><i style="width:'+(381.9/420*100)+'%;background:var(--plan)"></i></span><span class="v">381.9</span></div>'+
           '<div class="r"><span class="l">Forecast</span><span class="tk"><i style="width:'+(402/420*100)+'%;background:var(--s4)"></i></span><span class="v">402.0</span></div></div>',
         foot:'Cost is '+M(11.2)+' M over plan; the forecast absorbs a further '+M(8.9)+' M.'}) +
       QP.card({cls:'f15', title:'Monthly Trend', sub:perf ? 'Monthly corporate cost ('+f.sar+' M) with plan' : 'Corporate headcount at month end', rt:QP.seg('trend', s.trend, [{v:'perf',l:'Performance'},{v:'hc',l:'Headcount'}], 'sm'),
-        body:'<div class="qp-chart" id="k-trend"></div>'+QP.legendHtml(perf ? [{l:'Monthly', c:'var(--s1)'},{l:'Plan', c:'var(--target)', t:'dash'},{l:'Trend', c:'var(--s3)', t:'ln'}] : [{l:'Monthly', c:'var(--s1)'},{l:'Trend', c:'var(--s3)', t:'ln'}])}) +
+        body:'<div class="qp-chart" id="k-trend"></div>'+QP.legendHtml(perf ? [{l:'Monthly', c:'var(--area)'},{l:'Plan', c:'var(--target)', t:'dash'},{l:'Trend', c:'var(--s3)', t:'ln'}] : [{l:'Monthly', c:'var(--area)'},{l:'Trend', c:'var(--s3)', t:'ln'}])}) +
       '</div>';
 
     /* AP */
@@ -126,7 +125,7 @@ QP.define('corporate', {
     var n = v.length, xs = v.map(function(_, i){ return i; }), mx = sum(xs) / n, my = sum(v) / n;
     var b = sum(xs.map(function(x, i){ return (x - mx) * (v[i] - my); })) / sum(xs.map(function(x){ return (x - mx) * (x - mx); }));
     QP.draw('k-trend', 'combo', {h:230, cats:MONTHS, hl:5, labels:'all', maxBar:34, fmt:function(x){ return perf ? f.n(x) : f.i(x); },
-      bars:[{name:perf ? 'Monthly cost' : 'Headcount', color:'var(--s1)', values:v}],
+      bars:[{name:perf ? 'Monthly cost' : 'Headcount', color:'var(--area)', values:v}],
       lines:(perf ? [{name:'Plan', color:'var(--target)', values:TREND.plan, dash:'5 4', markers:false, width:1.8}] : []).concat([{name:'Trend', color:'var(--s3)', values:xs.map(function(x){ return QP.round(my + b * (x - mx), 1); }), markers:false, width:2.4}])});
     QP.draw('k-ap', 'stacked', {h:230, cats:MONTHS, fmt:function(x){ return f.n(x); },
       series:[{name:'Not Due', color:'var(--s1)', values:APM.nd}, {name:'Past Due ≤ 90 Days', color:'var(--s2)', values:APM.le}, {name:'Past Due > 90 Days', color:'var(--neg)', values:APM.gt}]});

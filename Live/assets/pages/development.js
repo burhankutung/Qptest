@@ -57,14 +57,13 @@ var AP = {months:[72.6,76.9,79.4,83.1,85.7,88.4], vend:[
   {n:'Qiddiya Co.', b:[3.8,2.1,2.8,0.2]}, {n:'All others', b:[18.6,7.4,5.2,0.2]}]};
 
 QP.define('development', {
-  filterKeys:['basis','from','to'],
   defaults:function(){ return {basis:'m', from:'2026-04-01', to:'2026-04-30', view:'cum', trend:'perf', cmp:'plan'}; },
   onSet:function(s, k, v){ if (k === 'basis') { var r = QP.periodRange(2026, 4, v === 'ytd' ? 'ytd' : 'm'); s.from = r.from; s.to = r.to; } },
   scope:function(){ return 'All business units'; },
   controls:function(s){
-    return QP.seg('basis', s.basis, [{v:'m', l:'Apr'}, {v:'ytd', l:'YTD'}]) + QP.dates(s.from, s.to, 'from', 'to') + QP.clearBtn(QP.dirty());
+    return QP.seg('basis', s.basis, [{v:'m', l:'Apr'}, {v:'ytd', l:'YTD'}]) + QP.dates(s.from, s.to, 'from', 'to');
   },
-  legendRight:function(s){ return QP.seg('cmp', s.cmp, [{v:'plan',l:'vs Plan'},{v:'forecast',l:'vs Forecast'}], 'sm'); },
+  controlsRight:function(s){ return QP.seg('cmp', s.cmp, [{v:'plan',l:'vs Plan'},{v:'forecast',l:'vs Forecast'}], 'sm'); },
   body:function(s){
     var h = '', ytd = s.basis === 'ytd', cmp = s.cmp;
     if (QP.persona.context) {

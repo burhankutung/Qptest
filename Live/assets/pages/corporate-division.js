@@ -45,7 +45,6 @@ function stat(v, t1, t2){ return v > t2 ? 'neg' : v > t1 ? 'amb' : 'pos'; }
 function statLabel(st){ return st === 'neg' ? 'Underperforming' : st === 'amb' ? 'At risk' : st === 'pos' ? 'On track' : 'No data'; }
 
 QP.define('corporate-division', {
-  filterKeys:['basis','from','to','division'],
   defaults:function(){ var l = QP.persona.lock; return {basis:'m', from:'2026-02-01', to:'2026-02-28', division:l && l.division || 'Qiddiya Technology', rep:'m'}; },
   onSet:function(s, k, v){ if (k === 'basis') { var r = QP.periodRange(2026, 2, v === 'ytd' ? 'ytd' : 'm'); s.from = r.from; s.to = r.to; s.rep = v === 'ytd' ? 'ytd' : 'm'; } },
   scope:function(s){ return s.division; },
@@ -53,8 +52,7 @@ QP.define('corporate-division', {
     var lock = QP.persona.lock && QP.persona.lock.division;
     var tabs = QP.can('corporate') ? QP.seg('tab', 'corporate-division', [{v:'corporate', l:'Corporate'}, {v:'corporate-division', l:'Corporate Division'}], 'tabs') : '';
     return tabs + QP.seg('basis', s.basis, [{v:'m', l:'Feb'}, {v:'ytd', l:'YTD'}]) + QP.dates(s.from, s.to, 'from', 'to') +
-      QP.dd('division', 'Division', s.division, Object.keys(DIVS), {locked: lock ? 'Your access is limited to the Qiddiya Technology division' : null}) +
-      QP.clearBtn(QP.dirty());
+      QP.dd('division', 'Division', s.division, Object.keys(DIVS), {locked: lock ? 'Your access is limited to the Qiddiya Technology division' : null});
   },
   body:function(s){
     var D = DIVS[s.division], h = '', key = s.rep === 'ytd' ? 'y' : s.rep === 'fy' ? 'fy' : 'm';
@@ -67,7 +65,7 @@ QP.define('corporate-division', {
       var v = f.varPct(a, p), st = stat(v, t1, t2), mx = Math.max(a, p) * 1.12;
       return QP.kpi({label:label, st:QP.pill(statLabel(st), st), value:M(a), unit:'M', sub:'Plan <b>'+M(p)+' M</b>', status:st,
         chip:chip(v, {good:'down', suffix:v >= 0 ? 'over plan' : 'under plan'}),
-        meter:'<div class="meter" style="position:relative;overflow:visible"><span style="width:'+(a/mx*100)+'%;background:'+(st === 'pos' ? 'var(--s1)' : 'var(--'+st+')')+';border-radius:99px"></span><i style="position:absolute;left:'+(p/mx*100)+'%;top:-4px;bottom:-4px;border-left:2px dashed var(--target)"></i></div>'});
+        meter:'<div class="meter" style="position:relative;overflow:visible"><span style="width:'+(a/mx*100)+'%;background:'+(st === 'pos' ? 'var(--area)' : 'var(--'+st+')')+';border-radius:99px"></span><i style="position:absolute;left:'+(p/mx*100)+'%;top:-4px;bottom:-4px;border-left:2px dashed var(--target)"></i></div>'});
     }
     h += '<div class="qp-grid g5">' + tile('Total', totA, totP, 5, 10) + tile('Personnel Cost', pers[0], pers[1], 5, 10) + tile('Professional Svcs', kp[0], kp[1], 5, 15) + tile('IT Cost', ki[0], ki[1], 6, 15) +
       QP.kpi({label:'Headcount', st:QP.pill('No data', 'neu'), value:f.i(D.hc), sub:'Plan <b>'+f.i(D.hcp)+'</b>', status:'neu', chip:'<span class="muted" style="font-size:var(--fs-sm)">Status not set for headcount</span>'}) + '</div>';
@@ -103,7 +101,7 @@ QP.define('corporate-division', {
     var bt = [0,0,0,0]; D.ap.forEach(function(v){ v.b.forEach(function(x, i){ bt[i] += x; }); });
     h += QP.sec('Accounts Payable by Vendor', 'Feb-26 · ' + f.sar + ' thousands');
     h += '<div class="qp-row">' +
-      QP.card({cls:'f1', title:'Aging profile', sub:'Share of the division’s payables by age bucket', body:'<div class="qp-chart" id="dv-ap"></div>'+QP.legendHtml([{l:'Not Due', c:'var(--s1)'},{l:'1-30', c:'var(--s2)'},{l:'31-60', c:'var(--amb)'},{l:'>90', c:'var(--neg)'}])}) +
+      QP.card({cls:'f1', title:'Aging Profile', sub:'Share of the division’s payables by age bucket', body:'<div class="qp-chart" id="dv-ap"></div>'+QP.legendHtml([{l:'Not Due', c:'var(--s1)'},{l:'1-30', c:'var(--s2)'},{l:'31-60', c:'var(--amb)'},{l:'>90', c:'var(--neg)'}])}) +
       QP.card({cls:'flush f2', body:QP.table({id:'dap', rows:D.ap, total:{n:'Total', b:bt}, cols:[{k:'n', label:'Vendor'}].concat(['Not Due','1-30','31-60','>90'].map(function(b, i){
         return {label:b+' ('+f.sar+')', cls:'r', fmt:function(r){ return f.i(r.b[i]); }}; })).concat([{label:'Total ('+f.sar+')', cls:'r', key:true, fmt:function(r){ return f.i(sum(r.b)); }}])}),
         foot:'Grain: vendor, aging bucket. Total reconciles to Total Commitments outstanding.'}) +

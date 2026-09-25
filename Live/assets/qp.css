@@ -30,6 +30,10 @@
      Charts: Qiddiya blue #001B72 · 400 #19327F · 300 #354E9E · 200 #4577BF
              Aqua 600 #0B8EB6 · Qiddiya aqua #0BC0FF · Aqua 400 #3EC1E9 · Aqua 300 #6ED0EE
              (optional: Orange 600 #FF7800 · Pink 700 #B10057)
+     Area identity (Area Summaries headers, reused wherever an area is shown).
+     Two cool additions keep the four areas distinct but in one family:
+             Development → Qiddiya blue · Operating Assets → Aqua 600
+             Corporate → Violet #6A3FD1 · City Operations → Teal #0B8A7A
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* Proxima Nova is served by the licensed Adobe Fonts (Typekit) kit linked in
@@ -51,6 +55,8 @@
   --c-qblue:#001B72; --c-q400:#19327F; --c-q300:#354E9E; --c-q200:#4577BF;
   --c-aqua600:#0B8EB6; --c-aqua:#0BC0FF; --c-aqua400:#3EC1E9; --c-aqua300:#6ED0EE;
   --c-orange600:#FF7800; --c-pink700:#B10057;
+  /* area-only colours, added for the area identity set (not used for UI or status) */
+  --c-violet:#6A3FD1; --c-teal:#0B8A7A;
   --c-canvas:#F4F5F7;
 
   /* semantic roles */
@@ -66,6 +72,12 @@
   --s1:var(--c-qblue); --s2:var(--c-q200); --s3:var(--c-aqua); --s4:var(--c-q300);
   --s5:var(--c-q400); --s6:var(--c-aqua400); --s7:var(--c-aqua600); --s8:var(--c-aqua300);
   --plan:var(--c-aqua300); --target:var(--c-dark-gray);
+
+  /* business-area identity, as set by the Area Summaries headers: -bg fills a
+     header surface; the plain token is that area's data colour */
+  --area-dev-bg:var(--c-qblue); --area-oa-bg:var(--c-aqua600); --area-corp-bg:var(--c-violet); --area-city-bg:var(--c-teal);
+  --area-dev:var(--c-qblue); --area-oa:var(--c-aqua600); --area-corp:var(--c-violet); --area-city:var(--c-teal);
+  --area:var(--s1);
 
   /* state */
   --pos:var(--c-green); --pos-ink:var(--c-green); --pos-bg:var(--c-light-gray);
@@ -110,15 +122,25 @@
   --dis:#252B36; --dis-ink:#5E6573;
   --neu:#5E6573; --neu-ink:#9AA2B1; --amb-ink:#E7E9EE;
   --s1:#6C8FE8; --s2:#9DB8F0; --s4:#7F95D6; --s5:#4E6FC9; --target:#9AA2B1;
+  --area-dev:#6C8FE8; --area-corp:#9B7BEA; --area-city:#22B3A0;
   --mark:#4A5262; --av:#3D5FC4; --tip-bg:#2B3140;
   --ktip-bg:#1C212B; --ktip-line:rgba(255,255,255,.12); --ktip-dot:rgba(255,255,255,.22);
   --ktip-shadow:0 18px 44px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.4);
 }
+/* each area dashboard draws its primary actuals in its area colour (--area).
+   City Operations and Operating Assets also take it as series 1, which they use
+   only for actuals; Corporate keeps series 1 blue because its payables aging
+   uses series 1 for "Not Due", which should stay the neutral company blue */
+:root[data-area="dev"]{--area:var(--area-dev)}
+:root[data-area="corp"]{--area:var(--area-corp)}
+:root[data-area="city"]{--area:var(--area-city); --s1:var(--area-city)}
+:root[data-area="oa"]{--area:var(--area-oa); --s1:var(--area-oa); --s2:var(--c-aqua300)}
+
 
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;color:var(--ink)}
 svg line{fill:none}
-.qp-chart svg,.qp-kpi .spark,.qp-ring>svg,.qp-map svg{fill:var(--ink)}
+.qp-chart svg,.qp-kpi .spark,.qp-ring>svg{fill:var(--ink)}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:var(--fs-md);line-height:1.45;
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-width:320px}
 html{overflow-x:hidden}
@@ -153,8 +175,14 @@ a{color:inherit}
 .qp-rail .lg{width:52px;padding:4px 0 14px;margin-bottom:4px;border-bottom:1px solid var(--line);display:flex;justify-content:center}
 .qp-rail a.lg{height:auto;border-radius:0}
 .qp-rail a.lg:hover{background:none}
-.qp-rail .lg span{display:block;width:44px;height:28px;overflow:hidden}
-.qp-rail .lg img{width:69px;height:auto;max-width:none;display:block;margin:-12.5px 0 0 -12.5px}
+.qp-rail .lg .mk{display:block;width:44px;height:28px;overflow:hidden}
+.qp-rail .lg .mk img{width:69px;height:auto;max-width:none;display:block;margin:-12.5px 0 0 -12.5px}
+/* expanded rail shows the full Qiddiya logo; the wordmark turns white on the dark theme */
+.qp-rail .lg .full{display:none;height:28px;width:auto;max-width:100%}
+:root[data-rail="open"] .qp-rail .lg .mk{display:none}
+:root[data-rail="open"] .qp-rail .lg .full.lt{display:block}
+:root[data-rail="open"][data-theme="dark"] .qp-rail .lg .full.lt{display:none}
+:root[data-rail="open"][data-theme="dark"] .qp-rail .lg .full.dk{display:block}
 .qp-rail a{position:relative;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
   color:var(--mut);text-decoration:none;transition:background .15s,color .15s}
 .qp-rail a svg{width:20px;height:20px}
@@ -189,7 +217,7 @@ a{color:inherit}
 .qp-who .cv{width:14px;height:14px;color:var(--mut)}
 
 /* breadcrumb + orientation */
-.qp-crumb{display:flex;align-items:center;gap:10px;margin-top:24px;line-height:1.2}
+.qp-crumb{display:flex;align-items:center;gap:10px;margin-top:20px;line-height:1.2}
 .qp-crumb .bk{width:28px;height:28px;border-radius:var(--r-ctl);display:grid;place-items:center;color:var(--acc-ink);text-decoration:none;margin-right:-2px}
 .qp-crumb .bk:hover{background:var(--acc-bg)}
 .qp-crumb .bk svg{width:18px;height:18px}
@@ -197,17 +225,12 @@ a{color:inherit}
 .qp-crumb .sep{color:var(--mark);font-size:var(--fs-2xl);font-weight:400}
 .qp-crumb .cur{font-size:var(--fs-2xl);color:var(--mut);font-weight:500}
 .qp-desc{font-size:var(--fs-md);color:var(--mut);margin:6px 0 0;max-width:820px}
-.qp-orient{margin-top:6px}
-.qp-orient .qp-desc{margin:0}
 
 /* ── controls (slicers) ────────────────────────────────────────────────── */
-.qp-ctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.qp-ctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 .qp-ctl .sp{flex:1 1 auto}
-.qp-legrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px}
-/* KPI cards open the page body directly under the legend */
-.qp-legrow+.qp-grid{margin-top:24px}
-/* a page control that shares the legend's line, e.g. vs Plan / vs Forecast */
-.qp-legrow>.rt{margin-left:auto;display:flex;align-items:center;gap:8px}
+/* a page-level switch at the end of the filter row, e.g. vs Plan / vs Forecast */
+.qp-ctl>.rt{margin-left:auto;display:flex;align-items:center;gap:8px}
 /* period switch: light-gray pill track, purple selected with lighter-gray-2 text */
 .qp-seg{display:inline-flex;gap:4px;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:4px}
 .qp-seg button{appearance:none;border:0;background:transparent;border-radius:9px;cursor:pointer;font-size:var(--fs-sm);font-weight:600;
@@ -248,11 +271,6 @@ a{color:inherit}
 .qp-menu [role=option][aria-selected=true] svg{visibility:visible}
 .qp-menu .grp{font-size:var(--fs-xs);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);padding:8px 10px 4px}
 
-.qp-clear{appearance:none;display:inline-flex;align-items:center;gap:6px;border:1px solid transparent;background:none;cursor:pointer;
-  font-size:var(--fs-sm);font-weight:600;color:var(--acc-ink);padding:0 10px;height:34px;border-radius:var(--r-ctl)}
-.qp-clear:hover{background:var(--acc-bg)}
-.qp-clear:disabled{cursor:default;background:none;color:var(--dis-ink)}
-.qp-clear svg{width:14px;height:14px}
 
 .qp-status{display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--mut);white-space:nowrap}
 .qp-status i{width:8px;height:8px;border-radius:50%;background:var(--pos)}
@@ -282,7 +300,9 @@ a{color:inherit}
 .qp-sec .cap,.qp-eyebrow .cap{font-size:var(--fs-sm);font-weight:400;color:var(--mut)}
 .qp-sec .cap::before,.qp-eyebrow .cap::before{content:"·";margin-right:10px;color:var(--mark)}
 .qp-sec .rt{margin-left:auto;display:flex;align-items:center;gap:8px;align-self:center}
-.qp-legrow+.qp-sec,.qp-legrow+.qp-eyebrow,.qp-sec.first{margin-top:24px}
+/* the page body starts right under the filter row: KPI cards first, sections close behind */
+.qp-ctl+.qp-grid,.qp-ctl+.qp-card,.qp-ctl+.qp-row{margin-top:16px}
+.qp-ctl+.qp-sec,.qp-ctl+.qp-eyebrow,.qp-sec.first{margin-top:20px}
 /* sub-heading inside a card */
 .qp-card .qp-eyebrow{font-size:var(--fs-md);font-weight:600;color:var(--ink);margin:28px 0 12px}
 .qp-card .qp-eyebrow .cap::before{display:none}
@@ -498,6 +518,13 @@ a{color:inherit}
 /* selected row */
 .qp-tbl tr.sel td,.qp-tbl tr.sel:hover td{background:color-mix(in srgb, var(--acc-bg) 55%, var(--card))}
 .qp-tbl tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--acc)}
+/* selectable rows (row.act): hover/focus is a light, temporary tint; .sel is the persistent selection */
+.qp-tbl tr.pick{cursor:pointer}
+.qp-tbl tr.pick:hover td,.qp-tbl tr.pick.hl td{background:color-mix(in srgb, var(--acc-bg) 28%, var(--card))}
+.qp-tbl tr.pick.sel:hover td,.qp-tbl tr.pick.sel.hl td{background:color-mix(in srgb, var(--acc-bg) 70%, var(--card))}
+.qp-tbl tr.pick:focus{outline:none}
+.qp-tbl tr.pick:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.qp-tbl tr.pick.sel td:first-child{font-weight:700}
 /* in-body subtotal lines (e.g. Net Income) */
 .qp-tbl tr.tot td{font-weight:600;border-top:1px solid var(--line)}
 /* totals row mirrors the header: uppercase label, same size, one hairline above */
@@ -607,13 +634,44 @@ a{color:inherit}
 .qp-trio .v{font-size:var(--fs-2xl);font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 
 /* site map */
-.qp-map{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card2);flex:1 1 auto;min-height:300px}
-.qp-map svg{display:block;width:100%;height:100%;position:absolute;inset:0}
-.qp-map .pin{cursor:pointer}
-.qp-map .pin circle.o{transition:r .15s}
-.qp-map .pin:hover circle.o{r:13}
+.qp-map{position:relative;isolation:isolate;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card2);flex:1 1 auto;min-height:300px}
+/* site map: OpenStreetMap tiles via Leaflet, pins and OSM site outlines in the product palette */
+.qp-map-canvas{position:absolute;inset:0;background:var(--card2);font:inherit;z-index:0}
+.qp-map .leaflet-container{font:inherit}
+.qp-map path.site{stroke:var(--s1);stroke-width:1.5;fill:var(--s1);fill-opacity:.08}
+.qp-map path.site.on{stroke:var(--acc);stroke-width:2;fill:var(--acc);fill-opacity:.16}
+.qp-pin{cursor:pointer;transition:opacity .15s}
+.qp-pin i{display:block;width:100%;height:100%;border-radius:50%;background:var(--s1);border:2px solid #fff;box-shadow:0 0 0 3px color-mix(in srgb,var(--s1) 22%,transparent),0 1px 3px rgba(0,0,0,.3);box-sizing:border-box;transition:transform .15s}
+/* selection: the chosen pin is larger, accent-filled and labelled; the rest step back until hovered */
+.qp-pin.mut{opacity:.72}
+.qp-pin.mut.hl,.qp-pin.mut:hover,.qp-pin.mut:focus-visible{opacity:1}
+.qp-pin.hl i{transform:scale(1.25)}
+.qp-pin.on i{background:var(--acc);border-width:3px;box-shadow:0 0 0 6px color-mix(in srgb,var(--acc) 26%,transparent),0 2px 6px rgba(0,0,0,.35);animation:qp-pulse 2.4s ease-out infinite}
+@keyframes qp-pulse{0%,100%{box-shadow:0 0 0 6px color-mix(in srgb,var(--acc) 26%,transparent),0 2px 6px rgba(0,0,0,.35)}50%{box-shadow:0 0 0 11px color-mix(in srgb,var(--acc) 10%,transparent),0 2px 6px rgba(0,0,0,.35)}}
+@media (prefers-reduced-motion: reduce){.qp-pin.on i{animation:none}}
+.qp-pin.approx i{background:#fff;border:2px dashed var(--s1)}
+.qp-pin.approx.on i{border:3px dashed var(--acc)}
+.qp-pin b{position:absolute;left:calc(100% + 7px);top:50%;transform:translateY(-50%);white-space:nowrap;font-size:var(--fs-xs);font-weight:600;color:var(--ink);
+  background:var(--card);border:1px solid var(--line);border-radius:6px;padding:3px 8px;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.qp-pin.hl b{border-color:var(--acc)}
+.qp-pin.on b{left:calc(100% + 9px);background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700;padding:4px 9px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.qp-pin.on b em{font-style:normal;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-right:7px;padding-right:7px;border-right:1px solid rgba(255,255,255,.45)}
+.qp-pin:focus-visible{outline:none}
+.qp-pin:focus-visible i{outline:2px solid var(--acc);outline-offset:3px}
+.qp-map-key{z-index:1000}
+.qp-map-key{position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:6px;font-size:var(--fs-xs);color:var(--mut);
+  background:var(--card);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+.qp-map-key i{width:10px;height:10px;border-radius:50%;border:2px dashed var(--s1)}
+.qp-map .leaflet-bar{border:1px solid var(--line);box-shadow:none;border-radius:8px;overflow:hidden}
+.qp-map .leaflet-bar a{background:var(--card);color:var(--ink);border-bottom-color:var(--line);width:30px;height:30px;line-height:30px}
+.qp-map .leaflet-bar a:hover{background:var(--card2)}
+.qp-map .leaflet-container .leaflet-control-attribution{font-size:var(--fs-xs);background:color-mix(in srgb,var(--card) 85%,transparent);color:var(--mut);border-top-left-radius:6px}
+.qp-map .leaflet-control-attribution a{color:var(--mut);text-decoration:underline}
+:root[data-theme="dark"] .qp-map .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.6)}
+.qp-map-off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--mut);font-size:var(--fs-sm)}
+.qp-map-off svg{width:28px;height:28px}
 .qp-map .cap{position:absolute;left:12px;top:12px;font-size:var(--fs-xs);font-weight:600;color:var(--ink);
-  background:var(--card);border:1px solid var(--line);border-radius:6px;padding:4px 8px;z-index:1}
+  background:var(--card);border:1px solid var(--line);border-radius:6px;padding:4px 8px;z-index:1000}
 
 /* stat list (Visitor metrics) */
 .qp-stats{display:grid;gap:var(--gap)}
@@ -785,7 +843,6 @@ a{color:inherit}
 
   .qp-crumb{flex-wrap:wrap;row-gap:8px}
   .qp-crumb b,.qp-crumb .cur{font-size:var(--fs-2xl)}
-  .qp-orient{flex-wrap:wrap}
   .qp-legend{flex-wrap:wrap;row-gap:8px;justify-content:flex-start}
   .qp-context{flex-wrap:wrap}
   .qp-context>div{border-right:0;border-bottom:1px solid var(--line);flex:1 1 45%}
@@ -795,7 +852,7 @@ a{color:inherit}
   .qp-card.kpiwrap{padding:0}
   .qp-area .hdr{min-height:0;padding:20px 16px 16px}
   .g2,.g3,.g4,.g5,.g6,.g8{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .qp-legrow .qp-legend{flex:1 1 100%}
+  .qp-ctl>.rt{margin-left:0}
   .qp-kv{grid-template-columns:1fr}
   .qp-trio{grid-template-columns:1fr}
   .qp-trio>div{padding:12px 0;border-left:0;border-top:1px solid var(--line)}
@@ -811,3 +868,13 @@ a{color:inherit}
   .qp-area .lead .v{font-size:var(--fs-metric)}
   .qp-big .v{font-size:var(--fs-metric-lg)}
 }
+
+/* Business Units: map instruction and the selected-project panel */
+.qp-hint{display:flex;align-items:center;gap:6px;margin:0 0 12px;font-size:var(--fs-sm);color:var(--mut)}
+.qp-hint svg{width:15px;height:15px;flex:none;color:var(--acc)}
+.qp-selected .hd h3 .k{flex-basis:100%;margin-bottom:4px;font-size:var(--fs-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+
+/* cards that explain themselves on hover/focus (QP.card tip) */
+.qp-card.qp-hastip{cursor:help;transition:border-color .15s}
+.qp-card.qp-hastip:hover{border-color:color-mix(in srgb,var(--acc) 35%,var(--line))}
+.qp-card.qp-hastip:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
