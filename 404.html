@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Page Not Found · Q-Profit</title>
 <meta name="robots" content="noindex">
-<script>try{var d=document.documentElement,tq=(/[?&]theme=(dark|light)(?:&|$)/.exec(location.search)||[])[1];if(tq){window.QP_THEME=tq;d.setAttribute('data-theme',tq)}else if(localStorage.getItem('qp-theme')==='dark')d.setAttribute('data-theme','dark');if(localStorage.getItem('qp-rail')==='open')d.setAttribute('data-rail','open')}catch(e){}</script>
+<script>try{var d=document.documentElement,tq=(/[?&]theme=(dark|light)(?:&|$)/.exec(location.search)||/^\/user\/[^?#]*\/(dark|light)\/?$/.exec(location.pathname)||/^#\/user\/.*\/(dark|light)\/?$/.exec(location.hash)||[])[1];if(tq){window.QP_THEME=tq;d.setAttribute('data-theme',tq)}else if(localStorage.getItem('qp-theme')==='dark')d.setAttribute('data-theme','dark');if(localStorage.getItem('qp-rail')==='open')d.setAttribute('data-rail','open')}catch(e){}</script>
 <link rel="icon" href="/Live/assets/qiddiya-mark.png">
 <link rel="stylesheet" href="https://use.typekit.net/fkj2upu.css">
 <link rel="stylesheet" href="/Live/assets/qp.css">

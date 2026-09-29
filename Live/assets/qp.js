@@ -72,14 +72,15 @@ QP.USERS.forEach(function(k){ QP.PERSONAS[k].slug = k; });
    Each page's head sets QP_MODE and a <base>, so asset paths stay relative. */
 QP.MODE = window.QP_MODE === 'hash' ? 'hash' : 'path';
 QP.ASSETS = 'assets/';
-/* a ?theme=dark|light link fixes the theme for that view without touching the saved preference;
-   in-app links carry it so a shared dark (or light) link stays that way while browsing */
-QP.THEME = window.QP_THEME || null;
-function themeQ(){ return QP.THEME ? '?theme=' + QP.THEME : ''; }
-QP.HOME = (QP.MODE === 'path' ? '/' : 'index.html') + themeQ();
+/* theme in the address: a dashboard shown in dark reads /user/<user>/<page>/dark (light is the
+   plain address); the theme button swaps that segment in place and in-app links follow it.
+   Older ?theme=dark links are rewritten to this form when the app boots. */
+QP.THEME = window.QP_THEME === 'dark' ? 'dark' : null;
+function themeSeg(){ return QP.THEME === 'dark' ? '/dark' : ''; }
+QP.HOME = QP.MODE === 'path' ? '/' : 'index.html';
 QP.can = function(p){ return QP.persona.pages.indexOf(p) >= 0; };
 QP.route = function(page, user){ return '/user/' + (user || QP.persona.slug) + (page ? '/' + page : ''); };
-QP.url = function(page, user){ return QP.MODE === 'hash' ? 'app.html' + themeQ() + '#' + QP.route(page, user) : QP.route(page, user) + themeQ(); };
+QP.url = function(page, user){ return (QP.MODE === 'hash' ? 'app.html#' : '') + QP.route(page, user) + themeSeg(); };
 QP.href = function(p){ return QP.url(p); };
 QP.current = function(){ return QP.MODE === 'hash' ? decodeURI(location.hash.slice(1)) : location.pathname; };
 
@@ -328,7 +329,7 @@ window.addEventListener('scroll', hideKTip, true);
    browser; each page's head applies them before first paint. ─────────── */
 var ROOT = document.documentElement;
 function pref(k, v){ try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch(e){} return null; }
-if (QP.THEME) ROOT.setAttribute('data-theme', QP.THEME); else if (pref('qp-theme') === 'dark') ROOT.setAttribute('data-theme', 'dark');
+if (window.QP_THEME) ROOT.setAttribute('data-theme', window.QP_THEME); else if (pref('qp-theme') === 'dark') ROOT.setAttribute('data-theme', 'dark');
 if (pref('qp-rail') === 'open') ROOT.setAttribute('data-rail', 'open');
 function isDark(){ return ROOT.getAttribute('data-theme') === 'dark'; }
 function railOpen(){ return ROOT.getAttribute('data-rail') === 'open'; }
@@ -354,13 +355,11 @@ document.addEventListener('click', function(ev){
   if (t.hasAttribute('data-theme-toggle')) {
     var dark = !isDark();
     ROOT.setAttribute('data-theme', dark ? 'dark' : 'light'); pref('qp-theme', dark ? 'dark' : 'light');
-    /* the button only switches the theme in place: on a ?theme= link it leaves link mode,
-       so the address and in-app links go back to their plain form */
-    if (QP.THEME) {
-      QP.THEME = null; QP.HOME = QP.MODE === 'path' ? '/' : 'index.html';
-      var q = new URLSearchParams(location.search); q.delete('theme'); q = q.toString();
-      history.replaceState(history.state, '', location.pathname + (q ? '?' + q : '') + location.hash);
-      document.querySelectorAll('a[href*="theme="]').forEach(function(a){ a.setAttribute('href', a.getAttribute('href').replace(/\?theme=(dark|light)(?=#|$)/, '')); });
+    /* on a dashboard the address follows the switch in place: .../dark in dark, plain in light */
+    if (QP.persona && QP.pageId) {
+      QP.THEME = dark ? 'dark' : null;
+      setAddress(QP.route(QP.pageId) + themeSeg());
+      themeLinks();
     }
     document.querySelectorAll('[data-theme-toggle]').forEach(function(b){ b.outerHTML = QP.themeButton(); });
   } else {
@@ -710,9 +709,24 @@ QP.go = function(target){
   route(0);
 };
 QP.parse = function(path){
-  var m = path.replace(/\/+$/, '').match(/^\/user\/([^\/]+)(?:\/([^\/]+))?$/i);
-  return m ? {user:decodeURIComponent(m[1]).toLowerCase(), page:m[2] ? decodeURIComponent(m[2]).toLowerCase() : null} : null;
+  var m = path.replace(/\/+$/, '').match(/^\/user\/([^\/]+)(?:\/([^\/]+))?(?:\/([^\/]+))?$/i);
+  if (!m) return null;
+  var page = m[2] ? decodeURIComponent(m[2]).toLowerCase() : null, theme = m[3] ? m[3].toLowerCase() : null;
+  if (!theme && (page === 'dark' || page === 'light')) { theme = page; page = null; }   /* /user/<user>/dark */
+  if (theme && theme !== 'dark' && theme !== 'light') return null;
+  return {user:decodeURIComponent(m[1]).toLowerCase(), page:page, theme:theme};
 };
+/* replace the current address (keeping any ?query) without a reload or a history entry */
+function setAddress(path){
+  try { history.replaceState(history.state, '', QP.MODE === 'hash' ? location.pathname + location.search + '#' + path : path + location.search); } catch (e) {}
+}
+/* in-app dashboard links carry /dark while the theme is dark */
+function themeLinks(){
+  document.querySelectorAll('a[href*="/user/"]').forEach(function(a){
+    var h = a.getAttribute('href'), i = h.indexOf('?'), p = i < 0 ? h : h.slice(0, i), q = i < 0 ? '' : h.slice(i);
+    a.setAttribute('href', p.replace(/\/(dark|light)$/, '') + themeSeg() + q);
+  });
+}
 function ensureFrame(){ if (!document.getElementById('qp-body')) document.body.innerHTML = FRAME; }
 function route(y){
   if (QP.persona && QP.def && QP.state) kept[QP.persona.slug + '/' + QP.pageId] = QP.state;
@@ -721,6 +735,12 @@ function route(y){
   var r = QP.parse(QP.current()), per = r && QP.PERSONAS[r.user];
   if (!per) return unknownUser(r && r.user);
   QP.persona = per;
+  /* the address decides the theme when it names one, otherwise the saved preference;
+     a dark dashboard always shows /dark in its address */
+  var th = r.theme || (pref('qp-theme') === 'dark' ? 'dark' : 'light');
+  ROOT.setAttribute('data-theme', th);
+  QP.THEME = th === 'dark' ? 'dark' : null;
+  if (th === 'dark' && !r.theme && r.page) setAddress(QP.route(r.page) + '/dark');
   var page = r.page || per.pages[0];
   ensureFrame();
   if (!QP.PAGES[page] || !QP.DEFS[page]) return outside(page, 'missing');
@@ -755,6 +775,13 @@ function unknownUser(user){
 }
 QP.boot = function(){
   bind();
+  /* older ?theme=dark|light links become the /dark (or /light) address form */
+  var sq = new URLSearchParams(location.search), tq = sq.get('theme'), cur = QP.current().replace(/\/+$/, '');
+  if ((tq === 'dark' || tq === 'light') && /^\/user\//.test(cur)) {
+    sq.delete('theme'); sq = sq.toString();
+    var path = cur.replace(/\/(dark|light)$/, '') + '/' + tq;
+    try { history.replaceState(null, '', QP.MODE === 'hash' ? location.pathname + (sq ? '?' + sq : '') + '#' + path : path + (sq ? '?' + sq : '')); } catch (e) {}
+  }
   if (QP.MODE === 'hash') window.addEventListener('hashchange', function(){ route(0); });
   else {
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
