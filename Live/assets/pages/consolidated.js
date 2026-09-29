@@ -27,6 +27,56 @@ var KPIS = [
   {k:'PIF', a:5750.0, p:5670.0, fc:5750.0, info:'Public Investment Fund funding received to date, against YTD plan and forecast.', st:'pos'}
 ];
 
+/* ── KPI card concepts (client exploration) ───────────────────────────────
+   Opened with ?kpi=0…4 on the Consolidated address; the concept switcher
+   appears only then, so the everyday dashboard is unchanged. 0 = current. */
+var KPI_CONCEPTS = [{v:'0', l:'Current'}, {v:'1', l:'1 · Bullet'}, {v:'2', l:'2 · Ring'}, {v:'3', l:'3 · Plan & Forecast'}, {v:'4', l:'4 · Scorecard'}];
+var KPI_STATUS = {pos:'On track', amb:'At risk', neg:'Below plan'};
+function urlConcept(){ var m = /[?&]kpi=([0-4])(?:&|$)/.exec(location.search); return m ? m[1] : null; }
+/* the figures every concept draws from one KPI */
+function kfig(k){
+  var sec = k.sec != null, base = sec ? k.sec : k.p, alt = sec ? k.fy : k.fc, v = f.varPct(k.a, base);
+  var fmt = k.hc ? function(x){ return f.i(x); } : function(x){ return M(x); };
+  return {base:base, alt:alt, baseL:sec ? 'YTD Secured' : 'YTD Plan', altL:sec ? 'FY Target' : 'YTD Forecast', att:Math.round(k.a / base * 100),
+    fmt:fmt, val:k.hc ? f.i(k.a) : M(k.a, 1), chip:chip(v, {good:k.good || 'up', cls:k.good === 'none' ? 'amb' : null}),
+    sub:(sec ? 'YTD Secured' : 'YTD Plan')+' <b>'+fmt(base)+'</b> · '+(sec ? 'FY Target' : 'YTD Forecast')+' <b>'+fmt(alt)+'</b>'};
+}
+function miniRing(pct, color){
+  var r = 26, c = 2 * Math.PI * r, d = Math.max(0, Math.min(100, pct)) / 100 * c;
+  return '<svg class="kc-rg" viewBox="0 0 64 64" role="img" aria-label="'+pct+'% of target"><circle cx="32" cy="32" r="'+r+'" fill="none" stroke="var(--line)" stroke-width="6"/>'+
+    '<circle cx="32" cy="32" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+d.toFixed(1)+' '+c.toFixed(1)+'" transform="rotate(-90 32 32)"/>'+
+    '<text x="32" y="36.5" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">'+pct+'%</text></svg>';
+}
+function kpiRow(c){
+  if (c === '4') return kpiScorecard();
+  return '<div class="qp-grid '+(c === '2' ? 'g3' : 'g6')+' kc-'+c+'">' + KPIS.map(function(k){
+    var x = kfig(k), o = {label:k.k, info:k.info, value:x.val, sub:x.sub, status:k.st,
+      chip:x.chip + '<span class="muted" style="font-size:var(--fs-sm)">vs '+(k.sec != null ? 'YTD secured' : 'YTD plan')+'</span>'};
+    if (c === '1') {          /* bullet: actual against the plan marker */
+      var mx = Math.max(k.a, x.base, x.alt) * 1.04;
+      o.meter = '<div class="kc-bullet"><span class="trk"><i style="width:'+(k.a / mx * 100).toFixed(1)+'%"></i><em style="left:'+(x.base / mx * 100).toFixed(1)+'%" title="'+x.baseL+'"></em></span>'+
+        '<span class="cap"><b>'+x.att+'%</b> of '+x.baseL+'</span></div>';
+    } else if (c === '2') {   /* ring: attainment, coloured by status, on a wider card */
+      o.cls = 'kc-ringcard'; o.meter = miniRing(x.att, 'var(--'+k.st+')');
+    } else if (c === '3') {   /* plan & forecast printed on the card, no hover needed */
+      o.meter = '<div class="kc-pf"><div><span>'+x.baseL+'</span><b>'+x.fmt(x.base)+'</b></div><div><span>'+x.altL+'</span><b>'+x.fmt(x.alt)+'</b></div></div>';
+    }
+    return QP.kpi(o);
+  }).join('') + '</div>';
+}
+function kpiScorecard(){       /* all six KPIs as rows of one table */
+  var tag = function(k, t){ return k.sec != null ? ' <span class="kc-tag">'+t+'</span>' : ''; };
+  return QP.card({cls:'flush kc-score', body:QP.table({id:'kpis', rows:KPIS, cols:[
+    {label:'KPI', fmt:function(k){ return k.k + QP.infoBtn(k.k, k.info); }},
+    {label:'Actual', cls:'r', key:true, fmt:function(k){ return kfig(k).val; }},
+    {label:'Plan', cls:'r', fmt:function(k){ var x = kfig(k); return x.fmt(x.base) + tag(k, 'secured'); }},
+    {label:'Forecast', cls:'r', fmt:function(k){ var x = kfig(k); return x.fmt(x.alt) + tag(k, 'FY target'); }},
+    {label:'Variance', cls:'r', fmt:function(k){ return kfig(k).chip; }},
+    {label:'Attainment', cls:'r', fmt:function(k){ return QP.bar(kfig(k).att, 'var(--s1)'); }},
+    {label:'Status', fmt:function(k){ return QP.pill(KPI_STATUS[k.st], k.st); }}
+  ]})});
+}
+
 var DEV_BU = [
   {n:'Entertainment', a:355.8, p:412.0, fc:440.0},
   {n:'Master Development Unit', a:1204.6, p:1180.0, fc:1240.0},
@@ -80,7 +130,9 @@ function sum(a){ return a.reduce(function(x,y){ return x+y; },0); }
 function cum(a){ var s = 0; return a.map(function(v){ s += v; return QP.round(s, 1); }); }
 
 QP.define('consolidated', {
-  defaults:function(){ return {basis:'m', year:'2026', month:'5', trend:'overall', devB:'plan', corpB:'plan', project:'All', bu:'All', ap:'amount'}; },
+  defaults:function(){ return {basis:'m', year:'2026', month:'5', trend:'overall', devB:'plan', corpB:'plan', project:'All', bu:'All', ap:'amount', kpiC:urlConcept() || '0'}; },
+  /* keep the review link in step with the chosen KPI concept */
+  onSet:function(s, k, v){ if (k === 'kpiC' && urlConcept() !== null) history.replaceState(history.state, '', location.pathname + '?kpi=' + v + location.hash); },
   scope:function(){ return 'Qiddiya Investment Company'; },
   controls:function(s){
     var mi = MIDX[+s.month], ml = QP.mlabel(mi.y, mi.m);
@@ -93,15 +145,9 @@ QP.define('consolidated', {
     var mi = +s.month, mo = MIDX[mi], ml = QP.mlabel(mo.y, mo.m), ytd = s.basis === 'ytd';
     var h = '';
 
-    /* KPI cards */
-    h += '<div class="qp-grid g6">' + KPIS.map(function(k){
-      var base = k.sec != null ? k.sec : k.p, v = f.varPct(k.a, base);
-      var val = k.hc ? f.i(k.a) : M(k.a, 1);
-      var sub = k.sec != null
-        ? 'YTD Secured <b>'+M(k.sec)+'</b> · FY Target <b>'+M(k.fy)+'</b>'
-        : 'YTD Plan <b>'+(k.hc ? f.i(k.p) : M(k.p))+'</b> · YTD Forecast <b>'+(k.hc ? f.i(k.fc) : M(k.fc))+'</b>';
-      return QP.kpi({label:k.k, info:k.info, value:val, sub:sub, status:k.st, chip:chip(v, {good:k.good || 'up', cls:k.good === 'none' ? 'amb' : null}) + '<span class="muted" style="font-size:var(--fs-sm)">vs '+(k.sec != null ? 'YTD secured' : 'YTD plan')+'</span>'});
-    }).join('') + '</div>';
+    /* KPI cards; with a ?kpi= review link a switcher shows the card concepts in place */
+    if (urlConcept() !== null) h += '<div class="kc-switch"><span>KPI card concept</span>'+QP.seg('kpiC', s.kpiC, KPI_CONCEPTS, 'sm')+'</div>';
+    h += kpiRow(urlConcept() !== null ? s.kpiC : '0');
 
     /* area summaries */
     h += QP.eyebrow('Area Summaries', 'Open an area for its full dashboard');

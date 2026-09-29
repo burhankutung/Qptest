@@ -1,4 +1,4 @@
-# Only the published site is tracked in this repo.
+# Only the published site (and its Figma import exports) is tracked in this repo.
 *
 !Live/
 !Live/**
@@ -6,3 +6,5 @@
 !vercel.json
 !404.html
 !.nojekyll
+!Figma/
+!Figma/**
