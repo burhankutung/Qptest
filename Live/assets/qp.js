@@ -354,12 +354,13 @@ document.addEventListener('click', function(ev){
   if (t.hasAttribute('data-theme-toggle')) {
     var dark = !isDark();
     ROOT.setAttribute('data-theme', dark ? 'dark' : 'light'); pref('qp-theme', dark ? 'dark' : 'light');
-    /* on a ?theme= link, the address and in-app links follow the switch */
+    /* the button only switches the theme in place: on a ?theme= link it leaves link mode,
+       so the address and in-app links go back to their plain form */
     if (QP.THEME) {
-      QP.THEME = dark ? 'dark' : 'light';
-      var q = new URLSearchParams(location.search); q.set('theme', QP.THEME);
-      history.replaceState(history.state, '', location.pathname + '?' + q + location.hash);
-      document.querySelectorAll('a[href*="theme="]').forEach(function(a){ a.setAttribute('href', a.getAttribute('href').replace(/theme=(dark|light)/, 'theme=' + QP.THEME)); });
+      QP.THEME = null; QP.HOME = QP.MODE === 'path' ? '/' : 'index.html';
+      var q = new URLSearchParams(location.search); q.delete('theme'); q = q.toString();
+      history.replaceState(history.state, '', location.pathname + (q ? '?' + q : '') + location.hash);
+      document.querySelectorAll('a[href*="theme="]').forEach(function(a){ a.setAttribute('href', a.getAttribute('href').replace(/\?theme=(dark|light)(?=#|$)/, '')); });
     }
     document.querySelectorAll('[data-theme-toggle]').forEach(function(b){ b.outerHTML = QP.themeButton(); });
   } else {
