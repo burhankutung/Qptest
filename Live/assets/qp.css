@@ -950,3 +950,23 @@ a{color:inherit}
 .kc-pf b{font-size:var(--fs-sm);font-weight:700;color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
 /* 4 · scorecard */
 .kc-score .kc-tag{font-size:var(--fs-xs);color:var(--mut);font-weight:400;margin-left:4px}
+
+/* ── tooltip view (?tips=1): every tooltip drawn open ────────────────────── */
+.qp-pinned{position:absolute;pointer-events:none}
+.qp-pinned.fixed{position:fixed}
+.qp-tipsbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;margin-top:20px;padding:10px 12px 10px 14px;background:var(--card);
+  border:1px dashed color-mix(in srgb,var(--acc) 45%,var(--line));border-radius:12px;font-size:var(--fs-sm)}
+.qp-tipsbar .t{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc-ink)}
+.qp-tipsbar .t svg{width:15px;height:15px}
+.qp-tipsbar .p{font-weight:600;color:var(--ink)}
+.qp-tipsbar .p em{font-style:normal;font-weight:400;color:var(--mut);margin-left:6px}
+.qp-tipsbar .sp{flex:1 1 auto}
+.qp-tipsbar .qp-link{display:inline-flex;align-items:center;gap:4px}
+.qp-tipsbar .qp-link svg{width:14px;height:14px}
+.qp-tipsbar .qp-link.ex{color:var(--mut)}
+/* KPI hover card shown open inside its card: same panel, in the flow, pointing up at the figures */
+.qp-ktip.qp-inline{position:relative;left:auto;top:auto;display:block;min-width:0;max-width:none;margin-top:14px;padding:10px 12px 11px;box-shadow:none;opacity:1;transform:none}
+.qp-ktip.qp-inline::before{content:"";position:absolute;left:18px;top:-6px;width:10px;height:10px;background:var(--ktip-bg);border-left:1px solid var(--ktip-line);border-top:1px solid var(--ktip-line);transform:rotate(45deg)}
+.qp-ktip.qp-inline .v{white-space:normal;font-size:var(--fs-xl)}
+/* collapsed rail in tooltip view: a clear column for the pinned rail labels */
+@media (min-width:901px){ :root.qp-tipsview:not([data-rail="open"]) .qp-rail{margin-right:150px} }

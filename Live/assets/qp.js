@@ -77,10 +77,14 @@ QP.ASSETS = 'assets/';
    Older ?theme=dark links are rewritten to this form when the app boots. */
 QP.THEME = window.QP_THEME === 'dark' ? 'dark' : null;
 function themeSeg(){ return QP.THEME === 'dark' ? '/dark' : ''; }
+/* tooltip view: ?tips=1 draws every tooltip on a dashboard open at once, with a bar that steps
+   through the user's dashboards in order; in-app links keep the flag */
+QP.TIPS = /[?&]tips=1(?:&|$)/.test(location.search);
+function tipsQ(){ return QP.TIPS ? '?tips=1' : ''; }
 QP.HOME = QP.MODE === 'path' ? '/' : 'index.html';
 QP.can = function(p){ return QP.persona.pages.indexOf(p) >= 0; };
 QP.route = function(page, user){ return '/user/' + (user || QP.persona.slug) + (page ? '/' + page : ''); };
-QP.url = function(page, user){ return (QP.MODE === 'hash' ? 'app.html#' : '') + QP.route(page, user) + themeSeg(); };
+QP.url = function(page, user){ return QP.MODE === 'hash' ? 'app.html' + tipsQ() + '#' + QP.route(page, user) + themeSeg() : QP.route(page, user) + themeSeg() + tipsQ(); };
 QP.href = function(p){ return QP.url(p); };
 QP.current = function(){ return QP.MODE === 'hash' ? decodeURI(location.hash.slice(1)) : location.pathname; };
 
@@ -317,6 +321,7 @@ function placeKTip(x, y){
 }
 function hideKTip(){ kcard = null; if (ktipEl) ktipEl.classList.remove('on'); }
 document.addEventListener('mouseover', function(ev){
+  if (QP.TIPS) return;   /* tooltip view: every card is already open */
   var c = ev.target.closest && ev.target.closest('.qp-kpi');
   if (!c || c === kcard) return;
   if (!ktipEl || !ktipEl.isConnected) { ktipEl = document.createElement('div'); ktipEl.className = 'qp-ktip'; ktipEl.setAttribute('role', 'tooltip'); document.body.appendChild(ktipEl); }
@@ -344,7 +349,7 @@ QP.railHead = function(){
     '<span class="lg-full" role="img" aria-label="Qiddiya"><img class="full lt" src="'+QP.ASSETS+'qiddiya-logo.png" alt=""><img class="full dk" src="'+QP.ASSETS+'qiddiya-logo-dark.png" alt=""></span>'+
     '<button type="button" class="lg-close" data-rail-toggle aria-expanded="true" aria-label="Collapse menu" data-tip="Collapse menu">'+icon('expand')+'</button></div>';
 };
-function refit(){ (QP.charts || []).forEach(function(c){ c.fn(c.el, c.cfg); }); fitTables(); }
+function refit(){ (QP.charts || []).forEach(function(c){ c.fn(c.el, c.cfg); }); fitTables(); if (QP.TIPS) pinTips(); }
 document.addEventListener('click', function(ev){
   var t = ev.target.closest && ev.target.closest('[data-theme-toggle],[data-rail-toggle]');
   if (!t) return;
@@ -595,7 +600,7 @@ QP.render = function(){
   var main = document.getElementById('qp-body'), y = window.scrollY;
   QP.charts = []; QP.tip.hide();
   try {
-    main.innerHTML = crumb() + '<div class="qp-ctl">'+QP.def.controls(QP.state)+(QP.def.controlsRight ? '<div class="rt">'+QP.def.controlsRight(QP.state)+'</div>' : '')+'</div>' + QP.def.body(QP.state) + FOOTER;
+    main.innerHTML = tipsBar() + crumb() + '<div class="qp-ctl">'+QP.def.controls(QP.state)+(QP.def.controlsRight ? '<div class="rt">'+QP.def.controlsRight(QP.state)+'</div>' : '')+'</div>' + QP.def.body(QP.state) + FOOTER;
     if (QP.def.mount) QP.def.mount(QP.state);
   } catch (e) {
     if (window.console) console.error(e);
@@ -606,7 +611,68 @@ QP.render = function(){
   }
   labelTables(main); fitTables();
   window.scrollTo(0, y);
+  /* pin again once charts, fonts and the map have settled */
+  if (QP.TIPS) { setTimeout(pinTips, 60); setTimeout(pinTips, 800); }
 };
+
+/* â”€â”€ tooltip view (?tips=1) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+function tipsBar(){
+  if (!QP.TIPS) return '';
+  var ps = QP.persona.pages, i = ps.indexOf(QP.pageId), n = ps.length;
+  var exit = (QP.MODE === 'hash' ? 'app.html#' : '') + QP.route(QP.pageId) + themeSeg();
+  return '<div class="qp-tipsbar" role="navigation" aria-label="Tooltip view"><span class="t">'+icon('info')+'Tooltip view</span>'+
+    '<span class="p">'+QP.PAGES[QP.pageId].label+' <em>'+(i + 1)+' of '+n+'</em></span><span class="sp"></span>'+
+    (i > 0 ? '<a class="qp-link" href="'+QP.url(ps[i - 1])+'">'+icon('chevl')+QP.PAGES[ps[i - 1]].label+'</a>' : '')+
+    (i < n - 1 ? '<a class="qp-link" href="'+QP.url(ps[i + 1])+'">'+QP.PAGES[ps[i + 1]].label+icon('chevr')+'</a>' : '')+
+    '<a class="qp-link ex" href="'+exit+'">Exit tooltip view</a></div>';
+}
+function clearPins(){ [].forEach.call(document.querySelectorAll('.qp-pinned'), function(e){ e.remove(); }); }
+/* every tooltip on the page drawn open next to its trigger: above, else below, right or left,
+   whichever doesn't cover a tooltip already placed */
+function pinTips(){
+  clearPins();
+  if (!QP.TIPS || !QP.pageId) return;
+  /* KPI hover cards open inside their card (a row of six has no room to float them) */
+  [].forEach.call(document.querySelectorAll('#qp-body .qp-kpi'), function(c){
+    var k = document.createElement('div'); k.className = 'qp-ktip qp-pinned qp-inline on'; k.setAttribute('aria-hidden', 'true'); k.innerHTML = kpiTip(c); c.appendChild(k);
+  });
+  var placed = [], W = document.documentElement.clientWidth;
+  /* keep the step-through bar clear so its links stay usable */
+  var bar = document.querySelector('.qp-tipsbar');
+  if (bar) { var br = bar.getBoundingClientRect(); placed.push({left:br.left, top:br.top, right:br.right, bottom:br.bottom}); }
+  /* how much a candidate box would cover tooltips already placed (0 = free) */
+  function overlap(r){ return placed.reduce(function(s, p){ var x = Math.min(r.right + 4, p.right) - Math.max(r.left - 4, p.left), y = Math.min(r.bottom + 4, p.bottom) - Math.max(r.top - 4, p.top); return s + (x > 0 && y > 0 ? x * y : 0); }, 0); }
+  function put(el, trig){
+    var r = trig.getBoundingClientRect(); if (!r.width && !r.height) return;
+    var fixed = !!trig.closest('.qp-rail');   /* the rail is sticky: its tips stay with it */
+    el.classList.add('qp-pinned', 'on'); if (fixed) el.classList.add('fixed');
+    el.setAttribute('aria-hidden', 'true'); document.body.appendChild(el);
+    var w = el.offsetWidth, h = el.offsetHeight, cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    var clampX = function(x){ return Math.max(8, Math.min(W - w - 8, x)); };
+    /* nearest first: above / below (centred, then edge-aligned), beside, then one or two steps further out */
+    var opts = fixed ? [{x:r.right + 10, y:cy - h / 2}] : [];   /* rail: always beside its icon */
+    if (!fixed) [0, 1, 2].forEach(function(k){
+      var up = r.top - h - 10 - k * (h + 8), down = r.bottom + 10 + k * (h + 8);
+      [cx - w / 2, r.left, r.right - w].forEach(function(x){ opts.push({x:clampX(x), y:up}); });
+      [cx - w / 2, r.left, r.right - w].forEach(function(x){ opts.push({x:clampX(x), y:down}); });
+      if (!k) opts.push({x:r.right + 10, y:cy - h / 2}, {x:r.left - w - 10, y:cy - h / 2});
+    });
+    /* first free spot in order of preference; if none is free, the one that covers least */
+    var fits = opts.filter(function(o){ return o.x >= 4 && o.x + w <= W - 4 && o.y + (fixed ? 0 : window.scrollY) >= 4; }), best = null, bestA = Infinity;
+    for (var i = 0; i < fits.length; i++) { var a = overlap({left:fits[i].x, top:fits[i].y, right:fits[i].x + w, bottom:fits[i].y + h}); if (a < bestA) { best = fits[i]; bestA = a; } if (!a) break; }
+    var pick = best || opts[0];
+    el.style.left = (pick.x + (fixed ? 0 : window.scrollX)) + 'px'; el.style.top = (pick.y + (fixed ? 0 : window.scrollY)) + 'px';
+    placed.push({left:pick.x, top:pick.y, right:pick.x + w, bottom:pick.y + h});
+  }
+  /* order: rail labels (fixed beside their icons), then the rest */
+  var ro = railOpen(), tips = [].filter.call(document.querySelectorAll('[data-tip]'), function(tg){
+    if (!tg.offsetParent || tg.closest('.qp-tipsbar')) return false;
+    return !(ro && tg.closest('.qp-rail') && !tg.hasAttribute('data-rail-toggle'));   /* open rail: labels already show */
+  });
+  function tip(tg){ var d = document.createElement('div'); d.className = 'qp-tip'; d.textContent = tg.dataset.tip; put(d, tg); }
+  tips.filter(function(tg){ return tg.closest('.qp-rail'); }).forEach(tip);
+  tips.filter(function(tg){ return !tg.closest('.qp-rail'); }).forEach(tip);
+}
 
 /* full-width message card: not found, outside access, render error */
 function notice(ic, title, text, actions, code){
@@ -677,11 +743,11 @@ function bind(){
     if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.closest('[data-act]') && QP.def && QP.def.act) { ev.preventDefault(); var ae = ev.target.closest('[data-act]'); QP.def.act(ae.dataset.act, ae, QP.state); }
   });
   /* data-tip tooltips */
-  document.addEventListener('mouseover', function(ev){ var el = ev.target.closest('[data-tip]'); if (el && el.closest('.qp-rail') && !el.hasAttribute('data-rail-toggle') && document.documentElement.getAttribute('data-rail') === 'open') return; if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left + r.width / 2 - 14, r.top); } });
+  document.addEventListener('mouseover', function(ev){ if (QP.TIPS) return; var el = ev.target.closest('[data-tip]'); if (el && el.closest('.qp-rail') && !el.hasAttribute('data-rail-toggle') && document.documentElement.getAttribute('data-rail') === 'open') return; if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left + r.width / 2 - 14, r.top); } });
   document.addEventListener('mouseout', function(ev){ var el = ev.target.closest('[data-tip]'); if (el && !el.contains(ev.relatedTarget)) QP.tip.hide(); });
-  document.addEventListener('focusin', function(ev){ var el = ev.target.closest('[data-tip]'); if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left, r.top); } });
+  document.addEventListener('focusin', function(ev){ if (QP.TIPS) return; var el = ev.target.closest('[data-tip]'); if (el) { var r = el.getBoundingClientRect(); QP.tip.show(esc(el.dataset.tip), r.left, r.top); } });
   document.addEventListener('focusout', QP.tip.hide);
-  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ QP.charts.forEach(function(c){ c.fn(c.el, c.cfg); }); fitTables(); }, 120); });
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ QP.charts.forEach(function(c){ c.fn(c.el, c.cfg); }); fitTables(); if (QP.TIPS) pinTips(); }, 120); });
   document.addEventListener('scroll', function(ev){ var t = ev.target; if (t.classList && t.classList.contains('qp-tbl')) t.classList.toggle('sx', t.scrollLeft > 0); }, true);
 }
 function mountShell(){
@@ -723,13 +789,16 @@ function setAddress(path){
 /* in-app dashboard links carry /dark while the theme is dark */
 function themeLinks(){
   document.querySelectorAll('a[href*="/user/"]').forEach(function(a){
-    var h = a.getAttribute('href'), i = h.indexOf('?'), p = i < 0 ? h : h.slice(0, i), q = i < 0 ? '' : h.slice(i);
+    var h = a.getAttribute('href'), k = h.indexOf('#');
+    if (k >= 0) { a.setAttribute('href', h.slice(0, k + 1) + h.slice(k + 1).replace(/\/(dark|light)$/, '') + themeSeg()); return; }
+    var i = h.indexOf('?'), p = i < 0 ? h : h.slice(0, i), q = i < 0 ? '' : h.slice(i);
     a.setAttribute('href', p.replace(/\/(dark|light)$/, '') + themeSeg() + q);
   });
 }
 function ensureFrame(){ if (!document.getElementById('qp-body')) document.body.innerHTML = FRAME; }
 function route(y){
   if (QP.persona && QP.def && QP.state) kept[QP.persona.slug + '/' + QP.pageId] = QP.state;
+  clearPins();
   QP.tip.hide(); QP.charts = [];
   if (QP.MODE === 'hash' && !location.hash) { location.replace(QP.HOME); return; }
   var r = QP.parse(QP.current()), per = r && QP.PERSONAS[r.user];
@@ -775,6 +844,8 @@ function unknownUser(user){
 }
 QP.boot = function(){
   bind();
+  if (QP.TIPS) ROOT.classList.add('qp-tipsview');   /* leaves room beside the rail for its labels */
+  if (QP.TIPS && document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ pinTips(); });
   /* older ?theme=dark|light links become the /dark (or /light) address form */
   var sq = new URLSearchParams(location.search), tq = sq.get('theme'), cur = QP.current().replace(/\/+$/, '');
   if ((tq === 'dark' || tq === 'light') && /^\/user\//.test(cur)) {
