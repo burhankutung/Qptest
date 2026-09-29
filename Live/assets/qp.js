@@ -158,8 +158,11 @@ QP.dates = function(from, to, kf, kt){
   return '<span class="qp-field">From '+one(kf, from)+'</span><span class="qp-field">to '+one(kt, to)+'</span>';
 };
 /* metric tile for area cards: tone is the status edge; t is the target line */
+/* status edge: a real 3px element (not a clipped background layer), so design tools such as
+   html.to.design import it as its own thin rectangle instead of a fill across the card */
+var EDGE = '<i class="qp-edge" aria-hidden="true"></i>';
 QP.tile = function(k, v, t, tone, cls){
-  return '<div class="qp-tile '+(tone||'neu')+(cls ? ' '+cls : '')+'"><span class="k">'+k+'</span><span class="v">'+v+'</span>'+(t ? '<span class="t">'+t+'</span>' : '')+'</div>';
+  return '<div class="qp-tile '+(tone||'neu')+(cls ? ' '+cls : '')+'">'+EDGE+'<span class="k">'+k+'</span><span class="v">'+v+'</span>'+(t ? '<span class="t">'+t+'</span>' : '')+'</div>';
 };
 QP.statusPill = function(){ var p = QP.persona; var closed = /as at/.test(p.status); return '<span class="qp-status"><i></i><b>Month closed</b>· '+p.status+'</span>'; };
 QP.legend = function(){
@@ -177,14 +180,14 @@ QP.sec = function(title, cap, rt, cls){
 QP.eyebrow = function(t){ return '<div class="qp-eyebrow">'+t+'</div>'; };
 QP.card = function(o){
   var hd = (o.title || o.rt) ? '<div class="hd"><div class="tt"><h3>'+(o.title||'')+(o.cap ? ' <span class="cap">'+o.cap+'</span>' : '')+'</h3>'+(o.sub ? '<p>'+o.sub+'</p>' : '')+'</div>'+(o.rt ? '<div class="rt">'+o.rt+'</div>' : '')+'</div>' : '';
-  return '<section class="qp-card '+(o.cls||'')+(o.status ? ' st-'+o.status : '')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.style ? ' style="'+o.style+'"' : '')+(o.tip ? ' data-tip="'+esc(o.tip)+'" tabindex="0"' : '')+'>'+hd+(o.body||'')+(o.foot ? '<div class="qp-foot">'+icon('info')+'<span>'+o.foot+'</span></div>' : '')+'</section>';
+  return '<section class="qp-card '+(o.cls||'')+(o.status ? ' st-'+o.status : '')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.style ? ' style="'+o.style+'"' : '')+(o.tip ? ' data-tip="'+esc(o.tip)+'" tabindex="0"' : '')+'>'+(o.status ? EDGE : '')+hd+(o.body||'')+(o.foot ? '<div class="qp-foot">'+icon('info')+'<span>'+o.foot+'</span></div>' : '')+'</section>';
 };
 /* tooltip attributes for any element: shown on hover, tap or keyboard focus */
 QP.tipAttr = function(t){ return ' data-tip="'+esc(t)+'" tabindex="0"'; };
 /* small i button beside a label: its tooltip (hover, tap or focus) defines the measure */
 QP.infoBtn = function(label, def){ return '<button type="button" class="qp-ib" data-tip="'+esc(def)+'" aria-label="'+esc('About '+String(label).replace(/<[^>]*>/g, '')+': '+def)+'">'+icon('info')+'</button>'; };
 QP.kpi = function(o){
-  return '<div class="qp-kpi '+(o.status||'neu')+' '+(o.cls||'')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.info ? ' data-def="'+esc(o.info)+'"' : '')+'>'+
+  return '<div class="qp-kpi '+(o.status||'neu')+' '+(o.cls||'')+'"'+(o.id ? ' id="'+o.id+'"' : '')+(o.info ? ' data-def="'+esc(o.info)+'"' : '')+'>'+EDGE+
     '<div class="k"><span class="lab">'+o.label+'</span>'+(o.st ? '<span class="st">'+o.st+'</span>' : '')+'</div>'+
     (o.info ? '<span class="sr">'+esc(o.info)+'</span>' : '')+
     (o.pair ? o.pair : '<div class="v">'+o.value+(o.unit ? '<small>'+o.unit+'</small>' : '')+'</div>')+

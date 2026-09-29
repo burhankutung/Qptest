@@ -99,6 +99,8 @@
   --neu:var(--c-disabled-font); --neu-ink:var(--c-dark-gray); --neu-bg:var(--c-light-gray);
 
   --r-card:12px; --r-tile:10px; --r-ctl:8px;
+  /* selected table row: light purple mixed 55% into the card, written out as plain hex for import tools */
+  --sel-row:#ECE7FF;
 
   /* semantic aliases (documentation-friendly names for the tokens above —
      same values, same single source of truth, nothing new to keep in sync) */
@@ -133,7 +135,7 @@
   --ink:#E7E9EE; --mut:#9AA2B1; --faint:#9AA2B1;
   --acc-ink:#A98BFF; --acc-bg:#2C2254; --acc-bg2:#2C2254; --tab-bg:#2C2254;
   --dis:#252B36; --dis-ink:#5E6573;
-  --neu:#5E6573; --neu-ink:#9AA2B1; --amb-ink:#E7E9EE;
+  --neu:#5E6573; --neu-ink:#9AA2B1; --amb-ink:#E7E9EE; --sel-row:#221E3E;
   --s1:#6C8FE8; --s2:#9DB8F0; --s4:#7F95D6; --s5:#4E6FC9; --target:#9AA2B1;
   --area-dev:#6C8FE8; --area-corp:#9B7BEA; --area-city:#22B3A0;
   --mark:#4A5262; --av:#3D5FC4; --tip-bg:#2B3140;
@@ -340,8 +342,21 @@ a{color:inherit}
 .qp-card.tight{padding:18px}
 .qp-card.flush{padding:0;overflow:clip}
 /* a card that reports one measure carries its status on the left edge */
-.qp-card.st-pos,.qp-card.st-neg,.qp-card.st-amb,.qp-card.st-neu{border-left:3px solid transparent;background:linear-gradient(180deg,var(--tc,var(--neu)) 0%,color-mix(in srgb,var(--tc,var(--neu)) 45%,transparent) 45%,transparent 100%) 0 0/3px 100% no-repeat border-box,var(--card)}
+.qp-card.st-pos,.qp-card.st-neg,.qp-card.st-amb,.qp-card.st-neu{border-left:3px solid transparent;background:var(--card)}
 .qp-card.st-pos{--tc:var(--pos)}.qp-card.st-neg{--tc:var(--neg)}.qp-card.st-amb{--tc:var(--amb)}.qp-card.st-neu{--tc:var(--neu)}
+/* status edge strip (QP.tile / QP.kpi / status QP.card): sits over the transparent 3px left border and
+   fades from the state colour into the card; a real element so it survives HTML-to-Figma import */
+.qp-edge{position:absolute;left:-3px;top:-1px;bottom:-1px;width:3px;pointer-events:none;
+  border-radius:3px 0 0 3px / var(--er,10px) 0 0 var(--er,10px);
+  background:linear-gradient(180deg,var(--tc,var(--neu)) 0%,color-mix(in srgb,var(--tc,var(--neu)) 45%,transparent) 45%,transparent 100%)}
+.qp-tile>.qp-edge{--er:8px}
+.qp-card>.qp-edge{--er:var(--r-card)}
+/* each state spelled out in plain rgba (no color-mix) so import tools read the gradient as-is */
+.pos>.qp-edge,.st-pos>.qp-edge{background:linear-gradient(180deg,#0FA465 0%,rgba(15,164,101,.45) 45%,rgba(15,164,101,0) 100%)}
+.neg>.qp-edge,.st-neg>.qp-edge{background:linear-gradient(180deg,#FF4B4B 0%,rgba(255,75,75,.45) 45%,rgba(255,75,75,0) 100%)}
+.amb>.qp-edge,.st-amb>.qp-edge{background:linear-gradient(180deg,#F4B11E 0%,rgba(244,177,30,.45) 45%,rgba(244,177,30,0) 100%)}
+.neu>.qp-edge,.st-neu>.qp-edge{background:linear-gradient(180deg,#B0B0B0 0%,rgba(176,176,176,.45) 45%,rgba(176,176,176,0) 100%)}
+:root[data-theme="dark"] .neu>.qp-edge,:root[data-theme="dark"] .st-neu>.qp-edge{background:linear-gradient(180deg,#5E6573 0%,rgba(94,101,115,.45) 45%,rgba(94,101,115,0) 100%)}
 .qp-card>.hd{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
 .qp-card>.hd .tt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px}
 .qp-card>.hd h3{font-size:var(--fs-xl);font-weight:600;letter-spacing:-.01em;line-height:1.3;margin:0;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;color:var(--ink)}
@@ -364,7 +379,7 @@ a{color:inherit}
 
 /* ── KPI card (OE reference): status on the left edge, label, value with
    its unit, then the variance and the reference figures ───────────────── */
-.qp-kpi{position:relative;background:linear-gradient(180deg,var(--tc,var(--neu)) 0%,color-mix(in srgb,var(--tc,var(--neu)) 45%,transparent) 45%,transparent 100%) 0 0/3px 100% no-repeat border-box,var(--card);border:1px solid var(--line);border-left:3px solid transparent;border-radius:var(--r-tile);
+.qp-kpi{position:relative;background:var(--card);border:1px solid var(--line);border-left:3px solid transparent;border-radius:var(--r-tile);
   padding:14px 16px;display:flex;flex-direction:column;min-width:0}
 .qp-kpi.pos{--tc:var(--pos)}.qp-kpi.neg{--tc:var(--neg)}.qp-kpi.amb{--tc:var(--amb)}.qp-kpi.neu{--tc:var(--neu)}
 .qp-kpi .k{display:flex;align-items:flex-start;gap:6px;font-size:var(--fs-xs);font-weight:400;color:var(--mut);line-height:1.35;min-height:16px}
@@ -439,7 +454,7 @@ a{color:inherit}
 
 /* metric tile: label, value, target line; the left edge is the status */
 .qp-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.qp-tile{background:linear-gradient(180deg,var(--tc,var(--neu)) 0%,color-mix(in srgb,var(--tc,var(--neu)) 45%,transparent) 45%,transparent 100%) 0 0/3px 100% no-repeat border-box,var(--card2);border:1px solid var(--line);border-left:3px solid transparent;border-radius:8px;padding:10px 12px;min-width:0;display:flex;flex-direction:column}
+.qp-tile{position:relative;background:var(--card2);border:1px solid var(--line);border-left:3px solid transparent;border-radius:8px;padding:10px 12px;min-width:0;display:flex;flex-direction:column}
 .qp-tile.pos{--tc:var(--pos)}.qp-tile.neg{--tc:var(--neg)}.qp-tile.amb{--tc:var(--amb)}.qp-tile.neu{--tc:var(--neu)}
 .qp-tile.wide{grid-column:1 / -1}
 .qp-tile .k{font-size:var(--fs-xs);color:var(--mut);line-height:1.35;display:flex;align-items:center;gap:6px}
@@ -531,7 +546,7 @@ a{color:inherit}
 .qp-tbl .qp-chip.amb{color:var(--amb)}
 .qp-tbl .qp-chip.neu{color:var(--mut)}
 /* selected row */
-.qp-tbl tr.sel td,.qp-tbl tr.sel:hover td{background:color-mix(in srgb, var(--acc-bg) 55%, var(--card))}
+.qp-tbl tr.sel td,.qp-tbl tr.sel:hover td{background:var(--sel-row)}
 .qp-tbl tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--acc)}
 /* selectable rows (row.act): hover/focus is a light, temporary tint; .sel is the persistent selection */
 .qp-tbl tr.pick{cursor:pointer}
