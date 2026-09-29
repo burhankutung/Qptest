@@ -132,7 +132,7 @@ function cum(a){ var s = 0; return a.map(function(v){ s += v; return QP.round(s,
 QP.define('consolidated', {
   defaults:function(){ return {basis:'m', year:'2026', month:'5', trend:'overall', devB:'plan', corpB:'plan', project:'All', bu:'All', ap:'amount', kpiC:urlConcept() || '0'}; },
   /* keep the review link in step with the chosen KPI concept */
-  onSet:function(s, k, v){ if (k === 'kpiC' && urlConcept() !== null) history.replaceState(history.state, '', location.pathname + '?kpi=' + v + location.hash); },
+  onSet:function(s, k, v){ if (k === 'kpiC' && urlConcept() !== null) { var q = new URLSearchParams(location.search); q.set('kpi', v); history.replaceState(history.state, '', location.pathname + '?' + q + location.hash); } },
   scope:function(){ return 'Qiddiya Investment Company'; },
   controls:function(s){
     var mi = MIDX[+s.month], ml = QP.mlabel(mi.y, mi.m);

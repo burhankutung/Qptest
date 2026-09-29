@@ -72,10 +72,14 @@ QP.USERS.forEach(function(k){ QP.PERSONAS[k].slug = k; });
    Each page's head sets QP_MODE and a <base>, so asset paths stay relative. */
 QP.MODE = window.QP_MODE === 'hash' ? 'hash' : 'path';
 QP.ASSETS = 'assets/';
-QP.HOME = QP.MODE === 'path' ? '/' : 'index.html';
+/* a ?theme=dark|light link fixes the theme for that view without touching the saved preference;
+   in-app links carry it so a shared dark (or light) link stays that way while browsing */
+QP.THEME = window.QP_THEME || null;
+function themeQ(){ return QP.THEME ? '?theme=' + QP.THEME : ''; }
+QP.HOME = (QP.MODE === 'path' ? '/' : 'index.html') + themeQ();
 QP.can = function(p){ return QP.persona.pages.indexOf(p) >= 0; };
 QP.route = function(page, user){ return '/user/' + (user || QP.persona.slug) + (page ? '/' + page : ''); };
-QP.url = function(page, user){ return (QP.MODE === 'hash' ? 'app.html#' : '') + QP.route(page, user); };
+QP.url = function(page, user){ return QP.MODE === 'hash' ? 'app.html' + themeQ() + '#' + QP.route(page, user) : QP.route(page, user) + themeQ(); };
 QP.href = function(p){ return QP.url(p); };
 QP.current = function(){ return QP.MODE === 'hash' ? decodeURI(location.hash.slice(1)) : location.pathname; };
 
@@ -324,7 +328,7 @@ window.addEventListener('scroll', hideKTip, true);
    browser; each page's head applies them before first paint. ─────────── */
 var ROOT = document.documentElement;
 function pref(k, v){ try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch(e){} return null; }
-if (pref('qp-theme') === 'dark') ROOT.setAttribute('data-theme', 'dark');
+if (QP.THEME) ROOT.setAttribute('data-theme', QP.THEME); else if (pref('qp-theme') === 'dark') ROOT.setAttribute('data-theme', 'dark');
 if (pref('qp-rail') === 'open') ROOT.setAttribute('data-rail', 'open');
 function isDark(){ return ROOT.getAttribute('data-theme') === 'dark'; }
 function railOpen(){ return ROOT.getAttribute('data-rail') === 'open'; }
@@ -350,6 +354,13 @@ document.addEventListener('click', function(ev){
   if (t.hasAttribute('data-theme-toggle')) {
     var dark = !isDark();
     ROOT.setAttribute('data-theme', dark ? 'dark' : 'light'); pref('qp-theme', dark ? 'dark' : 'light');
+    /* on a ?theme= link, the address and in-app links follow the switch */
+    if (QP.THEME) {
+      QP.THEME = dark ? 'dark' : 'light';
+      var q = new URLSearchParams(location.search); q.set('theme', QP.THEME);
+      history.replaceState(history.state, '', location.pathname + '?' + q + location.hash);
+      document.querySelectorAll('a[href*="theme="]').forEach(function(a){ a.setAttribute('href', a.getAttribute('href').replace(/theme=(dark|light)/, 'theme=' + QP.THEME)); });
+    }
     document.querySelectorAll('[data-theme-toggle]').forEach(function(b){ b.outerHTML = QP.themeButton(); });
   } else {
     if (railOpen()) ROOT.removeAttribute('data-rail'); else ROOT.setAttribute('data-rail', 'open');
@@ -635,7 +646,7 @@ function bind(){
     var a = t.closest('a[href]');
     if (a && ev.button === 0 && !ev.metaKey && !ev.ctrlKey && !ev.shiftKey && !ev.altKey && !a.target && !a.hasAttribute('download')) {
       var u = new URL(a.href, location.href);
-      if (QP.MODE === 'path' && u.origin === location.origin && /^\/user\//.test(u.pathname)) { ev.preventDefault(); QP.go(u.pathname); return; }
+      if (QP.MODE === 'path' && u.origin === location.origin && /^\/user\//.test(u.pathname)) { ev.preventDefault(); QP.go(u.pathname + u.search); return; }
       if (QP.MODE === 'hash' && u.pathname === location.pathname && /^#\/user\//.test(u.hash)) { ev.preventDefault(); QP.go(u.hash.slice(1)); return; }
     }
     if (t.closest('[data-reload]')) { location.reload(); return; }
@@ -689,7 +700,7 @@ QP.go = function(target){
   closeMenus();
   var path = String(target), h = path.indexOf('#');
   if (h >= 0) path = path.slice(h + 1);
-  if (path === QP.current()) return;
+  if (path.split('?')[0] === QP.current()) return;
   /* hash mode may run from file://, where history.pushState can be refused: a plain
      fragment change works everywhere and the hashchange listener routes it */
   if (QP.MODE === 'hash') { location.hash = path; return; }
