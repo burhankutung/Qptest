@@ -1165,6 +1165,65 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font)}
 .qp-dd:hover>button svg,.qp-dd:focus-within>button svg{transform:rotate(180deg)}
 .qp-menu [role=option]{cursor:default}
 </style>
+<style id="header-nav-v2">
+/* Header and left menu, as in the approved screenshot:
+   logo | Q-Profit ................ avatar, name + role, chevron;  icon-only menu with a divider and a Â» button */
+.qp-top{border-radius:8px;min-height:72px;padding:14px 24px;gap:16px}
+.qp-brand{gap:0;align-items:center}
+.qp-hlogo,.qp-hlogo img{width:164px}
+.qp-hsep{flex:none;width:1.5px;height:28px;margin:0 24px;background:var(--line)}
+.qp-brand h1{font-size:24px;font-weight:400;letter-spacing:0;color:var(--mut)}
+.qp-who{gap:12px;padding:4px 4px 4px 0}
+.qp-who .av{display:grid;width:46px;height:46px;font-size:14px}
+.qp-top .qp-who>span:not(.av)>span{display:block;font-size:14px;color:var(--mut)}
+.qp-who b{font-size:14px}
+.qp-who .cv{width:16px;height:16px;color:var(--mut)}
+
+/* expand / collapse button at the foot of the menu (no scripts: a label toggling a hidden checkbox) */
+.qp-rail .qp-rail-cb{display:none}
+.qp-rail .qp-rail-tg{width:46px;height:40px;flex:none;box-sizing:border-box;margin-top:2px;padding-top:6px;border-top:1px solid var(--line);display:grid;place-items:center;color:var(--mut);cursor:pointer}
+.qp-rail .qp-rail-tg:hover{color:var(--ink)}
+.qp-rail .qp-rail-tg svg{width:18px;height:18px;transition:transform .2s}
+@media (min-width:681px){
+  .qp-rail:has(.qp-rail-cb:checked),.qp-rail:focus-within{width:var(--rail-w-open);align-items:stretch;padding:16px 12px}
+  .qp-rail:has(.qp-rail-cb:checked) a,.qp-rail:focus-within a{width:auto;justify-content:flex-start;gap:12px;padding:0 13px}
+  .qp-rail:has(.qp-rail-cb:checked) a .lb,.qp-rail:focus-within a .lb{display:inline;font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .qp-rail:has(.qp-rail-cb:checked) a.on .lb,.qp-rail:focus-within a.on .lb{font-weight:700}
+  .qp-rail:has(.qp-rail-cb:checked) .qp-rail-tg,.qp-rail:focus-within .qp-rail-tg{width:auto;justify-items:end;padding-right:13px}
+  .qp-rail:has(.qp-rail-cb:checked) .qp-rail-tg svg,.qp-rail:focus-within .qp-rail-tg svg{transform:rotate(180deg)}
+}
+/* the already-open menu (expanded-menu page): Â« collapses it by returning to the normal page */
+:root[data-rail="open"] .qp-rail a.qp-rail-tg{width:auto;height:40px;margin-top:2px;padding:6px 13px 0;border-radius:0;border-top:1px solid var(--line);justify-content:flex-end;gap:0;background:none;color:var(--mut)}
+:root[data-rail="open"] .qp-rail a.qp-rail-tg:hover{color:var(--ink);background:none}
+:root[data-rail="open"] .qp-rail .qp-rail-tg svg{transform:rotate(180deg)}
+@media (max-width:680px){ .qp-rail .qp-rail-tg{display:none} .qp-hsep{margin:0 14px} .qp-hlogo,.qp-hlogo img{width:110px} .qp-brand h1{font-size:18px} }
+</style>
+<style id="static-tooltips">
+/* Static pages have no scripts: every [data-tip] shows its text as a black tooltip on hover or keyboard focus. */
+[data-tip]{position:relative}
+/* let a tooltip extend past the card / bar it belongs to (the coloured header keeps the card's rounded top corners) */
+.qp-area{overflow:visible}
+.qp-area>.hdr{border-radius:7px 7px 0 0}
+.qp-comp{overflow:visible}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;z-index:300;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);
+  width:max-content;max-width:280px;box-sizing:border-box;padding:9px 11px;border-radius:9px;background:var(--tip-bg);color:var(--c-lighter-gray-2);
+  font-size:var(--fs-sm);font-weight:400;font-style:normal;line-height:1.4;letter-spacing:0;text-align:left;text-transform:none;white-space:normal;pointer-events:none;
+  box-shadow:0 6px 18px rgba(0,0,0,.28)}
+[data-tip]:hover::before,[data-tip]:focus-visible::before{content:"";position:absolute;z-index:300;left:50%;bottom:calc(100% + 3px);transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--tip-bg);border-bottom:0;pointer-events:none}
+.qp-ib[data-tip]:hover::after,.qp-ib[data-tip]:focus-visible::after{left:-6px;transform:none}
+.qp-card.qp-hastip[data-tip]:hover::after{left:16px;transform:none;bottom:calc(100% - 4px)}
+.qp-card.qp-hastip[data-tip]:hover::before{display:none}
+.qp-bullet .r[data-tip]:hover::after{left:0;transform:none;bottom:calc(100% + 4px)}
+.qp-bullet .r[data-tip]:hover::before{display:none}
+/* menu icons: the tip opens to the right of the icon, and only while the menu is collapsed */
+.qp-rail a[data-tip]:hover::after,.qp-rail a[data-tip]:focus-visible::after{left:calc(100% + 12px);bottom:auto;top:50%;transform:translateY(-50%);white-space:nowrap}
+.qp-rail a[data-tip]:hover::before,.qp-rail a[data-tip]:focus-visible::before{left:calc(100% + 2px);bottom:auto;top:50%;transform:translateY(-50%);
+  border:5px solid transparent;border-right-color:var(--tip-bg);border-left:0}
+.qp-rail:focus-within a[data-tip]::after,.qp-rail:focus-within a[data-tip]::before,.qp-rail:has(.qp-rail-cb:checked) a[data-tip]::after,.qp-rail:has(.qp-rail-cb:checked) a[data-tip]::before,
+:root[data-rail="open"] .qp-rail a[data-tip]::after,:root[data-rail="open"] .qp-rail a[data-tip]::before,:root.qp-tipsview .qp-rail a[data-tip]::after,:root.qp-tipsview .qp-rail a[data-tip]::before{display:none}
+@media (max-width:680px){ .qp-rail a[data-tip]::after,.qp-rail a[data-tip]::before{display:none} }
+</style>
 </head>
 <body>
 <div class="tt-page">
