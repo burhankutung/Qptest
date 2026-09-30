@@ -1213,6 +1213,11 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font)}
   border:5px solid transparent;border-top-color:var(--tip-bg);border-bottom:0;pointer-events:none}
 .qp-ib[data-tip]:hover::after,.qp-ib[data-tip]:focus-visible::after{left:-6px;transform:none}
 .qp-kpi{overflow:visible}
+/* the i button follows the label text instead of sitting at the card's far edge */
+.qp-kpi .k{display:block}
+.qp-kpi .k .lab{display:inline}
+.qp-kpi .k .qp-ib{display:inline-grid;margin-left:5px;vertical-align:-3px}
+.qp-kpi .k .st{float:right}
 .qp-kpi .qp-ib[data-tip]:hover::after,.qp-kpi .qp-ib[data-tip]:focus-visible::after{max-width:240px}
 .qp-grid>.qp-kpi:nth-last-child(-n+2) .qp-ib[data-tip]:hover::after,.qp-grid>.qp-kpi:nth-last-child(-n+2) .qp-ib[data-tip]:focus-visible::after{left:auto;right:-6px}
 .qp-card.qp-hastip[data-tip]:hover::after{left:16px;transform:none;bottom:calc(100% - 4px)}
