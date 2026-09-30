@@ -27,6 +27,7 @@ var I = {
   nomatch:'<circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.5-4.5"/><path d="m8.6 8.6 4.8 4.8M13.4 8.6l-4.8 4.8"/>',
   lock:'<rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>',
   check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  user:'<circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="10" r="3"/><path d="M7 19.4V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v.4"/>',
   users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
   bars:'<path d="M4 20V13M9 20V9M14 20v-5M19 20V5"/>',
   up:'<path d="M12 5 4 16h16z" fill="currentColor" stroke="none"/>', down:'<path d="M12 19 4 8h16z" fill="currentColor" stroke="none"/>',
@@ -151,9 +152,9 @@ QP.dd = function(k, label, value, opts, o){
   var cur = opts.filter(function(x){ return (typeof x === 'string' ? x : x.v) == value; })[0];
   var curL = cur ? (typeof cur === 'string' ? cur : cur.l) : value;
   if (o.locked) {
-    return '<div class="qp-dd locked" data-tip="'+esc(o.locked)+'"><button type="button" aria-disabled="true">'+(label ? label + ' ' : '')+'<b>'+curL+'</b>'+icon('lock')+'</button></div>';
+    return '<div class="qp-dd locked" data-tip="'+esc(o.locked)+'"><button type="button" aria-disabled="true">'+(label ? '<span class="l">'+label+'</span> ' : '')+'<b>'+curL+'</b>'+icon('lock')+'</button></div>';
   }
-  return '<div class="qp-dd" data-dd="'+k+'"><button type="button" aria-haspopup="listbox" aria-expanded="false">'+(label ? label + ' ' : '')+'<b>'+curL+'</b>'+icon('chevd')+'</button>'+
+  return '<div class="qp-dd" data-dd="'+k+'"><button type="button" aria-haspopup="listbox" aria-expanded="false">'+(label ? '<span class="l">'+label+'</span> ' : '')+'<b>'+curL+'</b>'+icon('chevd')+'</button>'+
     '<div class="qp-menu" role="listbox">' + opts.map(function(x){
       if (x && x.grp) return '<div class="grp">'+x.grp+'</div>';
       var v = typeof x === 'string' ? x : x.v, l = typeof x === 'string' ? x : x.l;
@@ -164,7 +165,7 @@ QP.dates = function(from, to, kf, kt){
   function one(k, v){
     return '<label class="qp-date">'+icon('cal')+'<input type="text" readonly value="'+QP.dmy(v)+'" data-date="'+k+'" aria-label="'+(k===kf?'From date':'To date')+'"><input type="date" class="sr" tabindex="-1" data-picker="'+k+'" value="'+v+'"></label>';
   }
-  return '<span class="qp-field">From '+one(kf, from)+'</span><span class="qp-field">to '+one(kt, to)+'</span>';
+  return '<span class="qp-field"><span class="l">From</span> '+one(kf, from)+'</span><span class="qp-field"><span class="l">To</span> '+one(kt, to)+'</span>';
 };
 /* metric tile for area cards: tone is the status edge; t is the target line */
 /* status edge: a real 3px element (not a clipped background layer), so design tools such as
@@ -280,8 +281,11 @@ QP.tip = {
     tipEl.innerHTML = html; tipEl.classList.add('on');
     var w = tipEl.offsetWidth, hh = tipEl.offsetHeight;
     var left = Math.min(window.innerWidth - w - 10, Math.max(10, x + 14));
-    var top = y - hh - 12; if (top < 8) top = y + 18;
+    var top = y - hh - 12, below = top < 8; if (below) top = y + 18;
     tipEl.style.left = left + 'px'; tipEl.style.top = top + 'px';
+    /* pointer (guideline tooltip) aimed at the trigger, flipped when the tooltip sits below it */
+    tipEl.style.setProperty('--ax', Math.max(12, Math.min(w - 12, x + 14 - left)) + 'px');
+    tipEl.classList.toggle('below', below);
   },
   hide:function(){ if (tipEl) tipEl.classList.remove('on'); hideKTip(); }
 };
@@ -573,10 +577,12 @@ function shell(){
     QP.ORDER.filter(QP.can).map(function(id){ return '<a href="'+QP.href(id)+'" class="'+(id === pageId ? 'on' : '')+'" data-tip="'+QP.PAGES[id].label+'" aria-label="'+QP.PAGES[id].label+'"'+(id === pageId ? ' aria-current="page"' : '')+'>'+icon(id)+'<span class="lb">'+QP.PAGES[id].label+'</span></a>'; }).join('') +
     '</nav>' : '';
   var access = p.pages.map(function(id){ return '<a href="'+QP.href(id)+'" role="menuitem"'+(id === pageId ? ' aria-current="page"' : '')+'>'+icon(id)+QP.PAGES[id].label+'</a>'; }).join('');
+  /* header per PBI Guidelines V1: Qiddiya logo (with wording) + dashboard title, then
+     "Powered by Data Office" and the user, each after a soft-gray separator */
   var top = '<header class="qp-top"><div class="qp-brand">'+
-    (multi ? '' : '<span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span>')+'<h1>Q-Profit</h1></div>'+
-    QP.themeButton() +
-    '<div class="qp-who" data-who tabindex="0" role="button" aria-haspopup="true" aria-label="'+esc(p.name)+', '+esc(p.role)+' — dashboards menu"><span class="av">'+p.ini+'</span><span><b>'+p.name+'</b><span>'+p.role+'</span></span>'+icon('chevd','cv')+
+    '<span class="qp-hlogo"><img class="lt" src="'+QP.ASSETS+'qiddiya-logo.png" alt="Qiddiya"><img class="dk" src="'+QP.ASSETS+'qiddiya-logo-dark.png" alt=""></span><h1>Q-Profit</h1></div>'+
+    QP.themeButton() + '<span class="qp-hsep" aria-hidden="true"></span><span class="qp-powered">Powered by Data Office</span><span class="qp-hsep" aria-hidden="true"></span>' +
+    '<div class="qp-who" data-who tabindex="0" role="button" aria-haspopup="true" aria-label="'+esc(p.name)+', '+esc(p.role)+' — dashboards menu">'+icon('user','uic')+'<span class="av">'+p.ini+'</span><span><b>'+p.name+'</b><span>'+p.role+'</span></span>'+icon('chevd','cv')+
       '<div class="qp-pop" role="menu"><div class="hd"><b>'+p.name+'</b><span>'+p.role+'</span></div>'+access+
       '</div></div></header>';
   return {rail:rail, top:top};
@@ -837,7 +843,7 @@ function outside(page, why){
 function unknownUser(user){
   QP.persona = null; QP.pageId = null; QP.def = null; QP.state = null; ROOT.removeAttribute('data-area');
   document.title = 'Page Not Found · Q-Profit';
-  document.body.innerHTML = '<div class="qp-solo"><header class="qp-top"><div class="qp-brand"><span class="logo"><img src="'+QP.ASSETS+'qiddiya-mark.png" alt="Qiddiya"></span><h1>Q-Profit</h1></div>'+QP.themeButton()+'</header>'+
+  document.body.innerHTML = '<div class="qp-solo"><header class="qp-top"><div class="qp-brand"><span class="qp-hlogo"><img class="lt" src="'+QP.ASSETS+'qiddiya-logo.png" alt="Qiddiya"><img class="dk" src="'+QP.ASSETS+'qiddiya-logo-dark.png" alt=""></span><h1>Q-Profit</h1></div>'+QP.themeButton()+'<span class="qp-hsep" aria-hidden="true"></span><span class="qp-powered">Powered by Data Office</span></header>'+
     notice('users', 'Page Not Found', user ? 'There’s no user called “'+esc(user)+'”. Open the directory to find the right workspace.' : 'This address doesn’t match a Q-Profit page.',
       '<a class="qp-link" href="'+QP.HOME+'">'+icon('users')+'All users</a>', '404') + '<footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span></footer></div>';
   window.scrollTo(0, 0);

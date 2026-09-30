@@ -970,3 +970,124 @@ a{color:inherit}
 .qp-ktip.qp-inline .v{white-space:normal;font-size:var(--fs-xl)}
 /* collapsed rail in tooltip view: a clear column for the pinned rail labels */
 @media (min-width:901px){ :root.qp-tipsview:not([data-rail="open"]) .qp-rail{margin-right:150px} }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   PBI Guidelines V1 alignment (Design Review MoM, 29 Sep 2026)
+   Mandate to end of Dec 2026: stay as close as possible to the current Power BI
+   UX/UI Guidelines v1.2. The rules below override the design above where they
+   differ. Kept on purpose (MoM: colourful header retained, larger font allowed):
+   the coloured Area Summaries headers.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Typography: Arial only, Regular 400 / Bold 700 (Arial has no other weights, so
+   300/500/600 resolve to 400/700); Figma scale 28 / 24 / 18 / 14 / 12 / 11 px.
+   Surface: dashboard background Light gray #FBFBFB. Radius: 8px cards, 4px dropdowns.
+   Spacing: 20px between cards. */
+:root{
+  --font:"QP Riyal",Arial,"Helvetica Neue",Helvetica,sans-serif;
+  --fs-xs:12px; --fs-sm:12px; --fs-md:14px; --fs-lg:14px; --fs-xl:18px; --fs-2xl:18px; --fs-3xl:24px;
+  --fs-app:24px; --fs-metric:28px; --fs-metric-lg:28px; --fs-metric-xl:28px;
+  --c-canvas:#FBFBFB;
+  --r-card:8px; --r-tile:8px; --r-ctl:4px;
+  --gap:20px; --gut:20px;
+  /* tooltips: the black-background version (MoM) */
+  --tip-bg:#1A1A1A; --ktip-bg:#1A1A1A; --ktip-line:#1A1A1A; --ktip-dot:rgba(255,255,255,.45);
+  --ktip-shadow:0 8px 24px rgba(0,0,0,.22);
+}
+
+/* Header: white, 8px rounded, 1px soft gray; logo 128px; title Carbon 24 bold;
+   "Powered by Data Office" Dark gray 12; user icon 20px + name Carbon 14 bold + purple chevron 16px */
+.qp-top{border-radius:8px;min-height:64px;padding:12px 20px;gap:16px}
+.qp-brand{align-items:center;gap:24px}
+.qp-hlogo{display:block;flex:none;width:128px}
+.qp-hlogo img{display:block;width:128px;height:auto}
+.qp-hlogo .dk{display:none}
+:root[data-theme="dark"] .qp-hlogo .lt{display:none}
+:root[data-theme="dark"] .qp-hlogo .dk{display:block}
+.qp-brand h1{font-size:24px;font-weight:700;letter-spacing:0;line-height:1.2}
+.qp-hsep{flex:none;width:1.5px;height:24px;background:var(--line)}
+.qp-powered{font-size:12px;color:var(--mut);white-space:nowrap}
+.qp-theme{border-radius:8px;width:36px;height:36px}
+.qp-who{gap:8px;padding:4px}
+.qp-who .uic{flex:none;width:20px;height:20px;color:var(--ink)}
+.qp-top .qp-who .av,.qp-top .qp-who>span:not(.av)>span{display:none}
+.qp-who b{font-size:14px;font-weight:700}
+.qp-who .cv{width:16px;height:16px;color:var(--acc)}
+@media (max-width:760px){ .qp-powered,.qp-hsep{display:none} .qp-hlogo,.qp-hlogo img{width:96px} .qp-brand{gap:14px} .qp-brand h1{font-size:18px} }
+
+/* Tooltips: black background, white text, 8px rounded, pointer toward the trigger */
+.qp-tip{background:#1A1A1A;color:#FFFFFF;border-radius:8px;padding:8px 12px;font-size:12px;line-height:1.45;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.qp-tip::after{content:"";position:absolute;left:var(--ax,16px);bottom:-5px;width:10px;height:10px;margin-left:-5px;background:inherit;transform:rotate(45deg)}
+.qp-tip.below::after{bottom:auto;top:-5px}
+.qp-tip.qp-pinned::after,.qp-tip.tt-static::after{display:none}
+.qp-ktip{border-radius:8px;color:#FFFFFF}
+.qp-ktip .k,.qp-ktip .r,.qp-ktip .v small{color:rgba(255,255,255,.72)}
+.qp-ktip .r.lead{color:#FFFFFF}
+.qp-ktip .qp-chip.neu,.qp-ktip .qp-chip.out{color:rgba(255,255,255,.72)}
+
+/* Canvas & cards: 8px rounded, 1.5px Soft gray borders; card padding 16px */
+.qp-card{border-width:1.5px;border-radius:8px}
+.qp-card.st-pos,.qp-card.st-neg,.qp-card.st-amb,.qp-card.st-neu{border-left-width:3px}
+.qp-card:not(.flush){padding:16px}
+.qp-kpi,.qp-tile{border-top-width:1.5px;border-right-width:1.5px;border-bottom-width:1.5px;border-radius:8px}
+.qp-area{border-width:1.5px;border-radius:8px}
+.qp-rail{border-radius:8px}
+.qp-edge{top:-1.5px;bottom:-1.5px}
+
+/* Titles: section Carbon 18 bold; card / chart / table title Carbon 14 bold; page title 18 */
+.qp-sec h2,.qp-eyebrow,.qp-card.kpiwrap .qp-eyebrow{font-size:18px;font-weight:700;color:var(--ink)}
+.qp-sec,.qp-eyebrow{margin-bottom:12px}
+.qp-crumb>b,.qp-crumb .cur,.qp-crumb .sep{font-size:18px}
+.qp-card>.hd h3,.qp-card.flush:has(>.qp-tbl)>.hd h3{font-size:14px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--ink)}
+.qp-card>.hd h3 .cap,.qp-card>.hd p{font-size:12px}
+.qp-card.flush>.hd,.qp-card.flush:has(>.qp-tbl)>.hd{padding:16px 16px 4px}
+
+/* KPI cards: value Carbon 28 bold on top, label Dark gray 12 regular UPPERCASE below */
+.qp-kpi{display:flex;flex-direction:column;padding:16px}
+.qp-kpi>*{order:3}
+.qp-kpi>.v,.qp-kpi>.pair{order:1;margin-top:0;font-size:28px;font-weight:700;color:var(--ink)}
+.qp-kpi>.k{order:2;margin-top:6px;font-size:12px;font-weight:400;text-transform:uppercase;letter-spacing:.02em;color:var(--mut)}
+.qp-kpi>.ft{margin-top:10px}
+.kc-3 .qp-kpi .kc-pf{order:4}
+
+/* Tags (variance): tinted background + border, 4px rounded, 12 bold */
+.qp-chip{padding:2px 6px;border:1px solid transparent;border-radius:4px;font-size:12px;font-weight:700;line-height:1.35}
+.qp-chip.pos{color:#0FA465;background:rgba(15,164,101,.08);border-color:rgba(15,164,101,.35)}
+.qp-chip.neg{color:#FF4B4B;background:rgba(255,75,75,.08);border-color:rgba(255,75,75,.35)}
+.qp-chip.amb{color:#9A6B00;background:rgba(244,177,30,.12);border-color:rgba(244,177,30,.5)}
+.qp-chip.neu,.qp-chip.out{color:var(--mut);background:var(--card2);border-color:var(--line)}
+
+/* Tabs menu: container 8px rounded 1.5px Soft gray; active Light purple with Purple 12 bold;
+   inactive Dark gray 12 regular */
+.qp-seg,.qp-seg.sm{background:var(--card);border:1.5px solid var(--line);border-radius:8px;padding:4px;gap:4px}
+.qp-seg button,.qp-seg.sm button,.qp-seg.tabs button{font-size:12px;font-weight:400;color:var(--mut);border-radius:6px;padding:6px 12px}
+.qp-seg button.on,.qp-seg.sm button.on{background:var(--tab-bg);color:var(--acc-ink);font-weight:700}
+
+/* Dropdown filters: right-aligned; label (Dark gray 12) above a 4px-rounded 1px Soft gray box;
+   value Dark gray 12 regular, Carbon on hover; Purple 16px chevron; Purple border on hover */
+.qp-ctl{justify-content:flex-end;align-items:flex-end;gap:12px}
+.qp-dd,.qp-field{position:relative;padding-top:18px}
+.qp-dd>button{position:relative;height:32px;padding:0 8px 0 12px;gap:10px;border:1px solid var(--line);border-radius:4px;background:var(--card);font-size:12px}
+.qp-dd>button .l,.qp-field>.l{position:absolute;left:0;font-size:12px;font-weight:400;color:var(--mut);white-space:nowrap}
+.qp-dd>button .l{bottom:calc(100% + 4px)}
+.qp-field>.l{top:0}
+.qp-dd>button b{font-weight:400;color:var(--mut)}
+.qp-dd>button:hover{border-color:var(--acc)}
+.qp-dd>button:hover b{color:var(--ink)}
+.qp-dd>button svg{width:16px;height:16px;color:var(--acc)}
+.qp-dd.locked>button{background:var(--dis);border-color:var(--dis)}
+.qp-dd.locked>button b,.qp-dd.locked>button svg{color:var(--dis-ink)}
+.qp-date{border-radius:4px;height:32px;font-size:12px}
+
+/* Tables: column titles Dark gray 12 regular (no capitals); cells Carbon 14 regular with
+   Soft gray row dividers; totals bold */
+.qp-tbl th{font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--mut)}
+.qp-tbl th .u{font-weight:400}
+.qp-tbl td{font-size:14px;border-bottom:1px solid var(--line)}
+.qp-tbl tfoot td{font-size:14px;font-weight:700}
+.qp-tbl tfoot td.nm{text-transform:none;letter-spacing:0;color:var(--ink)}
+
+/* Chart legends: Dark gray 12 bold with round markers; axis text Dark gray 11 */
+.qp-lg,.qp-lg button{font-size:12px;font-weight:700}
+.qp-lg i:not(.ln):not(.dash){border-radius:50%}
+.qp-chart svg text{font-size:11px}

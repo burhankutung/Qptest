@@ -14,7 +14,7 @@
 <body>
 <div class="qp-solo">
   <header class="qp-top">
-    <div class="qp-brand"><span class="logo"><img src="assets/qiddiya-mark.png" alt="Qiddiya"></span><h1>Q-Profit</h1></div>
+    <div class="qp-brand"><span class="qp-hlogo"><img class="lt" src="assets/qiddiya-logo.png" alt="Qiddiya"><img class="dk" src="assets/qiddiya-logo-dark.png" alt=""></span><h1>Q-Profit</h1></div>
   </header>
   <div class="qp-crumb"><b>Workspaces</b><span class="sep">/</span><span class="cur">Qiddiya Investment Company</span></div>
   <div class="qp-sec first"><h2>People</h2></div>
@@ -24,7 +24,7 @@
 <script src="assets/qp.js" data-noboot></script>
 <script>
 (function(){
-  document.querySelector('.qp-top').insertAdjacentHTML('beforeend', QP.themeButton());
+  document.querySelector('.qp-top').insertAdjacentHTML('beforeend', QP.themeButton() + '<span class="qp-hsep" aria-hidden="true"></span><span class="qp-powered">Powered by Data Office</span>');
   var users = QP.USERS;
   document.getElementById('list').innerHTML = users.map(function(k){
     var p = QP.PERSONAS[k], home = QP.url(null, k);
