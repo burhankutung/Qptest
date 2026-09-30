@@ -1179,6 +1179,9 @@ a{color:inherit}
 [data-tip]:hover::before,[data-tip]:focus-visible::before{content:"";position:absolute;z-index:300;left:50%;bottom:calc(100% + 3px);transform:translateX(-50%);
   border:5px solid transparent;border-top-color:var(--tip-bg);border-bottom:0;pointer-events:none}
 .qp-ib[data-tip]:hover::after,.qp-ib[data-tip]:focus-visible::after{left:-6px;transform:none}
+.qp-kpi{overflow:visible}
+.qp-kpi .qp-ib[data-tip]:hover::after,.qp-kpi .qp-ib[data-tip]:focus-visible::after{max-width:240px}
+.qp-grid>.qp-kpi:nth-last-child(-n+2) .qp-ib[data-tip]:hover::after,.qp-grid>.qp-kpi:nth-last-child(-n+2) .qp-ib[data-tip]:focus-visible::after{left:auto;right:-6px}
 .qp-card.qp-hastip[data-tip]:hover::after{left:16px;transform:none;bottom:calc(100% - 4px)}
 .qp-card.qp-hastip[data-tip]:hover::before{display:none}
 .qp-bullet .r[data-tip]:hover::after{left:0;transform:none;bottom:calc(100% + 4px)}
