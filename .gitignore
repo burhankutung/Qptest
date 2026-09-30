@@ -1,10 +1,8 @@
-# Only the published site (and its Figma import exports) is tracked in this repo.
+# Only the Figma HTML export is published from this repo.
 *
-!Live/
-!Live/**
+!Figma/
+!Figma/**
 !.gitignore
 !vercel.json
 !404.html
 !.nojekyll
-!Figma/
-!Figma/**

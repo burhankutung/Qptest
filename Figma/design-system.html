@@ -57,10 +57,10 @@
      Charts: Qiddiya blue #001B72 · 400 #19327F · 300 #354E9E · 200 #4577BF
              Aqua 600 #0B8EB6 · Qiddiya aqua #0BC0FF · Aqua 400 #3EC1E9 · Aqua 300 #6ED0EE
              (optional: Orange 600 #FF7800 · Pink 700 #B10057)
-     Area identity (Area Summaries headers, reused wherever an area is shown).
-     Two cool additions keep the four areas distinct but in one family:
+     Area identity (Area Summaries headers, reused wherever an area is shown),
+     all from the guideline chart palette (blue and aqua family):
              Development → Qiddiya blue · Operating Assets → Aqua 600
-             Corporate → Violet #6A3FD1 · City Operations → Teal #0B8A7A
+             Corporate → Qiddiya 300 · City Operations → Qiddiya 400
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* Proxima Nova is served by the licensed Adobe Fonts (Typekit) kit linked in
@@ -82,8 +82,6 @@
   --c-qblue:#001B72; --c-q400:#19327F; --c-q300:#354E9E; --c-q200:#4577BF;
   --c-aqua600:#0B8EB6; --c-aqua:#0BC0FF; --c-aqua400:#3EC1E9; --c-aqua300:#6ED0EE;
   --c-orange600:#FF7800; --c-pink700:#B10057;
-  /* area-only colours, added for the area identity set (not used for UI or status) */
-  --c-violet:#6A3FD1; --c-teal:#0B8A7A;
   --c-canvas:#F4F5F7;
 
   /* semantic roles */
@@ -102,8 +100,8 @@
 
   /* business-area identity, as set by the Area Summaries headers: -bg fills a
      header surface; the plain token is that area's data colour */
-  --area-dev-bg:var(--c-qblue); --area-oa-bg:var(--c-aqua600); --area-corp-bg:var(--c-violet); --area-city-bg:var(--c-teal);
-  --area-dev:var(--c-qblue); --area-oa:var(--c-aqua600); --area-corp:var(--c-violet); --area-city:var(--c-teal);
+  --area-dev-bg:var(--c-qblue); --area-oa-bg:var(--c-aqua600); --area-corp-bg:var(--c-q300); --area-city-bg:var(--c-q400);
+  --area-dev:var(--c-qblue); --area-oa:var(--c-aqua600); --area-corp:var(--c-q300); --area-city:var(--c-q400);
   --area:var(--s1);
 
   /* state */
@@ -151,7 +149,7 @@
   --dis:#252B36; --dis-ink:#5E6573;
   --neu:#5E6573; --neu-ink:#9AA2B1; --amb-ink:#E7E9EE; --sel-row:#221E3E;
   --s1:#6C8FE8; --s2:#9DB8F0; --s4:#7F95D6; --s5:#4E6FC9; --target:#9AA2B1;
-  --area-dev:#6C8FE8; --area-corp:#9B7BEA; --area-city:#22B3A0;
+  --area-dev:#6C8FE8; --area-corp:#7F95D6; --area-city:#4E6FC9;
   --mark:#4A5262; --av:#3D5FC4; --tip-bg:#2B3140;
   --ktip-bg:#1C212B; --ktip-line:rgba(255,255,255,.12); --ktip-dot:rgba(255,255,255,.22);
   --ktip-shadow:0 18px 44px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.4);
@@ -192,8 +190,8 @@ a{color:inherit}
 .qp-rail a .lb{display:none}
 :root[data-rail="open"] .qp-rail{width:var(--rail-w-open);align-items:stretch;padding:16px 12px}
 :root[data-rail="open"] .qp-rail a{width:auto;justify-content:flex-start;gap:12px;padding:0 13px}
-:root[data-rail="open"] .qp-rail a .lb{display:inline;font-size:var(--fs-md);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-:root[data-rail="open"] .qp-rail a.on .lb{font-weight:600}
+:root[data-rail="open"] .qp-rail a .lb{display:inline;font-size:var(--fs-md);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:root[data-rail="open"] .qp-rail a.on .lb{font-weight:700}
 /* rail head: collapsed, the logo mark is the expand button; expanded, the full
    logo sits beside a collapse button (the two states never show together) */
 .qp-rail .lg{width:52px;padding:4px 0 14px;margin-bottom:4px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:8px}
@@ -243,7 +241,7 @@ a{color:inherit}
 .qp-who{position:relative;display:flex;align-items:center;gap:12px;padding:4px 8px 4px 4px;border-left:0;
   cursor:pointer;background:none;border-top:0;border-right:0;border-bottom:0;text-align:left;border-radius:0}
 .qp-who .av{width:36px;height:36px;border-radius:50%;background:var(--av);color:var(--c-white);display:grid;place-items:center;font-size:var(--fs-sm);font-weight:700;flex:none}
-.qp-who b{display:block;font-size:var(--fs-md);font-weight:600;line-height:1.2;color:var(--ink)}
+.qp-who b{display:block;font-size:var(--fs-md);font-weight:700;line-height:1.2;color:var(--ink)}
 .qp-who span{display:block;font-size:var(--fs-sm);color:var(--mut);line-height:1.25}
 .qp-who .cv{width:14px;height:14px;color:var(--mut)}
 
@@ -254,7 +252,7 @@ a{color:inherit}
 .qp-crumb .bk svg{width:18px;height:18px}
 .qp-crumb>b{font-size:var(--fs-2xl);font-weight:700;letter-spacing:-.01em}
 .qp-crumb .sep{color:var(--mark);font-size:var(--fs-2xl);font-weight:400}
-.qp-crumb .cur{font-size:var(--fs-2xl);color:var(--mut);font-weight:500}
+.qp-crumb .cur{font-size:var(--fs-2xl);color:var(--mut);font-weight:400}
 .qp-desc{font-size:var(--fs-md);color:var(--mut);margin:6px 0 0;max-width:820px}
 
 /* ── controls (slicers) ────────────────────────────────────────────────── */
@@ -264,7 +262,7 @@ a{color:inherit}
 .qp-ctl>.rt{margin-left:auto;display:flex;align-items:center;gap:8px}
 /* period switch: light-gray pill track, purple selected with lighter-gray-2 text */
 .qp-seg{display:inline-flex;gap:4px;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:4px}
-.qp-seg button{appearance:none;border:0;background:transparent;border-radius:9px;cursor:pointer;font-size:var(--fs-sm);font-weight:600;
+.qp-seg button{appearance:none;border:0;background:transparent;border-radius:9px;cursor:pointer;font-size:var(--fs-sm);font-weight:700;
   color:var(--mut);padding:6px 14px;transition:background .15s,color .15s;white-space:nowrap}
 .qp-seg button:hover{color:var(--ink)}
 .qp-seg button.on{background:var(--tab-fill);color:var(--tab-ink);font-weight:700}
@@ -275,9 +273,9 @@ a{color:inherit}
 
 .qp-field{display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--mut)}
 .qp-date{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-ctl);
-  padding:0 10px;height:34px;color:var(--ink);font-weight:600}
+  padding:0 10px;height:34px;color:var(--ink);font-weight:700}
 .qp-date svg{width:14px;height:14px;color:var(--mut);flex:none}
-.qp-date input{appearance:none;border:0;background:transparent;font:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--ink);width:104px;padding:0;outline:none}
+.qp-date input{appearance:none;border:0;background:transparent;font:inherit;font-size:var(--fs-sm);font-weight:700;color:var(--ink);width:104px;padding:0;outline:none}
 .qp-date input::-webkit-calendar-picker-indicator{opacity:0;width:14px;margin-left:-14px;cursor:pointer}
 
 .qp-dd{position:relative;display:inline-block}
@@ -305,7 +303,7 @@ a{color:inherit}
 
 .qp-status{display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--mut);white-space:nowrap}
 .qp-status i{width:8px;height:8px;border-radius:50%;background:var(--pos)}
-.qp-status b{color:var(--ink);font-weight:600}
+.qp-status b{color:var(--ink);font-weight:700}
 
 .qp-legend{display:inline-flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:10px;
   padding:8px 16px;font-size:var(--fs-xs);color:var(--mut)}
@@ -326,7 +324,7 @@ a{color:inherit}
 /* group labels (OE reference): dark gray, medium weight — they name a group
    of cards without competing with the figures inside them */
 .qp-sec,.qp-eyebrow{display:flex;align-items:baseline;flex-wrap:wrap;column-gap:12px;row-gap:4px;margin:var(--sec) 0 14px}
-.qp-sec h2,.qp-eyebrow{font-size:var(--fs-xl);font-weight:500;letter-spacing:0;line-height:1.3;color:var(--mut)}
+.qp-sec h2,.qp-eyebrow{font-size:var(--fs-xl);font-weight:400;letter-spacing:0;line-height:1.3;color:var(--mut)}
 .qp-sec h2{margin:0}
 .qp-sec .cap,.qp-eyebrow .cap{font-size:var(--fs-sm);font-weight:400;color:var(--mut)}
 .qp-sec .cap::before,.qp-eyebrow .cap::before{content:"·";margin-right:10px;color:var(--mark)}
@@ -335,7 +333,7 @@ a{color:inherit}
 .qp-ctl+.qp-grid,.qp-ctl+.qp-card,.qp-ctl+.qp-row{margin-top:16px}
 .qp-ctl+.qp-sec,.qp-ctl+.qp-eyebrow,.qp-sec.first{margin-top:20px}
 /* sub-heading inside a card */
-.qp-card .qp-eyebrow{font-size:var(--fs-md);font-weight:600;color:var(--ink);margin:28px 0 12px}
+.qp-card .qp-eyebrow{font-size:var(--fs-md);font-weight:700;color:var(--ink);margin:28px 0 12px}
 .qp-card .qp-eyebrow .cap::before{display:none}
 .qp-card .qp-eyebrow:first-child{margin-top:0}
 
@@ -373,7 +371,7 @@ a{color:inherit}
 :root[data-theme="dark"] .neu>.qp-edge,:root[data-theme="dark"] .st-neu>.qp-edge{background:linear-gradient(180deg,#5E6573 0%,rgba(94,101,115,.45) 45%,rgba(94,101,115,0) 100%)}
 .qp-card>.hd{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
 .qp-card>.hd .tt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px}
-.qp-card>.hd h3{font-size:var(--fs-xl);font-weight:600;letter-spacing:-.01em;line-height:1.3;margin:0;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;color:var(--ink)}
+.qp-card>.hd h3{font-size:var(--fs-xl);font-weight:700;letter-spacing:-.01em;line-height:1.3;margin:0;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;color:var(--ink)}
 .qp-card>.hd h3 .cap{font-size:var(--fs-sm);font-weight:400;color:var(--mut)}
 .qp-card>.hd p{font-size:var(--fs-sm);color:var(--mut);margin:0}
 .qp-card>.hd .rt{flex:none;display:flex;align-items:center;gap:8px}
@@ -384,10 +382,10 @@ a{color:inherit}
 .qp-card.flush .qp-foot{margin-top:0;padding:14px var(--pad) 18px;border-top:1px solid var(--line)}
 /* a group of KPI cards sits on the page, not inside another card */
 .qp-card.kpiwrap{background:none;border:0;padding:0;border-radius:0}
-.qp-card.kpiwrap .qp-eyebrow{font-size:var(--fs-lg);font-weight:500;color:var(--mut);margin:24px 0 var(--gap)}
+.qp-card.kpiwrap .qp-eyebrow{font-size:var(--fs-lg);font-weight:400;color:var(--mut);margin:24px 0 var(--gap)}
 .qp-card.kpiwrap .qp-eyebrow .cap::before{display:inline}
 .qp-card.kpiwrap .qp-eyebrow:first-child{margin-top:0}
-.qp-badge{font-size:var(--fs-xs);font-weight:600;color:var(--mut);background:none;border:1px solid var(--line);border-radius:6px;padding:3px 8px;white-space:nowrap}
+.qp-badge{font-size:var(--fs-xs);font-weight:700;color:var(--mut);background:none;border:1px solid var(--line);border-radius:6px;padding:3px 8px;white-space:nowrap}
 .qp-badge.acc{color:var(--acc-ink);border-color:var(--acc-bg)}
 .qp-badge.pos{color:var(--ink);border-color:var(--pos)}
 
@@ -399,19 +397,19 @@ a{color:inherit}
 .qp-kpi .k{display:flex;align-items:flex-start;gap:6px;font-size:var(--fs-xs);font-weight:400;color:var(--mut);line-height:1.35;min-height:16px}
 .qp-kpi .k .lab{flex:1 1 auto;min-width:0}
 .qp-kpi .v{font-size:var(--fs-metric);font-weight:700;letter-spacing:-.025em;line-height:1.1;margin-top:8px;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--ink)}
-.qp-kpi .v small{font-size:var(--fs-xs);font-weight:600;color:var(--mut);margin-left:4px;letter-spacing:0}
+.qp-kpi .v small{font-size:var(--fs-xs);font-weight:700;color:var(--mut);margin-left:4px;letter-spacing:0}
 .qp-kpi .ft{display:flex;align-items:center;column-gap:6px;row-gap:4px;margin-top:8px;flex-wrap:wrap;font-size:var(--fs-xs);color:var(--mut)}
 .qp-kpi .ft .muted{font-size:var(--fs-xs)}
 .qp-kpi .ft .qp-chip{font-size:var(--fs-xs);font-weight:700}
 .qp-kpi .t{font-size:var(--fs-xs);color:var(--mut);line-height:1.5;margin-top:6px}
-.qp-kpi .t b{color:var(--ink);font-weight:600}
+.qp-kpi .t b{color:var(--ink);font-weight:700}
 .qp-kpi .spark{position:absolute;right:16px;top:14px;width:56px;height:20px}
 .qp-kpi:has(.spark) .k{padding-right:64px}
 .qp-kpi .st{margin-left:auto}
 .qp-kpi .pair{display:flex;gap:24px;margin-top:8px}
 .qp-kpi .pair div{display:flex;flex-direction:column;gap:6px}
 .qp-kpi .pair b{font-size:var(--fs-metric);font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--ink)}
-.qp-kpi .pair span{font-size:var(--fs-xs);font-weight:500;color:var(--mut)}
+.qp-kpi .pair span{font-size:var(--fs-xs);font-weight:400;color:var(--mut)}
 .qp-kpi .meter{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:12px;display:flex;gap:2px}
 .qp-kpi .meter span{display:block;height:100%}
 .qp-kpi.sm{padding:12px 14px}
@@ -420,7 +418,7 @@ a{color:inherit}
 /* variance: ink figure, direction arrow in the state colour. The sign and
    arrow carry direction; colour only adds favourability, so nothing relies
    on colour alone and every figure keeps full text contrast. */
-.qp-chip{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-sm);font-weight:600;white-space:nowrap;
+.qp-chip{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-sm);font-weight:700;white-space:nowrap;
   font-variant-numeric:tabular-nums;line-height:1.3;color:var(--ink)}
 .qp-chip svg{width:10px;height:10px;flex:none}
 .qp-chip.pos svg{color:var(--pos)}
@@ -429,7 +427,7 @@ a{color:inherit}
 .qp-chip.neu{color:var(--mut)}
 .qp-chip.neu svg{color:var(--mark)}
 .qp-chip.out{color:var(--mut)}
-.qp-pill{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-xs);font-weight:600;border-radius:99px;padding:2px 10px 2px 8px;white-space:nowrap;
+.qp-pill{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-xs);font-weight:700;border-radius:99px;padding:2px 10px 2px 8px;white-space:nowrap;
   background:none;border:1px solid var(--line);color:var(--ink);line-height:1.5}
 .qp-pill i{width:6px;height:6px;border-radius:50%;background:var(--neu)}
 .qp-pill.pos i{background:var(--pos)}
@@ -460,9 +458,9 @@ a{color:inherit}
 .qp-area .lead{padding:4px 4px 6px}
 .qp-area .lead .k{font-size:var(--fs-xs);color:var(--mut)}
 .qp-area .lead .v{font-size:var(--fs-metric);font-weight:700;letter-spacing:-.025em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums;color:var(--ink)}
-.qp-area .lead .v small{font-size:var(--fs-xs);font-weight:600;color:var(--mut);margin-left:4px;letter-spacing:0}
+.qp-area .lead .v small{font-size:var(--fs-xs);font-weight:700;color:var(--mut);margin-left:4px;letter-spacing:0}
 .qp-area .lead .cmp{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:6px;font-size:var(--fs-xs);color:var(--mut)}
-.qp-area .lead .cmp b{color:var(--ink);font-weight:600}
+.qp-area .lead .cmp b{color:var(--ink);font-weight:700}
 .qp-area .lead .cmp .qp-chip{font-size:var(--fs-xs);font-weight:700}
 .qp-area .ft{margin-top:auto;padding:2px 4px 0;font-size:var(--fs-xs);color:var(--mut)}
 
@@ -474,7 +472,7 @@ a{color:inherit}
 .qp-tile .k{font-size:var(--fs-xs);color:var(--mut);line-height:1.35;display:flex;align-items:center;gap:6px}
 .qp-tile .k i{width:8px;height:8px;border-radius:2px;flex:none}
 .qp-tile .v{font-size:var(--fs-xl);font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-top:4px;font-variant-numeric:tabular-nums;white-space:nowrap}
-.qp-tile .v small{font-size:var(--fs-xs);font-weight:600;color:var(--mut);margin-left:3px;letter-spacing:0}
+.qp-tile .v small{font-size:var(--fs-xs);font-weight:700;color:var(--mut);margin-left:3px;letter-spacing:0}
 .qp-tile .t{font-size:var(--fs-xs);color:var(--mut);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .qp-tile .t .qp-chip{font-size:var(--fs-xs);font-weight:700}
 .qp-tile .qp-comp{margin:8px 0 2px}
@@ -488,12 +486,12 @@ a{color:inherit}
 .qp-kvl .r .lt small{display:block;font-size:var(--fs-xs);color:var(--mark);margin-top:2px}
 .qp-kvl .r.sub{border-top:0;padding:4px 0}
 .qp-kvl .r.sub .l{padding-left:2px}
-.qp-kvl .r.sub .v{font-weight:500}
+.qp-kvl .r.sub .v{font-weight:400}
 .qp-kvl .bar{padding:2px 0 8px}
 .qp-kvl .bar+.r.sub{padding-top:2px}
 .qp-kvl .r.sub+.r:not(.sub){margin-top:8px}
-.qp-kvl .r .v{font-weight:600;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.qp-kvl .r .v small{font-size:var(--fs-sm);color:var(--mut);font-weight:500;margin-left:3px}
+.qp-kvl .r .v{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.qp-kvl .r .v small{font-size:var(--fs-sm);color:var(--mut);font-weight:400;margin-left:3px}
 .qp-kvl .r .d{text-align:right}
 .qp-kvl .r .d .qp-chip{justify-content:flex-end}
 
@@ -507,7 +505,7 @@ a{color:inherit}
 .qp-vs b{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);border-radius:1px}
 
 /* buttons: primary = purple / lighter-gray-2; link = purple text */
-.qp-link{appearance:none;display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sm);font-weight:600;color:var(--btn-ink);
+.qp-link{appearance:none;display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sm);font-weight:700;color:var(--btn-ink);
   background:var(--btn);border:0;border-radius:var(--r-ctl);padding:8px 14px;text-decoration:none;cursor:pointer;transition:box-shadow .15s;white-space:nowrap}
 .qp-link:hover{box-shadow:0 0 0 3px var(--acc-bg)}
 .qp-link svg{width:14px;height:14px}
@@ -528,9 +526,9 @@ a{color:inherit}
 .qp-card.flush .qp-tbl{border:0;border-radius:0}
 .qp-tbl table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-md);color:var(--ink)}
 .qp-tbl thead{position:sticky;top:0;z-index:3}
-.qp-tbl th{background:var(--card);text-align:left;font-size:var(--fs-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+.qp-tbl th{background:var(--card);text-align:left;font-size:var(--fs-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;
   color:var(--mut);padding:12px 14px 10px;white-space:nowrap;border:0}
-.qp-tbl th .u{font-weight:500;letter-spacing:0;text-transform:none}
+.qp-tbl th .u{font-weight:400;letter-spacing:0;text-transform:none}
 .qp-tbl thead tr.grp th{padding:12px 14px 0;text-align:center;color:var(--ink)}
 .qp-tbl thead tr.grp th span{display:block;border-bottom:1px solid var(--line);padding-bottom:6px}
 /* the active period: purple rule under the group label */
@@ -553,7 +551,7 @@ a{color:inherit}
 .qp-tbl .dot.amb{background:var(--amb)}
 .qp-tbl .dot.none{background:none}
 /* variance: the signed figure in the state colour, no arrow or chip */
-.qp-tbl .qp-chip{font-size:var(--fs-md);font-weight:500;gap:0}
+.qp-tbl .qp-chip{font-size:var(--fs-md);font-weight:400;gap:0}
 .qp-tbl .qp-chip svg{display:none}
 .qp-tbl .qp-chip.pos{color:var(--pos)}
 .qp-tbl .qp-chip.neg{color:var(--neg)}
@@ -570,22 +568,22 @@ a{color:inherit}
 .qp-tbl tr.pick:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
 .qp-tbl tr.pick.sel td:first-child{font-weight:700}
 /* in-body subtotal lines (e.g. Net Income) */
-.qp-tbl tr.tot td{font-weight:600;border-top:1px solid var(--line)}
+.qp-tbl tr.tot td{font-weight:700;border-top:1px solid var(--line)}
 /* totals row mirrors the header: uppercase label, same size, one hairline above */
 .qp-tbl tfoot td{height:auto;padding-top:11px;padding-bottom:11px;background:var(--card);border-top:1px solid var(--line);
-  font-size:var(--fs-xs);font-weight:600;color:var(--ink)}
+  font-size:var(--fs-xs);font-weight:700;color:var(--ink)}
 .qp-tbl tfoot td.nm{color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
-.qp-tbl tfoot .qp-chip{font-size:var(--fs-xs);font-weight:600}
+.qp-tbl tfoot .qp-chip{font-size:var(--fs-xs);font-weight:700}
 /* child lines under an open row */
 .qp-tbl tr.child td{height:34px;font-size:var(--fs-sm);color:var(--mut)}
 .qp-tbl tr.child td.r{color:var(--ink)}
 .qp-tbl tr.child td.nm,.qp-card.flush .qp-tbl tr.child td.nm{padding-left:44px}
 .qp-tbl.has-dot tr.child td.nm,.qp-card.flush .qp-tbl.has-dot tr.child td.nm{padding-left:62px}
 .qp-tbl tr.child td.nm::before{content:"";display:inline-block;width:8px;height:1px;background:var(--mark);vertical-align:middle;margin:0 10px 0 -18px}
-.qp-tbl td.key{font-weight:600}
+.qp-tbl td.key{font-weight:700}
 .qp-tbl .qp-na{color:var(--mut);font-size:var(--fs-sm);cursor:help}
 .qp-tbl.has-exp td.nm{min-width:150px}
-.qp-tbl .sub{display:block;font-size:var(--fs-xs);color:var(--mut);font-weight:500;margin-top:2px}
+.qp-tbl .sub{display:block;font-size:var(--fs-xs);color:var(--mut);font-weight:400;margin-top:2px}
 .qp-card.flush .qp-tbl td,.qp-card.flush .qp-tbl th{padding-left:12px;padding-right:12px}
 .qp-card.flush .qp-tbl td:first-child,.qp-card.flush .qp-tbl th:first-child{padding-left:var(--pad)}
 .qp-card.flush .qp-tbl td:last-child,.qp-card.flush .qp-tbl th:last-child{padding-right:var(--pad)}
@@ -609,7 +607,7 @@ a{color:inherit}
 .qp-bar{display:flex;align-items:center;gap:12px;justify-content:flex-end}
 .qp-bar .tk{width:96px;height:6px;border-radius:3px;background:var(--line);overflow:hidden;flex:none}
 .qp-bar .tk i{display:block;height:100%;border-radius:3px;background:var(--s2)}
-.qp-bar b{min-width:36px;text-align:right;font-weight:600}
+.qp-bar b{min-width:36px;text-align:right;font-weight:700}
 
 /* ── charts ────────────────────────────────────────────────────────────── */
 .qp-chart{position:relative;width:100%}
@@ -638,7 +636,7 @@ a{color:inherit}
 .qp-big .v{font-size:var(--fs-metric-xl);font-weight:700;letter-spacing:-.025em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
 .qp-big .u{font-size:var(--fs-md);color:var(--mut)}
 .qp-sub2{font-size:var(--fs-sm);color:var(--mut);margin-top:8px}
-.qp-sub2 b{color:var(--ink);font-weight:600}
+.qp-sub2 b{color:var(--ink);font-weight:700}
 
 /* bullet: actual vs plan vs forecast */
 .qp-bullet{margin-top:18px;display:flex;flex-direction:column;gap:12px}
@@ -657,7 +655,7 @@ a{color:inherit}
 /* ring gauge (Project progress) */
 .qp-ring{display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0 2px;text-align:center}
 .qp-ring>svg{width:124px;height:124px}
-.qp-ring .k{font-size:var(--fs-sm);color:var(--mut);font-weight:600}
+.qp-ring .k{font-size:var(--fs-sm);color:var(--mut);font-weight:700}
 .qp-ring .ctx{font-size:var(--fs-sm);color:var(--mut);display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px}
 .qp-ring .ctx b{color:var(--ink);font-weight:700}
 
@@ -675,7 +673,7 @@ a{color:inherit}
 .qp-kv>div{padding:12px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px;min-width:0}
 .qp-kv>div.wide{grid-column:1 / -1}
 .qp-kv .k{font-size:var(--fs-sm);font-weight:400;color:var(--mut)}
-.qp-kv .v{font-size:var(--fs-lg);font-weight:600;font-variant-numeric:tabular-nums}
+.qp-kv .v{font-size:var(--fs-lg);font-weight:700;font-variant-numeric:tabular-nums}
 .qp-trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
 .qp-trio>div{padding:2px 20px;display:flex;flex-direction:column;gap:6px;border-left:1px solid var(--line)}
 .qp-trio>div:first-child{padding-left:0;border-left:0}
@@ -700,11 +698,11 @@ a{color:inherit}
 @media (prefers-reduced-motion: reduce){.qp-pin.on i{animation:none}}
 .qp-pin.approx i{background:#fff;border:2px dashed var(--s1)}
 .qp-pin.approx.on i{border:3px dashed var(--acc)}
-.qp-pin b{position:absolute;left:calc(100% + 7px);top:50%;transform:translateY(-50%);white-space:nowrap;font-size:var(--fs-xs);font-weight:600;color:var(--ink);
+.qp-pin b{position:absolute;left:calc(100% + 7px);top:50%;transform:translateY(-50%);white-space:nowrap;font-size:var(--fs-xs);font-weight:700;color:var(--ink);
   background:var(--card);border:1px solid var(--line);border-radius:6px;padding:3px 8px;box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .qp-pin.hl b{border-color:var(--acc)}
 .qp-pin.on b{left:calc(100% + 9px);background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700;padding:4px 9px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-.qp-pin.on b em{font-style:normal;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-right:7px;padding-right:7px;border-right:1px solid rgba(255,255,255,.45)}
+.qp-pin.on b em{font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-right:7px;padding-right:7px;border-right:1px solid rgba(255,255,255,.45)}
 /* badge pins: the project's logo (or glyph) on a white disc so brand colours stay true on any map */
 .qp-pin.badge i{background:#fff;border:2px solid color-mix(in srgb,var(--area) 30%,#fff);display:grid;place-items:center;padding:4px;
   color:var(--area);box-shadow:0 1px 5px rgba(0,0,0,.28)}
@@ -727,13 +725,13 @@ a{color:inherit}
 :root[data-theme="dark"] .qp-map .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.6)}
 .qp-map-off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--mut);font-size:var(--fs-sm)}
 .qp-map-off svg{width:28px;height:28px}
-.qp-map .cap{position:absolute;left:12px;top:12px;font-size:var(--fs-xs);font-weight:600;color:var(--ink);
+.qp-map .cap{position:absolute;left:12px;top:12px;font-size:var(--fs-xs);font-weight:700;color:var(--ink);
   background:var(--card);border:1px solid var(--line);border-radius:6px;padding:4px 8px;z-index:1000}
 
 /* stat list (Visitor metrics) */
 .qp-stats{display:grid;gap:var(--gap)}
 .qp-stat{display:flex;flex-direction:column;gap:8px}
-.qp-stat .k{font-size:var(--fs-sm);font-weight:500;color:var(--ink)}
+.qp-stat .k{font-size:var(--fs-sm);font-weight:400;color:var(--ink)}
 .qp-stat .v{font-size:var(--fs-metric);font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
 .qp-stat .t{font-size:var(--fs-sm);color:var(--mut)}
 .qp-stats.rows{grid-template-columns:1fr;gap:0}
@@ -753,7 +751,7 @@ a{color:inherit}
 .qp-ktip.on{opacity:1;transform:none}
 .qp-ktip .k{display:block;font-size:var(--fs-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:3px}
 .qp-ktip .v{display:block;font-size:var(--fs-2xl);font-weight:700;letter-spacing:-.02em;line-height:1.2;font-variant-numeric:tabular-nums;white-space:nowrap}
-.qp-ktip .v small{font-size:var(--fs-xs);font-weight:600;color:var(--mut);margin-left:3px;letter-spacing:0}
+.qp-ktip .v small{font-size:var(--fs-xs);font-weight:700;color:var(--mut);margin-left:3px;letter-spacing:0}
 .qp-ktip .rows{display:flex;flex-direction:column;gap:5px;margin-top:9px}
 .qp-ktip .r{display:flex;align-items:flex-start;gap:8px;font-size:var(--fs-xs);line-height:1.45;color:var(--mut)}
 .qp-ktip .r.lead{color:var(--ink)}
@@ -795,12 +793,12 @@ a{color:inherit}
 .qp-notice{align-items:center;text-align:center;padding:48px 32px 44px;max-width:680px;margin:40px auto 0;width:100%}
 .qp-notice .ic{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--mut)}
 .qp-notice .ic svg{width:22px;height:22px}
-.qp-notice .code{font-size:var(--fs-xs);font-weight:600;letter-spacing:.08em;color:var(--mut);margin-top:16px}
+.qp-notice .code{font-size:var(--fs-xs);font-weight:700;letter-spacing:.08em;color:var(--mut);margin-top:16px}
 .qp-notice h2{font-size:var(--fs-2xl);font-weight:700;letter-spacing:-.01em;margin:6px 0 0}
 .qp-notice p{font-size:var(--fs-md);color:var(--mut);margin:8px 0 0;max-width:480px;line-height:1.55}
 .qp-notice .lk{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:24px}
 .qp-navlink{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:var(--r-ctl);padding:7px 12px;font-size:var(--fs-sm);
-  font-weight:600;color:var(--ink);text-decoration:none;background:var(--card);transition:border-color .15s,color .15s;white-space:nowrap}
+  font-weight:700;color:var(--ink);text-decoration:none;background:var(--card);transition:border-color .15s,color .15s;white-space:nowrap}
 .qp-navlink:hover{border-color:var(--acc);color:var(--acc-ink)}
 .qp-navlink svg{width:15px;height:15px;color:var(--mut)}
 .qp-navlink:hover svg{color:var(--acc-ink)}
@@ -810,7 +808,7 @@ a{color:inherit}
 .qp-person{gap:0}
 .qp-person .who{display:flex;align-items:center;gap:12px}
 .qp-person .av{width:40px;height:40px;border-radius:50%;background:var(--av);color:var(--c-white);display:grid;place-items:center;font-size:var(--fs-sm);font-weight:700;flex:none}
-.qp-person .who b{display:block;font-size:var(--fs-lg);font-weight:600;line-height:1.3}
+.qp-person .who b{display:block;font-size:var(--fs-lg);font-weight:700;line-height:1.3}
 .qp-person .who span{font-size:var(--fs-sm);color:var(--mut)}
 .qp-person .scope{font-size:var(--fs-sm);color:var(--mut);margin-top:14px;line-height:1.5}
 .qp-person .pages{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
@@ -835,7 +833,7 @@ a{color:inherit}
 .qp-foot,.qp-footer,.qp-status,.qp-brand .prod,.qp-who span,.qp-field,.qp-dd>button,.muted,
 .qp-kpi .k,.qp-kpi .ft .muted,.qp-tile .k,.qp-tile .t,.qp-area .lead .k,.qp-area .lead .cmp,.qp-area .ft,
 .qp-lg,.qp-lg button,.qp-meta,.qp-stat .t,.qp-dl .r .l,.qp-kv .k,.qp-trio .k,.qp-ring .ctx,
-.qp-person .scope,.qp-person .who span,.qp-notice p,.qp-ktip .r:not(.lead),.qp-tbl .qp-na{font-weight:300}
+.qp-person .scope,.qp-person .who span,.qp-notice p,.qp-ktip .r:not(.lead),.qp-tbl .qp-na{font-weight:400}
 
 @media print{.qp-rail,.qp-ctl,.qp-top .qp-ic{display:none}.qp-app{padding:0}body{min-width:0}}
 
@@ -928,7 +926,7 @@ a{color:inherit}
 /* Business Units: map instruction and the selected-project panel */
 .qp-hint{display:flex;align-items:center;gap:6px;margin:0 0 12px;font-size:var(--fs-sm);color:var(--mut)}
 .qp-hint svg{width:15px;height:15px;flex:none;color:var(--acc)}
-.qp-selected .hd h3 .k{flex-basis:100%;margin-bottom:4px;font-size:var(--fs-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+.qp-selected .hd h3 .k{flex-basis:100%;margin-bottom:4px;font-size:var(--fs-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
 
 /* cards that explain themselves on hover/focus (QP.card tip) */
 .qp-card.qp-hastip{cursor:help;transition:border-color .15s}
@@ -949,7 +947,7 @@ a{color:inherit}
 .qp-comp-lb{display:flex;gap:2px;flex:1 1 100%;min-width:0;margin-top:-2px;font-size:var(--fs-xs);color:var(--mut);line-height:1.3}
 .qp-comp-lb span{display:flex;min-width:0;overflow:hidden}
 .qp-comp-lb em{font-style:normal;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qp-comp-lb b{flex:none;margin:0 6px 0 5px;font-weight:600;color:var(--ink)}
+.qp-comp-lb b{flex:none;margin:0 6px 0 5px;font-weight:700;color:var(--ink)}
 .qp-comp-lb span:last-child b{margin-right:0}
 
 /* ── KPI card concepts (Consolidated, ?kpi= review link) ─────────────────── */
@@ -985,7 +983,7 @@ a{color:inherit}
   border:1px dashed color-mix(in srgb,var(--acc) 45%,var(--line));border-radius:12px;font-size:var(--fs-sm)}
 .qp-tipsbar .t{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc-ink)}
 .qp-tipsbar .t svg{width:15px;height:15px}
-.qp-tipsbar .p{font-weight:600;color:var(--ink)}
+.qp-tipsbar .p{font-weight:700;color:var(--ink)}
 .qp-tipsbar .p em{font-style:normal;font-weight:400;color:var(--mut);margin-left:6px}
 .qp-tipsbar .sp{flex:1 1 auto}
 .qp-tipsbar .qp-link{display:inline-flex;align-items:center;gap:4px}
@@ -1117,7 +1115,26 @@ a{color:inherit}
 /* Chart legends: Dark gray 12 bold with round markers; axis text Dark gray 11 */
 .qp-lg,.qp-lg button{font-size:12px;font-weight:700}
 .qp-lg i:not(.ln):not(.dash){border-radius:50%}
-.qp-chart svg text{font-size:11px}
+/* chart axis labels: Dark gray 11 regular (the .ax / .lbl rules set 12 and outrank a generic text rule) */
+.qp-chart .ax,.qp-chart .lbl{font-size:11px}
+
+/* ── Audit against PBI Guidelines V1 (30 Sep): remaining deviations ─────────
+   Radii: cards 8px, controls / tags 4px, bars square. Palette only: no tints of
+   the purple for selection (Light purple #DCD4FF), table hover Light gray
+   #FBFBFB, amber tag text Carbon. Type: Figma scale 28/24/18/14/12/11. */
+:root{--sel-row:#DCD4FF}
+.qp-tbl{--row-hover:#FBFBFB}
+.qp-tbl thead tr.grp th{color:var(--mut)}
+.qp-pill{border-radius:4px}
+.qp-chip.amb{color:var(--c-carbon)}
+.qp-rail a,.qp-rail a.on{border-radius:8px}
+.qp-rail .lg-open,.qp-rail .lg-close{border-radius:8px}
+.qp-map{border-radius:8px}
+.qp-map .leaflet-bar a{font-family:var(--font);font-weight:700}
+.qp-kpi .meter,.qp-kpi .meter span,.tk,.tk i,.meter,.meter span,.qp-comp,.qp-comp i,.qp-bullet .r .tk,.qp-bullet .r .tk i,.kc-bullet .trk,.kc-bullet .trk i,.qp-bar .tk,.qp-bar .tk i{border-radius:0}
+.qp-area .hdr b{font-size:24px}
+/* small KPI cards (Development, Corporate…) use the same 28px value as every KPI card */
+.qp-kpi.sm>.v,.qp-kpi.sm .v{font-size:28px;margin-top:0}
 </style></head>
 <body>
 <div class="wrap">
@@ -1127,7 +1144,7 @@ a{color:inherit}
   </header>
   <div class="qp-crumb"><a class="bk" href="00-workspaces.html" aria-label="Back to all workspaces"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg></a><b>Design System</b><span class="sep">/</span><span class="cur">Foundations, Components and Power BI Mapping</span></div>
   <p class="qp-desc">One language across all seven dashboards, layout from the OE Performance View, colour strictly from the client palette: Light gray surface, White cards with Soft gray borders, Purple for buttons, links and the selected period, Light gray for the period-switch track, the Qiddiya blue / aqua ramp for charts, and Red / Green / Amber only for state.</p>
-  <div id="ds"><div class="qp-sec first"><h2>Colour</h2><div class="rt"><a class="qp-link" href="https://qptest.vercel.app/Live/assets/qprofit-powerbi-theme.json" download="">Power BI theme (.json)</a></div></div><section class="qp-card "><div class="qp-eyebrow">Primary &amp; UI</div><div class="sw"><div><i style="background:var(--c-purple)"></i><span><b>Purple · #7122F4</b><em>Buttons &amp; icon-button backgrounds; link text</em></span></div><div><i style="background:var(--c-light-purple)"></i><span><b>Light purple · #DCD4FF</b><em>Selected rail item; back-link hover</em></span></div><div><i style="background:var(--c-canvas)"></i><span><b>Canvas · #F4F5F7</b><em>Dashboard surface, shared with the OE reference dashboard</em></span></div><div><i style="background:var(--c-light-gray)"></i><span><b>Light gray · #FBFBFB</b><em>Inset panels and metric tiles; table cell hover; period-switch track</em></span></div><div><i style="background:var(--c-white)"></i><span><b>White · #FFFFFF</b><em>Card surface</em></span></div><div><i style="background:var(--c-soft-gray)"></i><span><b>Soft gray · #EAEAEA</b><em>Card borders; table rules; chart gridlines</em></span></div><div><i style="background:var(--c-carbon)"></i><span><b>Carbon black · #1A1A1A</b><em>Titles, subtitles, KPI numbers, table cells; secondary-button border</em></span></div><div><i style="background:var(--c-dark-gray)"></i><span><b>Dark gray · #6D6D6D</b><em>Paragraphs, labels, annotations; chart lines &amp; values; column titles</em></span></div><div><i style="background:var(--c-lighter-gray-2)"></i><span><b>Lighter gray 2 · #FCFCFC</b><em>Text &amp; icons on buttons and icon buttons</em></span></div><div><i style="background:var(--c-disabled-font)"></i><span><b>Disabled font · #B0B0B0</b><em>Disabled button text &amp; icon; "No data" state</em></span></div><div><i style="background:var(--c-disabled-bg)"></i><span><b>Disabled bg · #E7E7E7</b><em>Disabled button background; locked filters</em></span></div></div><div class="qp-eyebrow">Status</div><div class="sw"><div><i style="background:var(--c-red)"></i><span><b>Red · #FF4B4B</b><em>Negative / adverse values</em></span></div><div><i style="background:var(--c-green)"></i><span><b>Green · #0FA465</b><em>Positive / favourable values</em></span></div><div><i style="background:var(--c-amber)"></i><span><b>Amber · #F4B11E</b><em>Neutral, pending, at risk</em></span></div></div><div class="qp-eyebrow">Charts</div><div class="sw"><div><i style="background:var(--c-qblue)"></i><span><b>Qiddiya blue · #001B72</b><em>Series 1 · actuals</em></span></div><div><i style="background:var(--c-q400)"></i><span><b>Qiddiya 400 · #19327F</b><em>Series</em></span></div><div><i style="background:var(--c-q300)"></i><span><b>Qiddiya 300 · #354E9E</b><em>Series · forecast</em></span></div><div><i style="background:var(--c-q200)"></i><span><b>Qiddiya 200 · #4577BF</b><em>Series 2</em></span></div><div><i style="background:var(--c-aqua600)"></i><span><b>Aqua 600 · #0B8EB6</b><em>Cumulative lines</em></span></div><div><i style="background:var(--c-aqua)"></i><span><b>Qiddiya aqua · #0BC0FF</b><em>Series 3</em></span></div><div><i style="background:var(--c-aqua400)"></i><span><b>Aqua 400 · #3EC1E9</b><em>Series</em></span></div><div><i style="background:var(--c-aqua300)"></i><span><b>Aqua 300 · #6ED0EE</b><em>Plan / budget bars</em></span></div><div><i style="background:var(--c-orange600)"></i><span><b>Orange 600 · #FF7800</b><em>Optional alternative for a more colourful set</em></span></div><div><i style="background:var(--c-pink700)"></i><span><b>Pink 700 · #B10057</b><em>Optional alternative for a more colourful set</em></span></div></div><div class="qp-eyebrow">Area Identity</div><div class="sw"><div><i style="background:var(--area-dev-bg)"></i><span><b>Development · #001B72</b><em>Qiddiya blue · Development and Business Units</em></span></div><div><i style="background:var(--area-oa-bg)"></i><span><b>Operating Assets · #0B8EB6</b><em>Aqua 600 · Operating Assets</em></span></div><div><i style="background:var(--area-corp-bg)"></i><span><b>Corporate · #6A3FD1</b><em>Violet · Corporate and Corporate Divisions</em></span></div><div><i style="background:var(--area-city-bg)"></i><span><b>City Operations · #0B8A7A</b><em>Teal · City Operations</em></span></div></div></section><div class="qp-sec "><h2>Typography</h2></div><section class="qp-card ty"><div class="r"><code>Product name · 26 / 700</code><span style="font-size:26px;font-weight:700;letter-spacing:-.02em">Q-Profit</span></div><div class="r"><code>Page title · 20 / 700 + 500</code><span style="font-size:20px;font-weight:700">Consolidated <span style="color:var(--mut);font-weight:500">/ Qiddiya Investment Company</span></span></div><div class="r"><code>Group label · 18 / 500, dark gray</code><span style="font-size:18px;font-weight:500;color:var(--mut)">Area Summaries</span></div><div class="r"><code>Card title · 18 / 600</code><span style="font-size:18px;font-weight:600">Development Business Units</span></div><div class="r"><code>Tile value · 18 / 700</code><span style="font-size:18px;font-weight:700"><span class="sar">⃁</span>1,850.0</span></div><div class="r"><code>KPI value · 26 / 700</code><span style="font-size:26px;font-weight:700;letter-spacing:-.025em"><span class="sar">⃁</span>3,214.6</span></div><div class="r"><code>Body · 14 / 400</code><span style="font-size:14px">Personnel Cost</span></div><div class="r"><code>Label &amp; target · 12–13 / 400, dark gray</code><span style="font-size:13px;color:var(--mut)">YTD plan <span class="sar">⃁</span>3,352.0 · Forecast <span class="sar">⃁</span>3,388.4</span></div><div class="r"><code>Column title · 12 / 600 uppercase, dark gray</code><span style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)">YTD Actual (<span class="sar">⃁</span>)</span></div><div class="r"><code>Note · 12 / 400, dark gray</code><span style="font-size:12px;color:var(--mut)">Grain: business unit, then cost line.</span></div><div class="qp-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4.5M12 8h.01"></path></svg><span>Currency: amounts carry <span class="sar">⃁</span> before the value on cards; tables never repeat it per cell — the column heading states <b>(<span class="sar">⃁</span>)</b>. "SAR" is not used anywhere.</span></div></section><div class="qp-sec "><h2>Components</h2></div><div class="qp-grid g4"><div class="qp-kpi neg "><i class="qp-edge" aria-hidden="true"></i><div class="k"><span class="lab">Work Performed</span></div><div class="v"><span class="sar">⃁</span>3,214.6</div><div class="ft"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19 4 8h16z" fill="currentColor" stroke="none"></path></svg>−4.1%</span></div><div class="t sr">YTD Plan <b><span class="sar">⃁</span>3,352.0</b></div></div><div class="qp-kpi amb "><i class="qp-edge" aria-hidden="true"></i><div class="k"><span class="lab">Qiddiya City Headcount</span></div><div class="v">1,842</div><div class="ft"><span class="qp-chip amb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19 4 8h16z" fill="currentColor" stroke="none"></path></svg>−3.1%</span></div><div class="t sr">YTD Plan <b>1,901</b></div></div><div class="qp-kpi pos "><i class="qp-edge" aria-hidden="true"></i><div class="k"><span class="lab">Cash Overall</span></div><div class="v"><span class="sar">⃁</span>9,238.2</div><div class="ft"><span class="qp-chip pos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+0.6%</span></div><div class="t sr">YTD Secured <b><span class="sar">⃁</span>9,180.0</b></div></div><div class="qp-kpi neu "><i class="qp-edge" aria-hidden="true"></i><div class="k"><span class="lab">Headcount</span><span class="st"><span class="qp-pill neu"><i></i>No data</span></span></div><div class="v">17</div><div class="t sr">Plan <b>18</b></div></div></div><section class="qp-card " style="margin-top:16px"><div class="spec"><div class="qp-seg " role="tablist"><button role="tab" data-k="a" data-v="m" class="on" aria-selected="true">Mar</button><button role="tab" data-k="a" data-v="ytd" class="" aria-selected="false">YTD</button></div><div class="qp-seg sm" role="tablist"><button role="tab" data-k="b" data-v="forecast" class="" aria-selected="false">Forecast</button><button role="tab" data-k="b" data-v="plan" class="on" aria-selected="true">Plan</button></div><div class="qp-dd" data-dd="c"><button type="button" aria-haspopup="listbox" aria-expanded="false"><span class="l">Month</span> <b>Mar</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><div class="qp-menu" role="listbox"><div role="option" tabindex="-1" data-k="c" data-v="Mar" aria-selected="true">Mar<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg></div></div></div><div class="qp-dd locked" data-tip="Fixed to access scope"><button type="button" aria-disabled="true"><span class="l">Business Unit</span> <b>Entertainment</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg></button></div><span class="qp-status"><i></i><b>Month closed</b>· refreshed 8 Sep, 06:00</span></div><div class="spec" style="margin-top:14px"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+2.9%</span><span class="qp-chip pos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19 4 8h16z" fill="currentColor" stroke="none"></path></svg>−5.8%</span><span class="qp-chip pos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+1.3%</span><span class="qp-chip neu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="3" rx="1.5" fill="currentColor" stroke="none"></rect></svg>0.0%</span><span class="qp-pill pos"><i></i>On track</span><span class="qp-pill amb"><i></i>At risk</span><span class="qp-pill neg"><i></i>Underperforming</span><span class="qp-pill neu"><i></i>No data</span><a class="qp-link" href="Persona%201%20-%20Imran%20(Board%20of%20Director)/01-consolidated.html">View details<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a><span class="qp-badge">Badge</span></div></section><section class="qp-card flush" style="margin-top:16px"><div class="hd"><div class="tt"><h3>Matrix with Drill-Down</h3><p>Power BI matrix, stepped layout; uppercase column titles, 40px rows without rules, a status dot before each name, signed coloured variance, and a chevron at the row end (the +/- expand; the whole row is clickable)</p></div></div><div class="qp-tbl has-exp has-dot"><table><thead><tr><th scope="col" class="">Cost Category</th><th scope="col" class="r">YTD Actual <span class="u">(<span class="sar">⃁</span>)</span></th><th scope="col" class="r">YTD Plan <span class="u">(<span class="sar">⃁</span>)</span></th><th scope="col" class="r">Variance %</th><th class="xc"><span class="sr">Cost lines</span></th></tr></thead><tbody><tr class="xp " data-xp="ds-0"><td class=" nm"><span class="nmx"><i class="dot neg" aria-hidden="true"></i><span>Professional Services</span></span></td><td class="r">61.2</td><td class="r">52.8</td><td class="r"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+15.9%</span></td><td class="xc"><button class="qp-exp" data-exp="ds-0" aria-expanded="true" aria-controls="ds-0-c0 ds-0-c1" aria-label="Cost lines: Professional Services" data-tip="Cost lines"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button></td></tr><tr id="ds-0-c0" class="child" data-parent="ds-0"><td class=" nm">Consulting</td><td class="r">28.2</td><td class="r">24.3</td><td class="r"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+16.0%</span></td><td class="xc"></td></tr><tr id="ds-0-c1" class="child" data-parent="ds-0"><td class=" nm">Legal advisory</td><td class="r">14.7</td><td class="r">12.7</td><td class="r"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+15.7%</span></td><td class="xc"></td></tr><tr class="xp " data-xp="ds-1"><td class=" nm"><span class="nmx"><i class="dot pos" aria-hidden="true"></i><span>Marketing &amp; Events</span></span></td><td class="r">33.8</td><td class="r">35.9</td><td class="r"><span class="qp-chip pos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19 4 8h16z" fill="currentColor" stroke="none"></path></svg>−5.8%</span></td><td class="xc"><button class="qp-exp" data-exp="ds-1" aria-expanded="false" aria-controls="ds-1-c0" aria-label="Cost lines: Marketing &amp; Events" data-tip="Cost lines"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button></td></tr><tr id="ds-1-c0" class="child" data-parent="ds-1" hidden=""><td class=" nm">Brand campaigns</td><td class="r">15.5</td><td class="r">16.5</td><td class="r"><span class="qp-chip pos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19 4 8h16z" fill="currentColor" stroke="none"></path></svg>−6.1%</span></td><td class="xc"></td></tr></tbody><tfoot><tr><td class=" nm"><span class="nmx"><i class="dot none" aria-hidden="true"></i><span>Total</span></span></td><td class="r">95.0</td><td class="r">88.7</td><td class="r"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+7.1%</span></td><td class="xc"></td></tr></tfoot></table></div><div class="qp-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4.5M12 8h.01"></path></svg><span>Dot colour = the row’s status (conditional formatting icon on the row header). The totals row mirrors the header: uppercase label under one hairline.</span></div></section><div class="qp-sec "><h2>Power BI Mapping</h2></div><section class="qp-card flush"><div class="qp-tbl"><table><thead><tr><th scope="col" class="">Design element</th><th scope="col" class="">Power BI build</th><th scope="col" class="">Notes</th></tr></thead><tbody><tr class=""><td class=" nm">Icon rail &amp; user access</td><td class="">Page navigator buttons + RLS roles</td><td class=""><span class="muted" style="white-space:normal">Each user sees only their permitted dashboards; users with a single dashboard have no rail.</span></td></tr><tr class=""><td class=" nm">Month / YTD toggle, Plan / Forecast, Selected Month / YTD / Full Year</td><td class="">Field parameters or bookmarks on a button slicer</td><td class=""><span class="muted" style="white-space:normal">Tabs sit on a Light gray #FBFBFB pill track with a Soft gray border; the selected tab is Purple #7122F4 with Lighter gray 2 #FCFCFC text.</span></td></tr><tr class=""><td class=" nm">Year, Month, Business Unit, Division, Project dropdowns</td><td class="">Dropdown slicers; locked ones = slicer with RLS-filtered single value</td><td class=""><span class="muted" style="white-space:normal">Padlock state shown with an icon and tooltip.</span></td></tr><tr class=""><td class=" nm">From / To dates</td><td class="">Date slicer, "Between" style</td><td class=""><span class="muted" style="white-space:normal">Driven by the Month / YTD toggle through a period table.</span></td></tr><tr class=""><td class=" nm">KPI cards and metric tiles with status edge</td><td class="">New card visual (accent bar left) or card + shape</td><td class=""><span class="muted" style="white-space:normal">Accent colour from a status measure (good / neutral / bad); variance arrow repeats it.</span></td></tr><tr class=""><td class=" nm">Variance chips ▲ / ▼</td><td class="">Conditional formatting icons + font colour</td><td class=""><span class="muted" style="white-space:normal">Arrow = direction; colour = favourability (cost over plan is adverse).</span></td></tr><tr class=""><td class=" nm">Tables with expandable rows</td><td class="">Matrix with row hierarchy (expand / collapse)</td><td class=""><span class="muted" style="white-space:normal">Drill-through page optional for full ledger lines.</span></td></tr><tr class=""><td class=" nm">Monthly trend (columns + cumulative lines)</td><td class="">Line and clustered column chart, secondary axis</td><td class=""><span class="muted" style="white-space:normal">Plan dashed; legend click hides a series (native).</span></td></tr><tr class=""><td class=" nm">Headcount / AP aging stacks</td><td class="">Stacked column chart + line (plan)</td><td class=""><span class="muted" style="white-space:normal">&gt;90 days past due always red.</span></td></tr><tr class=""><td class=" nm">Workforce donut, progress rings</td><td class="">Donut chart; rings = donut with one value + remainder</td><td class=""><span class="muted" style="white-space:normal">Centre total as a card overlay.</span></td></tr><tr class=""><td class=" nm">Top 10 rides, data bars in tables</td><td class="">Clustered bar chart; table data bars</td><td class=""><span class="muted" style="white-space:normal">Lowest value highlighted with the at-risk colour.</span></td></tr><tr class=""><td class=" nm">Daily admissions</td><td class="">Line chart with 7-day moving average measure</td><td class=""><span class="muted" style="white-space:normal">Continuous date axis.</span></td></tr><tr class=""><td class=" nm">Site map</td><td class="">Image / Shape map or Icon Map visual with project points</td><td class=""><span class="muted" style="white-space:normal">Point selection cross-filters the project detail card.</span></td></tr><tr class=""><td class=" nm">KPI hover card</td><td class="">Report page tooltip on each card visual</td><td class=""><span class="muted" style="white-space:normal">Light panel (#F7F8FB, faint border, soft shadow): uppercase title, value, dot rows for reference + variance, other references, status and the definition. No info icon on the card.</span></td></tr><tr class=""><td class=" nm">Chart tooltips</td><td class="">Report page tooltips</td><td class=""><span class="muted" style="white-space:normal">Dark tooltip, month + series + variance.</span></td></tr></tbody></table></div><div class="qp-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4.5M12 8h.01"></path></svg><span>Canvas 1440 px wide; rail 78 px; page gutter 18 px, grid gap 12 px, card inset 20 px, 32 px between groups; card radius 12; KPI card radius 10; metric tile radius 8; control radius 8; period switch 14.</span></div></section><footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span></footer></div>
+  <div id="ds"><div class="qp-sec first"><h2>Colour</h2><div class="rt"></div></div><section class="qp-card "><div class="qp-eyebrow">Primary &amp; UI</div><div class="sw"><div><i style="background:var(--c-purple)"></i><span><b>Purple · #7122F4</b><em>Buttons &amp; icon-button backgrounds; link text</em></span></div><div><i style="background:var(--c-light-purple)"></i><span><b>Light purple · #DCD4FF</b><em>Selected rail item; back-link hover</em></span></div><div><i style="background:var(--c-canvas)"></i><span><b>Canvas · #F4F5F7</b><em>Dashboard surface, shared with the OE reference dashboard</em></span></div><div><i style="background:var(--c-light-gray)"></i><span><b>Light gray · #FBFBFB</b><em>Inset panels and metric tiles; table cell hover; period-switch track</em></span></div><div><i style="background:var(--c-white)"></i><span><b>White · #FFFFFF</b><em>Card surface</em></span></div><div><i style="background:var(--c-soft-gray)"></i><span><b>Soft gray · #EAEAEA</b><em>Card borders; table rules; chart gridlines</em></span></div><div><i style="background:var(--c-carbon)"></i><span><b>Carbon black · #1A1A1A</b><em>Titles, subtitles, KPI numbers, table cells; secondary-button border</em></span></div><div><i style="background:var(--c-dark-gray)"></i><span><b>Dark gray · #6D6D6D</b><em>Paragraphs, labels, annotations; chart lines &amp; values; column titles</em></span></div><div><i style="background:var(--c-lighter-gray-2)"></i><span><b>Lighter gray 2 · #FCFCFC</b><em>Text &amp; icons on buttons and icon buttons</em></span></div><div><i style="background:var(--c-disabled-font)"></i><span><b>Disabled font · #B0B0B0</b><em>Disabled button text &amp; icon; "No data" state</em></span></div><div><i style="background:var(--c-disabled-bg)"></i><span><b>Disabled bg · #E7E7E7</b><em>Disabled button background; locked filters</em></span></div></div><div class="qp-eyebrow">Status</div><div class="sw"><div><i style="background:var(--c-red)"></i><span><b>Red · #FF4B4B</b><em>Negative / adverse values</em></span></div><div><i style="background:var(--c-green)"></i><span><b>Green · #0FA465</b><em>Positive / favourable values</em></span></div><div><i style="background:var(--c-amber)"></i><span><b>Amber · #F4B11E</b><em>Neutral, pending, at risk</em></span></div></div><div class="qp-eyebrow">Charts</div><div class="sw"><div><i style="background:var(--c-qblue)"></i><span><b>Qiddiya blue · #001B72</b><em>Series 1 · actuals</em></span></div><div><i style="background:var(--c-q400)"></i><span><b>Qiddiya 400 · #19327F</b><em>Series</em></span></div><div><i style="background:var(--c-q300)"></i><span><b>Qiddiya 300 · #354E9E</b><em>Series · forecast</em></span></div><div><i style="background:var(--c-q200)"></i><span><b>Qiddiya 200 · #4577BF</b><em>Series 2</em></span></div><div><i style="background:var(--c-aqua600)"></i><span><b>Aqua 600 · #0B8EB6</b><em>Cumulative lines</em></span></div><div><i style="background:var(--c-aqua)"></i><span><b>Qiddiya aqua · #0BC0FF</b><em>Series 3</em></span></div><div><i style="background:var(--c-aqua400)"></i><span><b>Aqua 400 · #3EC1E9</b><em>Series</em></span></div><div><i style="background:var(--c-aqua300)"></i><span><b>Aqua 300 · #6ED0EE</b><em>Plan / budget bars</em></span></div><div><i style="background:var(--c-orange600)"></i><span><b>Orange 600 · #FF7800</b><em>Optional alternative for a more colourful set</em></span></div><div><i style="background:var(--c-pink700)"></i><span><b>Pink 700 · #B10057</b><em>Optional alternative for a more colourful set</em></span></div></div><div class="qp-eyebrow">Area Identity</div><div class="sw"><div><i style="background:var(--area-dev-bg)"></i><span><b>Development · #001B72</b><em>Qiddiya blue · Development and Business Units</em></span></div><div><i style="background:var(--area-oa-bg)"></i><span><b>Operating Assets · #0B8EB6</b><em>Aqua 600 · Operating Assets</em></span></div><div><i style="background:var(--area-corp-bg)"></i><span><b>Corporate · #354E9E</b><em>Qiddiya 300 · Corporate and Corporate Divisions</em></span></div><div><i style="background:var(--area-city-bg)"></i><span><b>City Operations · #19327F</b><em>Qiddiya 400 · City Operations</em></span></div></div></section><div class="qp-sec "><h2>Typography</h2></div><section class="qp-card ty"><div class="r"><code>Product name · 26 / 700</code><span style="font-size:26px;font-weight:700;letter-spacing:-.02em">Q-Profit</span></div><div class="r"><code>Page title · 20 / 700 + 500</code><span style="font-size:20px;font-weight:700">Consolidated <span style="color:var(--mut);font-weight:400">/ Qiddiya Investment Company</span></span></div><div class="r"><code>Group label · 18 / 500, dark gray</code><span style="font-size:18px;font-weight:400;color:var(--mut)">Area Summaries</span></div><div class="r"><code>Card title · 18 / 600</code><span style="font-size:18px;font-weight:700">Development Business Units</span></div><div class="r"><code>Tile value · 18 / 700</code><span style="font-size:18px;font-weight:700"><span class="sar">⃁</span>1,850.0</span></div><div class="r"><code>KPI value · 26 / 700</code><span style="font-size:26px;font-weight:700;letter-spacing:-.025em"><span class="sar">⃁</span>3,214.6</span></div><div class="r"><code>Body · 14 / 400</code><span style="font-size:14px">Personnel Cost</span></div><div class="r"><code>Label &amp; target · 12–13 / 400, dark gray</code><span style="font-size:13px;color:var(--mut)">YTD plan <span class="sar">⃁</span>3,352.0 · Forecast <span class="sar">⃁</span>3,388.4</span></div><div class="r"><code>Column title · 12 / 600 uppercase, dark gray</code><span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)">YTD Actual (<span class="sar">⃁</span>)</span></div><div class="r"><code>Note · 12 / 400, dark gray</code><span style="font-size:12px;color:var(--mut)">Grain: business unit, then cost line.</span></div><div class="qp-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4.5M12 8h.01"></path></svg><span>Currency: amounts carry <span class="sar">⃁</span> before the value on cards; tables never repeat it per cell — the column heading states <b>(<span class="sar">⃁</span>)</b>. "SAR" is not used anywhere.</span></div></section><div class="qp-sec "><h2>Components</h2></div><div class="qp-grid g4"><div class="qp-kpi neg "><i class="qp-edge" aria-hidden="true"></i><div class="k"><span class="lab">Work Performed</span></div><div class="v"><span class="sar">⃁</span>3,214.6</div><div class="ft"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19 4 8h16z" fill="currentColor" stroke="none"></path></svg>−4.1%</span></div><div class="t sr">YTD Plan <b><span class="sar">⃁</span>3,352.0</b></div></div><div class="qp-kpi amb "><i class="qp-edge" aria-hidden="true"></i><div class="k"><span class="lab">Qiddiya City Headcount</span></div><div class="v">1,842</div><div class="ft"><span class="qp-chip amb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19 4 8h16z" fill="currentColor" stroke="none"></path></svg>−3.1%</span></div><div class="t sr">YTD Plan <b>1,901</b></div></div><div class="qp-kpi pos "><i class="qp-edge" aria-hidden="true"></i><div class="k"><span class="lab">Cash Overall</span></div><div class="v"><span class="sar">⃁</span>9,238.2</div><div class="ft"><span class="qp-chip pos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+0.6%</span></div><div class="t sr">YTD Secured <b><span class="sar">⃁</span>9,180.0</b></div></div><div class="qp-kpi neu "><i class="qp-edge" aria-hidden="true"></i><div class="k"><span class="lab">Headcount</span><span class="st"><span class="qp-pill neu"><i></i>No data</span></span></div><div class="v">17</div><div class="t sr">Plan <b>18</b></div></div></div><section class="qp-card " style="margin-top:16px"><div class="spec"><div class="qp-seg " role="tablist"><button role="tab" data-k="a" data-v="m" class="on" aria-selected="true">Mar</button><button role="tab" data-k="a" data-v="ytd" class="" aria-selected="false">YTD</button></div><div class="qp-seg sm" role="tablist"><button role="tab" data-k="b" data-v="forecast" class="" aria-selected="false">Forecast</button><button role="tab" data-k="b" data-v="plan" class="on" aria-selected="true">Plan</button></div><div class="qp-dd" data-dd="c"><button type="button" aria-haspopup="listbox" aria-expanded="false"><span class="l">Month</span> <b>Mar</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><div class="qp-menu" role="listbox"><div role="option" tabindex="-1" data-k="c" data-v="Mar" aria-selected="true">Mar<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg></div></div></div><div class="qp-dd locked" data-tip="Fixed to access scope"><button type="button" aria-disabled="true"><span class="l">Business Unit</span> <b>Entertainment</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg></button></div><span class="qp-status"><i></i><b>Month closed</b>· refreshed 8 Sep, 06:00</span></div><div class="spec" style="margin-top:14px"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+2.9%</span><span class="qp-chip pos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19 4 8h16z" fill="currentColor" stroke="none"></path></svg>−5.8%</span><span class="qp-chip pos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+1.3%</span><span class="qp-chip neu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="3" rx="1.5" fill="currentColor" stroke="none"></rect></svg>0.0%</span><span class="qp-pill pos"><i></i>On track</span><span class="qp-pill amb"><i></i>At risk</span><span class="qp-pill neg"><i></i>Underperforming</span><span class="qp-pill neu"><i></i>No data</span><a class="qp-link" href="Persona%201%20-%20Imran%20(Board%20of%20Director)/01-consolidated.html">View details<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a><span class="qp-badge">Badge</span></div></section><section class="qp-card flush" style="margin-top:16px"><div class="hd"><div class="tt"><h3>Matrix with Drill-Down</h3><p>Power BI matrix, stepped layout; uppercase column titles, 40px rows without rules, a status dot before each name, signed coloured variance, and a chevron at the row end (the +/- expand; the whole row is clickable)</p></div></div><div class="qp-tbl has-exp has-dot"><table><thead><tr><th scope="col" class="">Cost Category</th><th scope="col" class="r">YTD Actual <span class="u">(<span class="sar">⃁</span>)</span></th><th scope="col" class="r">YTD Plan <span class="u">(<span class="sar">⃁</span>)</span></th><th scope="col" class="r">Variance %</th><th class="xc"><span class="sr">Cost lines</span></th></tr></thead><tbody><tr class="xp " data-xp="ds-0"><td class=" nm"><span class="nmx"><i class="dot neg" aria-hidden="true"></i><span>Professional Services</span></span></td><td class="r">61.2</td><td class="r">52.8</td><td class="r"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+15.9%</span></td><td class="xc"><button class="qp-exp" data-exp="ds-0" aria-expanded="true" aria-controls="ds-0-c0 ds-0-c1" aria-label="Cost lines: Professional Services" data-tip="Cost lines"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button></td></tr><tr id="ds-0-c0" class="child" data-parent="ds-0"><td class=" nm">Consulting</td><td class="r">28.2</td><td class="r">24.3</td><td class="r"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+16.0%</span></td><td class="xc"></td></tr><tr id="ds-0-c1" class="child" data-parent="ds-0"><td class=" nm">Legal advisory</td><td class="r">14.7</td><td class="r">12.7</td><td class="r"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+15.7%</span></td><td class="xc"></td></tr><tr class="xp " data-xp="ds-1"><td class=" nm"><span class="nmx"><i class="dot pos" aria-hidden="true"></i><span>Marketing &amp; Events</span></span></td><td class="r">33.8</td><td class="r">35.9</td><td class="r"><span class="qp-chip pos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19 4 8h16z" fill="currentColor" stroke="none"></path></svg>−5.8%</span></td><td class="xc"><button class="qp-exp" data-exp="ds-1" aria-expanded="false" aria-controls="ds-1-c0" aria-label="Cost lines: Marketing &amp; Events" data-tip="Cost lines"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></button></td></tr><tr id="ds-1-c0" class="child" data-parent="ds-1" hidden=""><td class=" nm">Brand campaigns</td><td class="r">15.5</td><td class="r">16.5</td><td class="r"><span class="qp-chip pos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19 4 8h16z" fill="currentColor" stroke="none"></path></svg>−6.1%</span></td><td class="xc"></td></tr></tbody><tfoot><tr><td class=" nm"><span class="nmx"><i class="dot none" aria-hidden="true"></i><span>Total</span></span></td><td class="r">95.0</td><td class="r">88.7</td><td class="r"><span class="qp-chip neg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5 4 16h16z" fill="currentColor" stroke="none"></path></svg>+7.1%</span></td><td class="xc"></td></tr></tfoot></table></div><div class="qp-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4.5M12 8h.01"></path></svg><span>Dot colour = the row’s status (conditional formatting icon on the row header). The totals row mirrors the header: uppercase label under one hairline.</span></div></section><div class="qp-sec "><h2>Power BI Mapping</h2></div><section class="qp-card flush"><div class="qp-tbl"><table><thead><tr><th scope="col" class="">Design element</th><th scope="col" class="">Power BI build</th><th scope="col" class="">Notes</th></tr></thead><tbody><tr class=""><td class=" nm">Icon rail &amp; user access</td><td class="">Page navigator buttons + RLS roles</td><td class=""><span class="muted" style="white-space:normal">Each user sees only their permitted dashboards; users with a single dashboard have no rail.</span></td></tr><tr class=""><td class=" nm">Month / YTD toggle, Plan / Forecast, Selected Month / YTD / Full Year</td><td class="">Field parameters or bookmarks on a button slicer</td><td class=""><span class="muted" style="white-space:normal">Tabs sit on a Light gray #FBFBFB pill track with a Soft gray border; the selected tab is Purple #7122F4 with Lighter gray 2 #FCFCFC text.</span></td></tr><tr class=""><td class=" nm">Year, Month, Business Unit, Division, Project dropdowns</td><td class="">Dropdown slicers; locked ones = slicer with RLS-filtered single value</td><td class=""><span class="muted" style="white-space:normal">Padlock state shown with an icon and tooltip.</span></td></tr><tr class=""><td class=" nm">From / To dates</td><td class="">Date slicer, "Between" style</td><td class=""><span class="muted" style="white-space:normal">Driven by the Month / YTD toggle through a period table.</span></td></tr><tr class=""><td class=" nm">KPI cards and metric tiles with status edge</td><td class="">New card visual (accent bar left) or card + shape</td><td class=""><span class="muted" style="white-space:normal">Accent colour from a status measure (good / neutral / bad); variance arrow repeats it.</span></td></tr><tr class=""><td class=" nm">Variance chips ▲ / ▼</td><td class="">Conditional formatting icons + font colour</td><td class=""><span class="muted" style="white-space:normal">Arrow = direction; colour = favourability (cost over plan is adverse).</span></td></tr><tr class=""><td class=" nm">Tables with expandable rows</td><td class="">Matrix with row hierarchy (expand / collapse)</td><td class=""><span class="muted" style="white-space:normal">Drill-through page optional for full ledger lines.</span></td></tr><tr class=""><td class=" nm">Monthly trend (columns + cumulative lines)</td><td class="">Line and clustered column chart, secondary axis</td><td class=""><span class="muted" style="white-space:normal">Plan dashed; legend click hides a series (native).</span></td></tr><tr class=""><td class=" nm">Headcount / AP aging stacks</td><td class="">Stacked column chart + line (plan)</td><td class=""><span class="muted" style="white-space:normal">&gt;90 days past due always red.</span></td></tr><tr class=""><td class=" nm">Workforce donut, progress rings</td><td class="">Donut chart; rings = donut with one value + remainder</td><td class=""><span class="muted" style="white-space:normal">Centre total as a card overlay.</span></td></tr><tr class=""><td class=" nm">Top 10 rides, data bars in tables</td><td class="">Clustered bar chart; table data bars</td><td class=""><span class="muted" style="white-space:normal">Lowest value highlighted with the at-risk colour.</span></td></tr><tr class=""><td class=" nm">Daily admissions</td><td class="">Line chart with 7-day moving average measure</td><td class=""><span class="muted" style="white-space:normal">Continuous date axis.</span></td></tr><tr class=""><td class=" nm">Site map</td><td class="">Image / Shape map or Icon Map visual with project points</td><td class=""><span class="muted" style="white-space:normal">Point selection cross-filters the project detail card.</span></td></tr><tr class=""><td class=" nm">KPI hover card</td><td class="">Report page tooltip on each card visual</td><td class=""><span class="muted" style="white-space:normal">Light panel (#F7F8FB, faint border, soft shadow): uppercase title, value, dot rows for reference + variance, other references, status and the definition. No info icon on the card.</span></td></tr><tr class=""><td class=" nm">Chart tooltips</td><td class="">Report page tooltips</td><td class=""><span class="muted" style="white-space:normal">Dark tooltip, month + series + variance.</span></td></tr></tbody></table></div><div class="qp-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4.5M12 8h.01"></path></svg><span>Canvas 1440 px wide; rail 78 px; page gutter 18 px, grid gap 12 px, card inset 20 px, 32 px between groups; card radius 12; KPI card radius 10; metric tile radius 8; control radius 8; period switch 14.</span></div></section><footer class="qp-footer"><span>Q-Profit · Data &amp; AI Office, Qiddiya Investment Company</span></footer></div>
 </div>
 
 
