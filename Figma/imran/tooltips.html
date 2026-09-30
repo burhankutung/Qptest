@@ -1232,6 +1232,14 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font)}
 :root[data-rail="open"] .qp-rail a[data-tip]::after,:root[data-rail="open"] .qp-rail a[data-tip]::before,:root.qp-tipsview .qp-rail a[data-tip]::after,:root.qp-tipsview .qp-rail a[data-tip]::before{display:none}
 @media (max-width:680px){ .qp-rail a[data-tip]::after,.qp-rail a[data-tip]::before{display:none} }
 </style>
+<style id="kpi-ib-corner">
+/* KPI cards: the i button sits in the card's top-right corner; its tooltip opens leftwards
+   (rightwards on the first card of a grid so it stays off the left menu) */
+.qp-kpi .k .qp-ib{position:absolute;top:12px;right:12px;margin:0;vertical-align:0}
+.qp-kpi .v{padding-right:18px}
+.qp-kpi .qp-ib[data-tip]:hover::after,.qp-kpi .qp-ib[data-tip]:focus-visible::after{left:auto;right:-6px;transform:none}
+.qp-grid>.qp-kpi:first-child .qp-ib[data-tip]:hover::after,.qp-grid>.qp-kpi:first-child .qp-ib[data-tip]:focus-visible::after{left:-6px;right:auto}
+</style>
 </head>
 <body>
 <div class="tt-page">
