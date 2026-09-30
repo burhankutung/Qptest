@@ -1154,6 +1154,17 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font)}
 .qp-tip.tt-static{max-width:360px}
 .qp-ktip.tt-static{min-width:240px;max-width:340px}
 </style>
+<style id="static-dropdowns">
+/* Static pages have no scripts: the profile menu and the filter lists open on hover, keyboard focus or tap. */
+.qp-who:hover .qp-pop,.qp-who:focus-within .qp-pop{display:block}
+.qp-who .qp-pop::before{content:"";position:absolute;left:0;right:0;top:-12px;height:12px}
+.qp-who:hover .cv,.qp-who:focus-within .cv{transform:rotate(180deg)}
+.qp-dd:hover .qp-menu,.qp-dd:focus-within .qp-menu{display:block}
+.qp-dd .qp-menu::before{content:"";position:absolute;left:0;right:0;top:-8px;height:8px}
+.qp-dd:hover>button,.qp-dd:focus-within>button{border-color:var(--acc)}
+.qp-dd:hover>button svg,.qp-dd:focus-within>button svg{transform:rotate(180deg)}
+.qp-menu [role=option]{cursor:default}
+</style>
 </head>
 <body>
 <div class="tt-page">

@@ -1121,7 +1121,18 @@ a{color:inherit}
 .qp-area .hdr b{font-size:24px}
 /* small KPI cards (Development, Corporate…) use the same 28px value as every KPI card */
 .qp-kpi.sm>.v,.qp-kpi.sm .v{font-size:28px;margin-top:0}
-</style></head>
+</style><style id="static-dropdowns">
+/* Static pages have no scripts: the profile menu and the filter lists open on hover, keyboard focus or tap. */
+.qp-who:hover .qp-pop,.qp-who:focus-within .qp-pop{display:block}
+.qp-who .qp-pop::before{content:"";position:absolute;left:0;right:0;top:-12px;height:12px}
+.qp-who:hover .cv,.qp-who:focus-within .cv{transform:rotate(180deg)}
+.qp-dd:hover .qp-menu,.qp-dd:focus-within .qp-menu{display:block}
+.qp-dd .qp-menu::before{content:"";position:absolute;left:0;right:0;top:-8px;height:8px}
+.qp-dd:hover>button,.qp-dd:focus-within>button{border-color:var(--acc)}
+.qp-dd:hover>button svg,.qp-dd:focus-within>button svg{transform:rotate(180deg)}
+.qp-menu [role=option]{cursor:default}
+</style>
+</head>
 <body>
 <div class="qp-solo">
   <header class="qp-top">
