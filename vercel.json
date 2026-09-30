@@ -1,7 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/", "destination": "/Figma/00-workspaces.html", "permanent": false }
+    { "source": "/", "destination": "/Figma/workspaces", "permanent": false }
   ]
 }
