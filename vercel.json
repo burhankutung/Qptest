@@ -3,6 +3,8 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/", "destination": "/Figma/workspaces", "permanent": false }
+    { "source": "/", "destination": "/workspaces", "permanent": false },
+    { "source": "/Figma", "destination": "/workspaces", "permanent": true },
+    { "source": "/Figma/:path*", "destination": "/:path*", "permanent": true }
   ]
 }

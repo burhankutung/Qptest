@@ -1,7 +1,16 @@
-# Only the Figma HTML export is published from this repo.
+# Only the HTML dashboard pages are published from this repo.
 *
-!Figma/
-!Figma/**
+!*/
+!workspaces.html
+!design-system.html
+!imran/**
+!hala/**
+!mohammed/**
+!yousef/**
+!reem/**
+!nasser/**
+!sara/**
+!kpi-concepts/**
 !.gitignore
 !vercel.json
 !404.html
