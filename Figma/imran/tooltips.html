@@ -1310,6 +1310,46 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font)}
 /* reference page: markers placed for wider screens must not cause sideways scrolling */
 .tt-stage{overflow-x:clip}
 </style>
+<style id="pbi-type">
+/* PBI Guidelines V1 typography system (Figma column):
+   Arial 400/700 - 28 / 24 / 18 / 14 / 12 px, 11 px for chart axes and buttons;
+   no letter-spacing; line-height 1.2 for titles and numbers, 1.45 for all other text;
+   colours: carbon #1A1A1A (titles, values, cells), dark gray #6D6D6D (labels, column titles, notes),
+   purple #7122F4 (interactive / selected), white on dark, red / green for status only */
+*{letter-spacing:0 !important}
+body *{line-height:1.45 !important}
+h1,h2,.qp-brand h1,.qp-crumb>b,.qp-sec h2,.qp-eyebrow,.qp-area .hdr .tt b,
+.qp-kpi>.v,.qp-kpi .v,.qp-kpi .pair b,.qp-tile .v,.qp-big .v,.qp-stat .v,.qp-area .lead .v,.qp-ktip .v{line-height:1.2 !important}
+.qp-card>.qp-eyebrow,.qp-crumb .qp-status,.qp-crumb .qp-status *{line-height:1.45 !important}
+.qp-map .leaflet-bar a{line-height:30px !important;font-size:18px}
+[data-tip]::after{line-height:1.45}
+code,.qp-person .ft code,.ty .r code{font-family:Arial,"Helvetica Neue",Helvetica,sans-serif}
+/* breadcrumb: page name 18 bold carbon; context and separator 14 regular dark gray (18 is bold-only in the guideline) */
+.qp-crumb .sep,.qp-crumb .cur{color:var(--mut);font-size:14px;font-weight:400}
+.qp-crumb{align-items:baseline}
+/* header stays 56px with the 1.45 line height on name + role */
+.qp-who{padding-top:0;padding-bottom:0}
+/* anything directly under the filter bar sits 8px below it */
+.qp-ctl+.qp-context,.qp-ctl+.kc-switch{margin-top:8px}
+/* table column-group headers are column titles: dark gray 12 regular, soft-gray rule */
+.qp-tbl thead tr.grp th,.qp-tbl thead tr.grp th span,.qp-tbl thead tr.grp th.band span{color:var(--mut);font-weight:400;border-bottom-color:var(--line)}
+/* expanded child rows: secondary text, dark gray 12 regular */
+.qp-tbl tr.child td{font-size:12px;color:var(--mut)}
+/* status pills: sentence case like every other tag */
+.qp-pill{text-transform:none}
+/* buttons: 11px bold (primary = purple fill, tertiary = purple text) */
+.qp-link{font-size:11px;font-weight:700}
+.leaflet-control-layers label,.leaflet-popup-content{font-size:12px}
+/* design-system swatch captions on the 12px step */
+.sw span b{font-size:12px}
+.sw span em{font-size:12px}
+/* Area Summaries: subtitle 12 regular dark gray; tiles are white cards with 12px padding and 12px gaps; tertiary link 11px */
+.qp-area>.hdr .tt span{font-size:12px;font-weight:400;text-transform:none;color:var(--mut)}
+.qp-area>.hdr .qp-link.ghost{font-size:11px}
+.qp-tile{background:var(--card);padding:12px}
+.qp-tiles{gap:12px}
+.qp-tile .k .qp-ib{top:12px;right:12px}
+</style>
 </head>
 <body>
 <div class="tt-page">
