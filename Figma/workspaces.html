@@ -1208,6 +1208,31 @@ a{color:inherit}
 /* 'Q-Profit' same size as the page subtitle (e.g. 'Qiddiya Investment Company') */
 .qp-brand h1{font-size:18px}
 </style>
+<style id="pbi-quickfix">
+/* PBI Guidelines V1 compliance fixes */
+/* filters to cards: 8px */
+.qp-ctl+.qp-grid,.qp-ctl+.qp-card,.qp-ctl+.qp-row{margin-top:8px}
+/* logo 128px wide */
+.qp-hlogo,.qp-hlogo img{width:128px}
+/* cards, KPI cards and tiles: plain 1.5px soft-gray border on every side, no coloured status edge */
+.qp-card,.qp-kpi,.qp-tile{border-left:1.5px solid var(--line)}
+.qp-edge{display:none}
+/* tables: sort icon on column titles, row text bold on hover (no hover fill) */
+.qp-tbl thead tr:not(.grp) th:not(:empty)::after{content:"";display:inline-block;width:16px;height:16px;margin-left:4px;vertical-align:-4px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237122F4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m8 9 4-4 4 4M8 15l4 4 4-4'/%3E%3C/svg%3E") center/16px no-repeat}
+.qp-tbl tbody tr:hover td{background:none;font-weight:700}
+/* tables inside cards: their own 1.5px soft-gray border, 8px rounded */
+.qp-card>.qp-tbl,.qp-card.flush>.qp-tbl{border:1.5px solid var(--line);border-radius:8px}
+.qp-card.flush>.qp-tbl{margin:0 var(--pad) var(--pad);width:auto}
+.qp-card.flush>.qp-tbl+.qp-foot{border-top:0;padding-top:0}
+/* section title sits on the bottom of its row, 12px above the cards */
+.qp-sec{align-items:flex-end}
+.qp-sec .rt{align-self:flex-end}
+/* 'View details' as a link: purple text on white */
+.qp-area>.hdr .qp-link.ghost{background:var(--card);color:var(--acc);font-size:12px;font-weight:700;padding:6px 10px;border-radius:8px}
+/* contrast: amber is never used for text */
+.qp-tbl .qp-chip.amb{color:var(--ink)}
+</style>
 </head>
 <body>
 <div class="qp-solo">
