@@ -426,11 +426,6 @@ a{color:inherit}
 .qp-area .hdr{position:relative;overflow:hidden;display:flex;align-items:flex-end;gap:12px;padding:26px 20px 22px;min-height:112px;background:var(--ac);color:var(--c-white)}
 /* decorative layer: thin concentric arcs off the right edge and a soft
    highlight in the top corner, white at low opacity over the area colour */
-.qp-area .hdr>.hdr-art{content:"";position:absolute;inset:0;pointer-events:none;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320' fill='none' stroke='white' stroke-width='1'%3E%3Ccircle cx='160' cy='160' r='58' stroke-opacity='.16'/%3E%3Ccircle cx='160' cy='160' r='92' stroke-opacity='.13'/%3E%3Ccircle cx='160' cy='160' r='126' stroke-opacity='.10'/%3E%3Ccircle cx='160' cy='160' r='158' stroke-opacity='.07'/%3E%3C/svg%3E") right -118px bottom -150px / 320px 320px no-repeat,
-    radial-gradient(120% 140% at 100% 0%, rgba(255,255,255,.12) 0%, rgba(255,255,255,0) 55%),
-    linear-gradient(180deg, rgba(255,255,255,0) 40%, rgba(0,0,0,.06) 100%)}
 .qp-area .hdr>*{position:relative;z-index:1}
 .qp-area .hdr .ic{display:none}
 .qp-area .hdr .tt{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1 1 auto}
@@ -1203,8 +1198,8 @@ a{color:inherit}
 .qp-hlogo,.qp-hlogo img{width:136px}
 .qp-hsep{height:24px}
 .qp-who{padding:2px 4px 2px 0}
-/* 'Q-Profit' same size as the page subtitle (e.g. 'Qiddiya Investment Company') */
-.qp-brand h1{font-size:18px}
+/* dashboard title: carbon black, 24px bold (PBI header spec) */
+.qp-brand h1{font-size:24px;font-weight:700;color:var(--ink)}
 </style>
 <style id="pbi-quickfix">
 /* PBI Guidelines V1 compliance fixes */
@@ -1252,6 +1247,22 @@ a{color:inherit}
 .qp-ctl .qp-seg button,.qp-sec>.rt.lt .qp-seg button{padding:0 12px;display:flex;align-items:center}
 /* Area Summary headers: one PBI colour (Qiddiya blue) for every area; areas are told apart by their titles */
 :root{--area-dev-bg:var(--c-qblue);--area-oa-bg:var(--c-qblue);--area-corp-bg:var(--c-qblue);--area-city-bg:var(--c-qblue)}
+</style>
+<style id="pbi-v2">
+/* PBI Guidelines V1, round 2 */
+/* Area Summaries: same card system as every other card - white header, carbon title, dark-gray subtitle, soft-gray divider */
+.qp-area>.hdr{background:var(--card);color:var(--ink);border-bottom:1.5px solid var(--line);padding:16px;min-height:0;align-items:center}
+.qp-area>.hdr .tt b{font-size:18px;color:var(--ink)}
+.qp-area>.hdr .tt span{color:var(--mut)}
+/* 'View details' = tertiary action: purple text link, no container */
+.qp-area>.hdr .qp-link.ghost{background:none;color:var(--acc);padding:4px 0;border-radius:0;font-size:12px;font-weight:700}
+/* header user area: 20px user icon, carbon name, purple chevron */
+.qp-who .uic{display:block;flex:none;width:20px;height:20px}
+.qp-who .cv{color:var(--acc)}
+/* filters: selected value carbon regular in dates and dropdowns; purple border on hover / focus */
+.qp-date input{font-weight:400;color:var(--ink)}
+.qp-dd>button{color:var(--ink)}
+.qp-date:hover,.qp-date:focus-within{border-color:var(--acc)}
 </style>
 </head>
 <body>
