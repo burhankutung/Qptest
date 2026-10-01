@@ -54,11 +54,9 @@
    not bundled here, since the font may not be redistributed as a file. Pages
    fall back to the system font stack below until that stylesheet loads. */
 /* The Saudi Riyal sign (U+20C1) is not in Proxima Nova: route it to Arial */
-@font-face{font-family:"QP Riyal";src:local("Arial"),local("ArialMT");unicode-range:U+20C1}
-
 :root{
   /* the Adobe Fonts kit registers the family as proxima-nova (100–900) */
-  --font:"QP Riyal","proxima-nova","Proxima Nova",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --font:"proxima-nova","Proxima Nova",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
 
   /* client palette */
   --c-purple:#7122F4; --c-light-gray:#FBFBFB; --c-white:#FFFFFF; --c-soft-gray:#EAEAEA;
@@ -160,7 +158,7 @@ html{overflow-x:hidden}
 svg text{font-family:var(--font)}
 button{font:inherit;color:inherit}
 a{color:inherit}
-.sar{font-family:Arial,"QP Riyal",sans-serif;font-weight:inherit;margin-right:.14em;letter-spacing:0}
+.sar{font-family:Arial,sans-serif;font-weight:inherit;margin-right:.14em;letter-spacing:0}
 .num{font-variant-numeric:tabular-nums}
 .muted{color:var(--mut)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -428,7 +426,7 @@ a{color:inherit}
 .qp-area .hdr{position:relative;overflow:hidden;display:flex;align-items:flex-end;gap:12px;padding:26px 20px 22px;min-height:112px;background:var(--ac);color:var(--c-white)}
 /* decorative layer: thin concentric arcs off the right edge and a soft
    highlight in the top corner, white at low opacity over the area colour */
-.qp-area .hdr::before{content:"";position:absolute;inset:0;pointer-events:none;
+.qp-area .hdr>.hdr-art{content:"";position:absolute;inset:0;pointer-events:none;
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320' fill='none' stroke='white' stroke-width='1'%3E%3Ccircle cx='160' cy='160' r='58' stroke-opacity='.16'/%3E%3Ccircle cx='160' cy='160' r='92' stroke-opacity='.13'/%3E%3Ccircle cx='160' cy='160' r='126' stroke-opacity='.10'/%3E%3Ccircle cx='160' cy='160' r='158' stroke-opacity='.07'/%3E%3C/svg%3E") right -118px bottom -150px / 320px 320px no-repeat,
     radial-gradient(120% 140% at 100% 0%, rgba(255,255,255,.12) 0%, rgba(255,255,255,0) 55%),
@@ -995,7 +993,7 @@ a{color:inherit}
    Surface: dashboard background Light gray #FBFBFB. Radius: 8px cards, 4px dropdowns.
    Spacing: 20px between cards. */
 :root{
-  --font:"QP Riyal",Arial,"Helvetica Neue",Helvetica,sans-serif;
+  --font:Arial,"Helvetica Neue",Helvetica,sans-serif;
   --fs-xs:12px; --fs-sm:12px; --fs-md:14px; --fs-lg:14px; --fs-xl:18px; --fs-2xl:18px; --fs-3xl:24px;
   --fs-app:24px; --fs-metric:28px; --fs-metric-lg:28px; --fs-metric-xl:28px;
   --c-canvas:#FBFBFB;
@@ -1218,8 +1216,6 @@ a{color:inherit}
 .qp-card,.qp-kpi,.qp-tile{border-left:1.5px solid var(--line)}
 .qp-edge{display:none}
 /* tables: sort icon on column titles, row text bold on hover (no hover fill) */
-.qp-tbl thead tr:not(.grp) th:not(:empty)::after{content:"";display:inline-block;width:16px;height:16px;margin-left:4px;vertical-align:-4px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237122F4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m8 9 4-4 4 4M8 15l4 4 4-4'/%3E%3C/svg%3E") center/16px no-repeat}
 .qp-tbl tbody tr:hover td{background:none;font-weight:700}
 /* tables inside cards: their own 1.5px soft-gray border, 8px rounded */
 .qp-card>.qp-tbl,.qp-card.flush>.qp-tbl{border:1.5px solid var(--line);border-radius:8px}
@@ -1232,6 +1228,17 @@ a{color:inherit}
 .qp-area>.hdr .qp-link.ghost{background:var(--card);color:var(--acc);font-size:12px;font-weight:700;padding:6px 10px;border-radius:8px}
 /* contrast: amber is never used for text */
 .qp-tbl .qp-chip.amb{color:var(--ink)}
+</style>
+<style id="figma-safe">
+/* html.to.design / Figma import: real elements, explicit sizes, no transforms for placement */
+/* table sort icon (real SVG in each column title) */
+.qp-tbl th .sort{display:inline-block;width:16px;height:16px;margin-left:4px;vertical-align:-4px;flex:none}
+/* plan marker on bullet bars: a 2px dashed line drawn as SVG */
+.qp-bullet .tick{width:2px;margin-left:-1px;cursor:default}
+.qp-bullet .tick::before{content:none}
+.qp-bullet .tick svg{display:block;width:2px;height:100%}
+/* map pin labels: vertically centred without translateY */
+.qp-pin b{top:0;bottom:0;margin:auto 0;height:max-content;transform:none}
 </style>
 </head>
 <body>
