@@ -1304,6 +1304,24 @@ code,.qp-person .ft code,.ty .r code{font-family:Arial,"Helvetica Neue",Helvetic
 .qp-tiles{gap:12px}
 .qp-tile .k .qp-ib{top:12px;right:12px}
 </style>
+<style id="figma-layout">
+/* html.to.design layout: spacing with gaps (no negative margins); short single-line UI text never wraps,
+   so Figma creates auto-width text layers instead of fixed boxes that can wrap with slightly different metrics */
+.qp-comp{margin-bottom:2px}
+.qp-comp-lb{margin-top:0}
+.qp-bullet .tick{margin-left:0}
+.qp-chip,.qp-pill,.qp-lg>*,.qp-seg button,.qp-dd>button,.qp-field .l,.qp-date,.qp-crumb>*,.qp-status,.qp-link,
+.v small,.qp-who b,.qp-who span,.qp-tile .k,.qp-kpi .t,.qp-comp-lb b{white-space:nowrap}
+/* tables: dense headers may break between label and unit (unit + sort icon stay together), all bottom-aligned;
+   first-column names stay on one line (the expanded-menu variant has less room and keeps wrapping) */
+.qp-tbl thead th{white-space:normal;vertical-align:bottom}
+.qp-tbl th .u{white-space:nowrap}
+:root:not([data-rail="open"]) .qp-tbl tbody td:first-child,:root:not([data-rail="open"]) .qp-tbl tfoot td:first-child{white-space:nowrap}
+/* workforce: donut and list 12px apart (spacing step), list labels on one line (the expanded-menu variant keeps wrapping) */
+div:has(>#c-wf){gap:12px!important}
+#c-wf+.qp-dl .l{white-space:nowrap}
+:root[data-rail="open"] #c-wf+.qp-dl .l{white-space:normal}
+</style>
 </head>
 <body>
 <div class="qp-solo">
