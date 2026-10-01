@@ -1346,6 +1346,19 @@ a{color:inherit}
 /* map pin labels: vertically centred without translateY */
 .qp-pin b{top:0;bottom:0;margin:auto 0;height:max-content;transform:none}
 </style>
+<style id="tabs-filters">
+/* Dashboard filter bar (PBI Guidelines, Scenarios 1 & 3): tabs / view selectors on the LEFT, filters on the RIGHT */
+.qp-ctl{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.qp-ctl>.qp-tabs,.qp-ctl>.qp-filters{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.qp-ctl>.qp-filters{margin-left:auto;justify-content:flex-end}
+/* section headers: view tabs sit next to the title; filters stay on the right */
+.qp-sec>.rt.lt{margin-left:4px}
+/* tabs in the filter bar and section headers: same 32px height as the filter controls */
+.qp-ctl .qp-seg,.qp-sec>.rt.lt .qp-seg{box-sizing:border-box;height:32px;padding:2px;align-items:stretch}
+.qp-ctl .qp-seg button,.qp-sec>.rt.lt .qp-seg button{padding:0 12px;display:flex;align-items:center}
+/* Area Summary headers: one PBI colour (Qiddiya blue) for every area; areas are told apart by their titles */
+:root{--area-dev-bg:var(--c-qblue);--area-oa-bg:var(--c-qblue);--area-corp-bg:var(--c-qblue);--area-city-bg:var(--c-qblue)}
+</style>
 </head>
 <body>
 <div class="wrap">
