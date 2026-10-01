@@ -1204,6 +1204,8 @@ a{color:inherit}
 .qp-hlogo,.qp-hlogo img{width:136px}
 .qp-hsep{height:24px}
 .qp-who{padding:2px 4px 2px 0}
+/* 'Q-Profit' same size as the page subtitle (e.g. 'Qiddiya Investment Company') */
+.qp-brand h1{font-size:18px}
 </style>
 <style id="filters-left">
 /* filter row (tabs, period, dates, dropdowns) starts on the left */
@@ -1218,12 +1220,13 @@ a{color:inherit}
 .qp-grid>.qp-kpi:first-child .qp-ib[data-tip]:hover::after,.qp-grid>.qp-kpi:first-child .qp-ib[data-tip]:focus-visible::after{left:-6px;right:auto}
 </style>
 <style id="kpi-hover-card">
-/* KPI hover card (as in imran/tooltips.html): hovering a KPI card opens a black card under it with
+/* KPI hover card (as in imran/tooltips.html): clicking a KPI card's i button opens a black card under it with
    value, plan, forecast, status and definition. CSS only; opens right-aligned in the right-hand columns of a grid */
 .qp-kpi>.qp-ktip.qp-hov{position:absolute;left:-1px;right:auto;top:calc(100% + 8px);display:none;opacity:1;transform:none;
   width:max-content;min-width:240px;max-width:320px;z-index:320;text-align:left;white-space:normal}
 .qp-kpi>.qp-ktip.qp-hov::before{content:"";position:absolute;left:18px;top:-5px;width:10px;height:10px;background:var(--ktip-bg);transform:rotate(45deg)}
-.qp-kpi:hover>.qp-ktip.qp-hov,.qp-kpi:focus-within>.qp-ktip.qp-hov{display:block}
+.qp-kpi:has(.qp-ib:focus)>.qp-ktip.qp-hov{display:block}
+.qp-kpi .k .qp-ib{cursor:pointer}
 .qp-grid.g2>.qp-kpi:nth-child(n)>.qp-ktip.qp-hov{left:-1px;right:auto}
 .qp-grid.g2>.qp-kpi:nth-child(n)>.qp-ktip.qp-hov::before{left:18px;right:auto}
 .qp-grid.g2>.qp-kpi:nth-child(2n)>.qp-ktip.qp-hov{left:auto;right:-1px}
@@ -1288,7 +1291,7 @@ a{color:inherit}
 .qp-grid.g8>.qp-kpi:nth-child(3n)>.qp-ktip.qp-hov{left:auto;right:-1px}
 .qp-grid.g8>.qp-kpi:nth-child(3n)>.qp-ktip.qp-hov::before{left:auto;right:18px}
 }
-.qp-kpi:hover{z-index:5}
+.qp-kpi:has(.qp-ib:focus){z-index:5}
 /* keep the KPI card's own label/value styles out of the hover card (match the reference) */
 .qp-kpi>.qp-ktip.qp-hov{max-width:340px}
 .qp-kpi>.qp-ktip.qp-hov .k{font-weight:700;line-height:1.45;margin:0 0 3px;padding:0;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.72)}
