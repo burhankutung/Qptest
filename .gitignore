@@ -1,7 +1,7 @@
-# Only the Figma HTML export is published from this repo (Vercel serves Figma/ as the site root).
+# Only the HTML output is published from this repo (Vercel serves "Q-Profit Output/" as the site root).
 *
-!Figma/
-!Figma/**
+!Q-Profit Output/
+!Q-Profit Output/**
 !.gitignore
 !vercel.json
 !.nojekyll
